@@ -1,5 +1,5 @@
 1) Получить репозитарий
-git clone http://[github-name]@github.com/lyohytch/5Grabber.git
+git clone https://[github-name]@github.com/lyohytch/5Grabber.git
 
 2) Добавить файл на коммит
 git add <new file>
