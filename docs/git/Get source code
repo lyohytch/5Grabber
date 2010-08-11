@@ -1,0 +1,9 @@
+1) Получить репозитарий
+git clone http://[github-name]@github.com/lyohytch/5Grabber.git
+
+2) Добавить файл на коммит
+git add <new file>
+git commit
+
+3) Залить файлы на сервак
+git push origin master(вместо master мб имя своего бранча)
