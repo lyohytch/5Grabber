@@ -96,6 +96,7 @@ bool CMainDispatcher::prepareDataBases()
             delete tmpDatabase;
             continue;
         }
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Create database for URL:"<<Iter.key();
         m_preparedDataBases.insert(Iter.key(), tmpDatabase);
 
     }

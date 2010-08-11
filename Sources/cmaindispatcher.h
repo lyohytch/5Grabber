@@ -42,7 +42,6 @@ public slots:
 protected slots:
     void startRecieveTasks();
     void onDone();
-
 };
 
 #endif // CMAINDISPATCHER_H

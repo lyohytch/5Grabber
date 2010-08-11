@@ -19,7 +19,7 @@ public:
     siterules_t loadSites()
     {
         siterules_t rules;
-        QUrl tmpSite("http://www.tmp.ru");
+        QUrl tmpSite("http://ntl.nnov.ru/");
         QVariantList tmpRules;
         tmpRules.append(QVariant("foobar"));
         rules.insert(tmpSite,tmpRules);
