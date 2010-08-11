@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QProcess>
+#include <QByteArray>
 
 #include "parsedocxls.h"
 
@@ -25,9 +26,21 @@ void ParseDoc::readConfig(const QString &filename)
 
 QVariant ParseDoc::ParseFile(const QString &filename)
 {
+    qDebug()<<Q_FUNC_INFO<<" ( "<<__LINE__<<" )";
+    // FIXME
+    QString fname = filename;
+    fname.chop(4);
+    fname += ".txt";
     catdocArgs << filename;
-    QProcess process;
-    process.start("catdoc", catdocArgs);
+    QProcess *process = new QProcess(this);
+    qDebug()<<Q_FUNC_INFO<<" ( "<<__LINE__<<" )"<<fname;
+   // process->setStandardOutputFile(fname,QIODevice::ReadWrite);
+    process->execute("/usr/local/bin/catdoc", catdocArgs);
+    //process->waitForFinished();
+    QByteArray arr = process->readAllStandardOutput();
+    qDebug()<<Q_FUNC_INFO<<" (((( "<<__LINE__<<" )))) "<<arr;
+    delete process;
+
     return QVariant();
 }
 

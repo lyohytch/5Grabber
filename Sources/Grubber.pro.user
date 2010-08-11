@@ -57,7 +57,8 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <value key="QtVersionId" type="int">0</value>
-   <value key="ToolChain" type="int">0</value>
+   <value key="ToolChain" type="int">2</value>
+   <value key="addQDumper" type=""></value>
    <value key="buildConfiguration" type="int">2</value>
   </valuemap>
  </data>
@@ -66,6 +67,8 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Release</value>
    <value key="QtVersionId" type="int">0</value>
+   <value key="ToolChain" type="int">2</value>
+   <value key="addQDumper" type=""></value>
    <value key="buildConfiguration" type="int">0</value>
   </valuemap>
  </data>
@@ -74,72 +77,58 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">ANT_HOME=/usr/share/ant</value>
-    <value type="QString">CONFIG_PROTECT=/usr/share/X11/xkb /var/lib/hsqldb /usr/share/config</value>
-    <value type="QString">CONFIG_PROTECT_MASK=/etc/gentoo-release /etc/sandbox.d /etc/env.d/java/ /etc/fonts/fonts.conf /etc/gconf /etc/terminfo /etc/ca-certificates.conf /etc/revdep-rebuild</value>
-    <value type="QString">CVS_RSH=ssh</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-cWguhiFwXn,guid=67ee63e6a41d3c6f6c746a3a00000027</value>
-    <value type="QString">DCCC_PATH=/usr/lib64/distcc/bin</value>
-    <value type="QString">DESKTOP_SESSION=KDE-4</value>
-    <value type="QString">DISPLAY=:0.0</value>
-    <value type="QString">DISTCC_LOG=</value>
-    <value type="QString">DISTCC_VERBOSE=</value>
-    <value type="QString">DM_CONTROL=/var/run/xdmctl</value>
-    <value type="QString">EDITOR=/bin/nano</value>
-    <value type="QString">GDK_USE_XFT=1</value>
-    <value type="QString">GS_LIB=/home/semlanik/.fonts</value>
-    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/semlanik/.gtkrc-2.0::/home/semlanik/.kde4/share/config/gtkrc-2.0</value>
-    <value type="QString">GTK_RC_FILES=/etc/gtk/gtkrc:/home/semlanik/.gtkrc::/home/semlanik/.kde4/share/config/gtkrc</value>
-    <value type="QString">HOME=/home/semlanik</value>
-    <value type="QString">INFOPATH=/usr/share/info:/usr/share/binutils-data/x86_64-pc-linux-gnu/2.20.1/info:/usr/share/gcc-data/x86_64-pc-linux-gnu/4.4.3/info</value>
-    <value type="QString">JAVAC=/etc/java-config-2/current-system-vm/bin/javac</value>
-    <value type="QString">JAVACC_HOME=/usr/share/javacc/</value>
-    <value type="QString">JAVA_HOME=/etc/java-config-2/current-system-vm</value>
-    <value type="QString">JDK_HOME=/etc/java-config-2/current-system-vm</value>
-    <value type="QString">KDE_FULL_SESSION=true</value>
-    <value type="QString">KDE_MULTIHEAD=false</value>
-    <value type="QString">KDE_SESSION_UID=1000</value>
-    <value type="QString">KDE_SESSION_VERSION=4</value>
-    <value type="QString">LANG=ru_RU.utf8</value>
-    <value type="QString">LANGUAGE=</value>
-    <value type="QString">LESS=-R -M --shift 5</value>
-    <value type="QString">LESSOPEN=|lesspipe.sh %s</value>
-    <value type="QString">LOGNAME=semlanik</value>
-    <value type="QString">MANPATH=/etc/java-config-2/current-system-vm/man:/usr/local/share/man:/usr/share/man:/usr/share/binutils-data/x86_64-pc-linux-gnu/2.20.1/man:/usr/share/gcc-data/x86_64-pc-linux-gnu/4.4.3/man:/etc/java-config/system-vm/man/</value>
-    <value type="QString">OPENGL_PROFILE=nvidia</value>
-    <value type="QString">PAGER=/usr/bin/less</value>
-    <value type="QString">PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/opt/bin:/usr/x86_64-pc-linux-gnu/gcc-bin/4.4.3://opt/android-sdk-update-manager/tools:/usr/games/bin</value>
-    <value type="QString">PWD=/home/semlanik</value>
-    <value type="QString">QTDIR=/usr/share/qt4</value>
-    <value type="QString">QT_PLUGIN_PATH=/home/semlanik/.kde4/lib64/kde4/plugins/:/usr/lib64/kde4/plugins/</value>
-    <value type="QString">SANE_CONFIG_DIR=/etc/sane.d</value>
-    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/6795,unix/semlanik_r460:/tmp/.ICE-unix/6795</value>
-    <value type="QString">SHELL=/bin/bash</value>
-    <value type="QString">SHLVL=1</value>
-    <value type="QString">STRIGI_PLUGIN_PATH=/usr/lib64/strigi:</value>
-    <value type="QString">USB_DEVFS_PATH=/dev/bus/usb</value>
-    <value type="QString">USER=semlanik</value>
-    <value type="QString">VBOX_APP_HOME=/usr/lib64/virtualbox-ose</value>
-    <value type="QString">WINDOWPATH=7</value>
-    <value type="QString">XCURSOR_THEME=Oxygen_White</value>
-    <value type="QString">XDG_CONFIG_DIRS=/etc/xdg</value>
-    <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/local/share:/usr/share</value>
-    <value type="QString">XDG_MENU_PREFIX=kde-4.4-</value>
-    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281470694.528641-1354017613</value>
-    <value type="QString">XDM_MANAGED=method=classic</value>
-    <value type="QString">XSESSION=kde-4.3</value>
-    <value type="QString">_=/usr/lib64/kde4/libexec/start_kdeinit_wrapper</value>
+    <value type="QString">ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString">APPDATA=C:\Users\alexeyk\AppData\Roaming</value>
+    <value type="QString">COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString">COMPUTERNAME=ALEXEYK-PC</value>
+    <value type="QString">COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString">CUDA_BIN_PATH=C:\CUDA\bin</value>
+    <value type="QString">CUDA_INC_PATH=C:\CUDA\include</value>
+    <value type="QString">CUDA_LIB_PATH=C:\CUDA\lib</value>
+    <value type="QString">FP_NO_HOST_CHECK=NO</value>
+    <value type="QString">HOMEDRIVE=C:</value>
+    <value type="QString">HOMEPATH=\Users\alexeyk</value>
+    <value type="QString">INCLUDE=C:\Program Files\Intel\TBB\3.0\include</value>
+    <value type="QString">INTEL_LICENSE_FILE=C:\Program Files\Common Files\Intel\Licenses</value>
+    <value type="QString">LIB=C:\Program Files\Intel\TBB\3.0\lib\ia32\vc9</value>
+    <value type="QString">LOCALAPPDATA=C:\Users\alexeyk\AppData\Local</value>
+    <value type="QString">LOGONSERVER=\\ALEXEYK-PC</value>
+    <value type="QString">NUMBER_OF_PROCESSORS=2</value>
+    <value type="QString">NVSDKCOMPUTE_ROOT=C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK</value>
+    <value type="QString">OS=Windows_NT</value>
+    <value type="QString">PATH=C:\Qt\2010.02.1\mingw\bin;C:\Qt\2010.02.1\qt\bin;C:\Program Files\Intel\TBB\3.0\bin\ia32\vc9;c:\Program Files\NVIDIA Corporation\PhysX\Common;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\;C:\Program Files\Git\cmd;C:\CUDA\bin</value>
+    <value type="QString">PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString">PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString">PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 13, GenuineIntel</value>
+    <value type="QString">PROCESSOR_LEVEL=6</value>
+    <value type="QString">PROCESSOR_REVISION=0f0d</value>
+    <value type="QString">PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString">PROGRAMFILES=C:\Program Files</value>
+    <value type="QString">PSMODULEPATH=C:\Windows\system32\WindowsPowerShell\v1.0\Modules\</value>
+    <value type="QString">PUBLIC=C:\Users\Public</value>
+    <value type="QString">QTDIR=C:/Qt/2010.02.1/qt</value>
+    <value type="QString">SESSIONNAME=Console</value>
+    <value type="QString">SYSTEMDRIVE=C:</value>
+    <value type="QString">SYSTEMROOT=C:\Windows</value>
+    <value type="QString">TBB30_INSTALL_DIR=C:\Program Files\Intel\TBB\3.0\</value>
+    <value type="QString">TBB_ARCH_PLATFORM=ia32\vc9</value>
+    <value type="QString">TEMP=C:\Users\alexeyk\AppData\Local\Temp</value>
+    <value type="QString">TMP=C:\Users\alexeyk\AppData\Local\Temp</value>
+    <value type="QString">USERDOMAIN=alexeyk-pc</value>
+    <value type="QString">USERNAME=alexeyk</value>
+    <value type="QString">USERPROFILE=C:\Users\alexeyk</value>
+    <value type="QString">VS90COMNTOOLS=C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\</value>
+    <value type="QString">WINDIR=C:\Windows</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
-    <value type="QString">/home/semlanik/My documents/Work/Grubber/Grubber.pro</value>
+    <value type="QString">D:/qt-projects/5Grabber/Sources/Grubber.pro</value>
     <value type="QString">-spec</value>
-    <value type="QString">linux-g++</value>
+    <value type="QString">win32-g++</value>
     <value type="QString">-r</value>
-    <value type="QString">CONFIG+=debug</value>
    </valuelist>
-   <value key="abstractProcess.command" type="QString">/usr/bin/qmake</value>
-   <value key="abstractProcess.enabled" type="bool">false</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grubber</value>
+   <value key="abstractProcess.command" type="QString">c:/qt/2010.02.1/qt/bin/qmake.exe</value>
+   <value key="abstractProcess.enabled" type="bool">true</value>
+   <value key="abstractProcess.workingDirectory" type="QString">D:/qt-projects/5Grabber/Sources</value>
   </valuemap>
  </data>
  <data>
@@ -147,69 +136,56 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">ANT_HOME=/usr/share/ant</value>
-    <value type="QString">CONFIG_PROTECT=/usr/share/X11/xkb /var/lib/hsqldb /usr/share/config</value>
-    <value type="QString">CONFIG_PROTECT_MASK=/etc/gentoo-release /etc/sandbox.d /etc/env.d/java/ /etc/fonts/fonts.conf /etc/gconf /etc/terminfo /etc/ca-certificates.conf /etc/revdep-rebuild</value>
-    <value type="QString">CVS_RSH=ssh</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-cWguhiFwXn,guid=67ee63e6a41d3c6f6c746a3a00000027</value>
-    <value type="QString">DCCC_PATH=/usr/lib64/distcc/bin</value>
-    <value type="QString">DESKTOP_SESSION=KDE-4</value>
-    <value type="QString">DISPLAY=:0.0</value>
-    <value type="QString">DISTCC_LOG=</value>
-    <value type="QString">DISTCC_VERBOSE=</value>
-    <value type="QString">DM_CONTROL=/var/run/xdmctl</value>
-    <value type="QString">EDITOR=/bin/nano</value>
-    <value type="QString">GDK_USE_XFT=1</value>
-    <value type="QString">GS_LIB=/home/semlanik/.fonts</value>
-    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/semlanik/.gtkrc-2.0::/home/semlanik/.kde4/share/config/gtkrc-2.0</value>
-    <value type="QString">GTK_RC_FILES=/etc/gtk/gtkrc:/home/semlanik/.gtkrc::/home/semlanik/.kde4/share/config/gtkrc</value>
-    <value type="QString">HOME=/home/semlanik</value>
-    <value type="QString">INFOPATH=/usr/share/info:/usr/share/binutils-data/x86_64-pc-linux-gnu/2.20.1/info:/usr/share/gcc-data/x86_64-pc-linux-gnu/4.4.3/info</value>
-    <value type="QString">JAVAC=/etc/java-config-2/current-system-vm/bin/javac</value>
-    <value type="QString">JAVACC_HOME=/usr/share/javacc/</value>
-    <value type="QString">JAVA_HOME=/etc/java-config-2/current-system-vm</value>
-    <value type="QString">JDK_HOME=/etc/java-config-2/current-system-vm</value>
-    <value type="QString">KDE_FULL_SESSION=true</value>
-    <value type="QString">KDE_MULTIHEAD=false</value>
-    <value type="QString">KDE_SESSION_UID=1000</value>
-    <value type="QString">KDE_SESSION_VERSION=4</value>
-    <value type="QString">LANG=ru_RU.utf8</value>
-    <value type="QString">LANGUAGE=</value>
-    <value type="QString">LESS=-R -M --shift 5</value>
-    <value type="QString">LESSOPEN=|lesspipe.sh %s</value>
-    <value type="QString">LOGNAME=semlanik</value>
-    <value type="QString">MANPATH=/etc/java-config-2/current-system-vm/man:/usr/local/share/man:/usr/share/man:/usr/share/binutils-data/x86_64-pc-linux-gnu/2.20.1/man:/usr/share/gcc-data/x86_64-pc-linux-gnu/4.4.3/man:/etc/java-config/system-vm/man/</value>
-    <value type="QString">OPENGL_PROFILE=nvidia</value>
-    <value type="QString">PAGER=/usr/bin/less</value>
-    <value type="QString">PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/opt/bin:/usr/x86_64-pc-linux-gnu/gcc-bin/4.4.3://opt/android-sdk-update-manager/tools:/usr/games/bin</value>
-    <value type="QString">PWD=/home/semlanik</value>
-    <value type="QString">QTDIR=/usr/share/qt4</value>
-    <value type="QString">QT_PLUGIN_PATH=/home/semlanik/.kde4/lib64/kde4/plugins/:/usr/lib64/kde4/plugins/</value>
-    <value type="QString">SANE_CONFIG_DIR=/etc/sane.d</value>
-    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/6795,unix/semlanik_r460:/tmp/.ICE-unix/6795</value>
-    <value type="QString">SHELL=/bin/bash</value>
-    <value type="QString">SHLVL=1</value>
-    <value type="QString">STRIGI_PLUGIN_PATH=/usr/lib64/strigi:</value>
-    <value type="QString">USB_DEVFS_PATH=/dev/bus/usb</value>
-    <value type="QString">USER=semlanik</value>
-    <value type="QString">VBOX_APP_HOME=/usr/lib64/virtualbox-ose</value>
-    <value type="QString">WINDOWPATH=7</value>
-    <value type="QString">XCURSOR_THEME=Oxygen_White</value>
-    <value type="QString">XDG_CONFIG_DIRS=/etc/xdg</value>
-    <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/local/share:/usr/share</value>
-    <value type="QString">XDG_MENU_PREFIX=kde-4.4-</value>
-    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281470694.528641-1354017613</value>
-    <value type="QString">XDM_MANAGED=method=classic</value>
-    <value type="QString">XSESSION=kde-4.3</value>
-    <value type="QString">_=/usr/lib64/kde4/libexec/start_kdeinit_wrapper</value>
+    <value type="QString">ALLUSERSPROFILE=C:\ProgramData</value>
+    <value type="QString">APPDATA=C:\Users\alexeyk\AppData\Roaming</value>
+    <value type="QString">COMMONPROGRAMFILES=C:\Program Files\Common Files</value>
+    <value type="QString">COMPUTERNAME=ALEXEYK-PC</value>
+    <value type="QString">COMSPEC=C:\Windows\system32\cmd.exe</value>
+    <value type="QString">CUDA_BIN_PATH=C:\CUDA\bin</value>
+    <value type="QString">CUDA_INC_PATH=C:\CUDA\include</value>
+    <value type="QString">CUDA_LIB_PATH=C:\CUDA\lib</value>
+    <value type="QString">FP_NO_HOST_CHECK=NO</value>
+    <value type="QString">HOMEDRIVE=C:</value>
+    <value type="QString">HOMEPATH=\Users\alexeyk</value>
+    <value type="QString">INCLUDE=C:\Program Files\Intel\TBB\3.0\include</value>
+    <value type="QString">INTEL_LICENSE_FILE=C:\Program Files\Common Files\Intel\Licenses</value>
+    <value type="QString">LIB=C:\Program Files\Intel\TBB\3.0\lib\ia32\vc9</value>
+    <value type="QString">LOCALAPPDATA=C:\Users\alexeyk\AppData\Local</value>
+    <value type="QString">LOGONSERVER=\\ALEXEYK-PC</value>
+    <value type="QString">NUMBER_OF_PROCESSORS=2</value>
+    <value type="QString">NVSDKCOMPUTE_ROOT=C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK</value>
+    <value type="QString">OS=Windows_NT</value>
+    <value type="QString">PATH=C:\Qt\2010.02.1\mingw\bin;C:\Qt\2010.02.1\qt\bin;C:\Program Files\Intel\TBB\3.0\bin\ia32\vc9;c:\Program Files\NVIDIA Corporation\PhysX\Common;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\;C:\Program Files\Git\cmd;C:\CUDA\bin</value>
+    <value type="QString">PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</value>
+    <value type="QString">PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString">PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 13, GenuineIntel</value>
+    <value type="QString">PROCESSOR_LEVEL=6</value>
+    <value type="QString">PROCESSOR_REVISION=0f0d</value>
+    <value type="QString">PROGRAMDATA=C:\ProgramData</value>
+    <value type="QString">PROGRAMFILES=C:\Program Files</value>
+    <value type="QString">PSMODULEPATH=C:\Windows\system32\WindowsPowerShell\v1.0\Modules\</value>
+    <value type="QString">PUBLIC=C:\Users\Public</value>
+    <value type="QString">QTDIR=C:/Qt/2010.02.1/qt</value>
+    <value type="QString">SESSIONNAME=Console</value>
+    <value type="QString">SYSTEMDRIVE=C:</value>
+    <value type="QString">SYSTEMROOT=C:\Windows</value>
+    <value type="QString">TBB30_INSTALL_DIR=C:\Program Files\Intel\TBB\3.0\</value>
+    <value type="QString">TBB_ARCH_PLATFORM=ia32\vc9</value>
+    <value type="QString">TEMP=C:\Users\alexeyk\AppData\Local\Temp</value>
+    <value type="QString">TMP=C:\Users\alexeyk\AppData\Local\Temp</value>
+    <value type="QString">USERDOMAIN=alexeyk-pc</value>
+    <value type="QString">USERNAME=alexeyk</value>
+    <value type="QString">USERPROFILE=C:\Users\alexeyk</value>
+    <value type="QString">VS90COMNTOOLS=C:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\</value>
+    <value type="QString">WINDIR=C:\Windows</value>
    </valuelist>
    <value key="abstractProcess.IgnoreReturnValue" type="bool">false</value>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
     <value type="QString">-w</value>
    </valuelist>
-   <value key="abstractProcess.command" type="QString">/usr/bin/make</value>
+   <value key="abstractProcess.command" type="QString">C:/Qt/2010.02.1/mingw/bin/mingw32-make.exe</value>
    <value key="abstractProcess.enabled" type="bool">true</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grubber</value>
+   <value key="abstractProcess.workingDirectory" type="QString">D:/qt-projects/5Grabber/Sources</value>
   </valuemap>
  </data>
  <data>
