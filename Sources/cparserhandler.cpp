@@ -11,7 +11,9 @@ CParserHandler::CParserHandler(QObject *parent) :
 void CParserHandler::startParsing(CDataBaseHandler* database)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parsing started";
+
+    //Test parsing doc file
     QString fname = "parser_analisys.doc";
     ParseDoc pD(this, fname);
-    pD.ParseFile(fname);
+    pD.ParseFile();
 }

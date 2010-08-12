@@ -10,12 +10,15 @@ class ParseDocXls : public QObject
 Q_OBJECT
 public:
     explicit ParseDocXls(QObject *parent = 0);
-    virtual void readConfig(const QString &filename) {}
-    virtual QVariant ParseFile(const QString &filename) { return QVariant();}
+    virtual void readConfig(const QString &/*cfile*/) {}
+    virtual QVariant ParseFile() { return QVariant();}
     QStringList catdocArgs;
+    QStringList configParams;
 signals:
 
 public slots:
+protected:
+    QString targetFile;
 
 };
 
@@ -25,7 +28,7 @@ Q_OBJECT
 public:
     ParseDoc(QObject *parent = 0, const QString &filename = 0);
     virtual void readConfig(const QString &filename);
-    virtual QVariant ParseFile(const QString &filename);
+    virtual QVariant ParseFile();
 signals:
 
 public slots:
