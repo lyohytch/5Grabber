@@ -1,5 +1,4 @@
 #include "cparserhandler.h"
-#include "parsedocxls.h"
 #include <QDebug>
 #include <QString>
 
@@ -12,8 +11,4 @@ void CParserHandler::startParsing(CDataBaseHandler* database)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Lets ROCK";
     qDebug()<<database->read().size();
-    //Test parsing doc file
-    QString fname = "parser_analisys.doc";
-    ParseDoc pD(this, fname);
-    pD.ParseFile();
 }

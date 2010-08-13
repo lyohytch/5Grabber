@@ -1,4 +1,5 @@
 #include "cmaindispatcher.h"
+#include "parsedocxls.h"
 #include <QDebug>
 
 CMainDispatcher::CMainDispatcher(QObject *parent) :
@@ -19,6 +20,21 @@ bool CMainDispatcher::init()
 bool CMainDispatcher::init(const QString &configUrl)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    /*
+     * Temporary addition to test converting and parsing doc and xls
+     *
+     */
+    //Test parsing doc file
+    QString fname = "parser_analisys.doc";
+    ParseDoc pD(this, fname);
+    pD.ParseFile();
+
+    //Test parsing xls file
+    QString fnameX = "24-06-2010.xls";
+    ParseXls pX(this,fnameX);
+    pX.ParseFile();
+
+    qDebug()<<Q_FUNC_INFO<<" parsing end";
     QUrl tmpConfigUrl(configUrl);
 
     if(tmpConfigUrl!=cConfigUrl && !checkUrl(tmpConfigUrl))
