@@ -4,19 +4,22 @@
 #include <QObject>
 #include <QStringList>
 #include <QVariant>
+#include <QRunnable>
 
-class ParseDocXls : public QObject
+class ParseDocXls : public QObject, public QRunnable
 {
 Q_OBJECT
 public:
     explicit ParseDocXls(QObject *parent = 0);
     virtual void readConfig(const QString &/*cfile*/) {}
     virtual QVariant ParseFile() { return QVariant();}
+    virtual void run();
     QVariant convertingToTxt(const QString &cmd);
     QStringList docxlsArgs; //list of files to convert
     QStringList configParams;
-signals:
 
+signals:
+    void docxlsParseFinished(QString);
 public slots:
 protected:
     QString targetFile;

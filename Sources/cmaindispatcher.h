@@ -38,6 +38,7 @@ signals:
     void done();
 public slots:
     void onRecieveTaskFinished(CRecieveTask *task);
+    void docxlsParseFinished(QString);
 protected slots:
     void startRecieveTasks();
     void onDone();

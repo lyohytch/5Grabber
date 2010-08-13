@@ -26,7 +26,6 @@ QVariant ParseDocXls::convertingToTxt(const QString &cmd)
     process->start(cmd, docxlsArgs);
     process->waitForFinished();
     QByteArray arr = process->readAllStandardOutput();
-    qDebug()<<Q_FUNC_INFO<<" (((( "<<__LINE__<<" )))) "<<QString::fromUtf8(arr);
     //Saving data to file
     QFile outF(outputFname);
     if(!outF.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -43,7 +42,14 @@ QVariant ParseDocXls::convertingToTxt(const QString &cmd)
     return QVariant();
 }
 
-//ParseDoc
+void ParseDocXls::run()
+{
+    QVariant docxlsParseOut = ParseFile();
+    emit docxlsParseFinished(docxlsParseOut.toString());
+}
+
+
+//**************************************ParseDoc
 ParseDoc::ParseDoc(QObject *parent, const QString &filename):
      ParseDocXls(parent)
 {
@@ -63,13 +69,14 @@ QVariant ParseDoc::ParseFile()
 {
     qDebug()<<Q_FUNC_INFO<<" ( "<<__LINE__<<" )";
     convertingToTxt("catdoc");
-    return QVariant();
+    return QVariant("Parsing DOC file finished");
 }
 
 
 
+
 // TODO implement it
-//ParseXls
+//**************************************************ParseXls
 ParseXls::ParseXls(QObject *parent, const QString &filename):
      ParseDocXls(parent)
 {
@@ -86,5 +93,5 @@ QVariant ParseXls::ParseFile()
 {
     qDebug()<<Q_FUNC_INFO<<" ( "<<__LINE__<<" )";
     convertingToTxt("xls2csv");
-    return QVariant();
+    return QVariant("Parsing XLS file finished");
 }

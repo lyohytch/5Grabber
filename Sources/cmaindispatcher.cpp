@@ -1,6 +1,7 @@
 #include "cmaindispatcher.h"
 #include "parsedocxls.h"
 #include <QDebug>
+#include <QThreadPool>
 
 CMainDispatcher::CMainDispatcher(QObject *parent) :
     QObject(parent)
@@ -17,6 +18,18 @@ bool CMainDispatcher::init()
     return init(cConfigUrl.toString());
 }
 
+/////////////////////////////////////////////
+////////////////////////////////////////////
+void CMainDispatcher::docxlsParseFinished(QString  in)
+{
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"\n"<<in;
+}
+
+
+//////////////////////////////////////////////
+///////////////////////////////////////////////
+
+
 bool CMainDispatcher::init(const QString &configUrl)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
@@ -26,13 +39,14 @@ bool CMainDispatcher::init(const QString &configUrl)
      */
     //Test parsing doc file
     QString fname = "parser_analisys.doc";
-    ParseDoc pD(this, fname);
-    pD.ParseFile();
-
+    ParseDoc *pD = new ParseDoc(this, fname);
+    connect(pD, SIGNAL(docxlsParseFinished(QString)), this, SLOT(docxlsParseFinished(QString)));
+    QThreadPool::globalInstance()->start(pD);
     //Test parsing xls file
     QString fnameX = "24-06-2010.xls";
-    ParseXls pX(this,fnameX);
-    pX.ParseFile();
+    ParseXls *pX = new ParseXls(this,fnameX);
+    connect(pX, SIGNAL(docxlsParseFinished(QString)), this, SLOT(docxlsParseFinished(QString)));
+    QThreadPool::globalInstance()->start(pX);
 
     qDebug()<<Q_FUNC_INFO<<" parsing end";
     QUrl tmpConfigUrl(configUrl);
