@@ -58,6 +58,7 @@
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <value key="QtVersionId" type="int">0</value>
    <value key="ToolChain" type="int">0</value>
+   <value key="addQDumper" type=""></value>
    <value key="buildConfiguration" type="int">2</value>
   </valuemap>
  </data>
@@ -66,6 +67,7 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Release</value>
    <value key="QtVersionId" type="int">0</value>
+   <value key="addQDumper" type=""></value>
    <value key="buildConfiguration" type="int">0</value>
   </valuemap>
  </data>
@@ -78,7 +80,7 @@
     <value type="QString">CONFIG_PROTECT=/usr/share/X11/xkb /var/lib/hsqldb /usr/share/config</value>
     <value type="QString">CONFIG_PROTECT_MASK=/etc/gentoo-release /etc/sandbox.d /etc/env.d/java/ /etc/fonts/fonts.conf /etc/gconf /etc/terminfo /etc/ca-certificates.conf /etc/revdep-rebuild</value>
     <value type="QString">CVS_RSH=ssh</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-cWguhiFwXn,guid=67ee63e6a41d3c6f6c746a3a00000027</value>
+    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-QB4i9D7vlu,guid=2c2f834edc04e77ba3f837a900008941</value>
     <value type="QString">DCCC_PATH=/usr/lib64/distcc/bin</value>
     <value type="QString">DESKTOP_SESSION=KDE-4</value>
     <value type="QString">DISPLAY=:0.0</value>
@@ -101,7 +103,6 @@
     <value type="QString">KDE_SESSION_UID=1000</value>
     <value type="QString">KDE_SESSION_VERSION=4</value>
     <value type="QString">LANG=ru_RU.utf8</value>
-    <value type="QString">LANGUAGE=</value>
     <value type="QString">LESS=-R -M --shift 5</value>
     <value type="QString">LESSOPEN=|lesspipe.sh %s</value>
     <value type="QString">LOGNAME=semlanik</value>
@@ -113,7 +114,7 @@
     <value type="QString">QTDIR=/usr/share/qt4</value>
     <value type="QString">QT_PLUGIN_PATH=/home/semlanik/.kde4/lib64/kde4/plugins/:/usr/lib64/kde4/plugins/</value>
     <value type="QString">SANE_CONFIG_DIR=/etc/sane.d</value>
-    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/6795,unix/semlanik_r460:/tmp/.ICE-unix/6795</value>
+    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/20608,unix/semlanik_r460:/tmp/.ICE-unix/20608</value>
     <value type="QString">SHELL=/bin/bash</value>
     <value type="QString">SHLVL=1</value>
     <value type="QString">STRIGI_PLUGIN_PATH=/usr/lib64/strigi:</value>
@@ -125,13 +126,13 @@
     <value type="QString">XDG_CONFIG_DIRS=/etc/xdg</value>
     <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/local/share:/usr/share</value>
     <value type="QString">XDG_MENU_PREFIX=kde-4.4-</value>
-    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281470694.528641-1354017613</value>
+    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281654388.472075-971150870</value>
     <value type="QString">XDM_MANAGED=method=classic</value>
     <value type="QString">XSESSION=kde-4.3</value>
     <value type="QString">_=/usr/lib64/kde4/libexec/start_kdeinit_wrapper</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
-    <value type="QString">/home/semlanik/My documents/Work/Grubber/Grubber.pro</value>
+    <value type="QString">/home/semlanik/My documents/Work/Grabber/5Grabber/Sources/Grubber.pro</value>
     <value type="QString">-spec</value>
     <value type="QString">linux-g++</value>
     <value type="QString">-r</value>
@@ -139,7 +140,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/qmake</value>
    <value key="abstractProcess.enabled" type="bool">false</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grubber</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grabber/5Grabber/Sources</value>
   </valuemap>
  </data>
  <data>
@@ -151,7 +152,7 @@
     <value type="QString">CONFIG_PROTECT=/usr/share/X11/xkb /var/lib/hsqldb /usr/share/config</value>
     <value type="QString">CONFIG_PROTECT_MASK=/etc/gentoo-release /etc/sandbox.d /etc/env.d/java/ /etc/fonts/fonts.conf /etc/gconf /etc/terminfo /etc/ca-certificates.conf /etc/revdep-rebuild</value>
     <value type="QString">CVS_RSH=ssh</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-cWguhiFwXn,guid=67ee63e6a41d3c6f6c746a3a00000027</value>
+    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-QB4i9D7vlu,guid=2c2f834edc04e77ba3f837a900008941</value>
     <value type="QString">DCCC_PATH=/usr/lib64/distcc/bin</value>
     <value type="QString">DESKTOP_SESSION=KDE-4</value>
     <value type="QString">DISPLAY=:0.0</value>
@@ -174,7 +175,6 @@
     <value type="QString">KDE_SESSION_UID=1000</value>
     <value type="QString">KDE_SESSION_VERSION=4</value>
     <value type="QString">LANG=ru_RU.utf8</value>
-    <value type="QString">LANGUAGE=</value>
     <value type="QString">LESS=-R -M --shift 5</value>
     <value type="QString">LESSOPEN=|lesspipe.sh %s</value>
     <value type="QString">LOGNAME=semlanik</value>
@@ -186,7 +186,7 @@
     <value type="QString">QTDIR=/usr/share/qt4</value>
     <value type="QString">QT_PLUGIN_PATH=/home/semlanik/.kde4/lib64/kde4/plugins/:/usr/lib64/kde4/plugins/</value>
     <value type="QString">SANE_CONFIG_DIR=/etc/sane.d</value>
-    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/6795,unix/semlanik_r460:/tmp/.ICE-unix/6795</value>
+    <value type="QString">SESSION_MANAGER=local/semlanik_r460:@/tmp/.ICE-unix/20608,unix/semlanik_r460:/tmp/.ICE-unix/20608</value>
     <value type="QString">SHELL=/bin/bash</value>
     <value type="QString">SHLVL=1</value>
     <value type="QString">STRIGI_PLUGIN_PATH=/usr/lib64/strigi:</value>
@@ -198,7 +198,7 @@
     <value type="QString">XDG_CONFIG_DIRS=/etc/xdg</value>
     <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/local/share:/usr/share</value>
     <value type="QString">XDG_MENU_PREFIX=kde-4.4-</value>
-    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281470694.528641-1354017613</value>
+    <value type="QString">XDG_SESSION_COOKIE=d2539438533b4cea2812984a4a5186d0-1281654388.472075-971150870</value>
     <value type="QString">XDM_MANAGED=method=classic</value>
     <value type="QString">XSESSION=kde-4.3</value>
     <value type="QString">_=/usr/lib64/kde4/libexec/start_kdeinit_wrapper</value>
@@ -209,7 +209,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool">true</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grubber</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/home/semlanik/My documents/Work/Grabber/5Grabber/Sources</value>
   </valuemap>
  </data>
  <data>
