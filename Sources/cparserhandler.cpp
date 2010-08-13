@@ -10,8 +10,8 @@ CParserHandler::CParserHandler(QObject *parent) :
 
 void CParserHandler::startParsing(CDataBaseHandler* database)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parsing started";
-
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Lets ROCK";
+    qDebug()<<database->read().size();
     //Test parsing doc file
     QString fname = "parser_analisys.doc";
     ParseDoc pD(this, fname);

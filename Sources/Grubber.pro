@@ -1,3 +1,4 @@
+QT+=network
 HEADERS += cmaindispatcher.h \
     cconfighandler.h \
     cdatabasehandler.h \
