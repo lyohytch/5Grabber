@@ -1,3 +1,9 @@
 Sources/Grubber.pro.user*
 Grubber-build-desktop/
-Sources/Makefile
+Sources/Makefile*
+moc_*
+*.o
+Sources/Grubber
+Sources/debug
+Sources/debug
+Sources/object_script.*
