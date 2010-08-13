@@ -13,15 +13,16 @@ class CConfigHandler : public QObject
 Q_OBJECT
 public:
     CConfigHandler(QObject *parent = 0);
-    bool load(const QUrl&){return true;};
+    bool load(const QUrl&);
     void flush(){};
-    QVariant valueOf(const QString& key){return QVariant();}
+    QVariant valueOf(const QString& key);
     siterules_t loadSites()
     {
         siterules_t rules;
-        QUrl tmpSite("http://www.tmp.ru");
+        QUrl tmpSite("http://ntl.nnov.ru");
         QVariantList tmpRules;
-        tmpRules.append(QVariant("foobar"));
+        tmpRules.append(QVariant("/"));
+        tmpRules.append(QVariant("/p15aa1.html"));
         rules.insert(tmpSite,tmpRules);
         return rules;
     }
@@ -30,12 +31,14 @@ signals:
 public slots:
 
 protected:
-    void initDefaults(){};
+    bool loadDefaults();
     bool loadConfig(const QUrl&){return true;};
     bool writeLine(const QString& line){return true;};
     bool validateValue(const QString& key, const QVariant& value){return true;};
 
     QVariantMap m_configValues;
 };
+
+extern CConfigHandler g_config;
 
 #endif // CCONFIGHANDLER_H

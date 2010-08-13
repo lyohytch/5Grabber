@@ -26,13 +26,13 @@ bool CMainDispatcher::init(const QString &configUrl)
         tmpConfigUrl=cConfigUrl;
     }
 
-    if(!m_config.load(tmpConfigUrl))
+    if(!g_config.load(tmpConfigUrl))
     {
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
         return false;
     }
 
-    m_sites = m_config.loadSites();
+    m_sites = g_config.loadSites();
     if(m_sites.isEmpty())
     {
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
@@ -96,6 +96,7 @@ bool CMainDispatcher::prepareDataBases()
             delete tmpDatabase;
             continue;
         }
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Create database for URL:"<<Iter.key();
         m_preparedDataBases.insert(Iter.key(), tmpDatabase);
 
     }
