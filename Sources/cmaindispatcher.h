@@ -29,7 +29,6 @@ protected:
     bool connectActions();
 
     QTimer m_startTasksTimer;
-    CConfigHandler m_config;
     QList<CRecieveTask*> m_activeTasksList;
     QMap<QUrl, CDataBaseHandler*> m_preparedDataBases;
 
@@ -42,7 +41,6 @@ public slots:
 protected slots:
     void startRecieveTasks();
     void onDone();
-
 };
 
 #endif // CMAINDISPATCHER_H
