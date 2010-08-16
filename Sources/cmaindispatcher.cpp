@@ -137,6 +137,7 @@ void CMainDispatcher::startRecieveTasks()
 
         m_activeTasksList.append(plugin);
         connect(plugin->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+        connect(plugin->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
     }
 
     for(int i=0;i<m_activeTasksList.count();i++)
@@ -160,6 +161,12 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 //        emit done();
 //    }
 }
+
+void onRecieveDataReady(CDataStructure* data)
+{
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
+}
+
 
 void CMainDispatcher::onDone()
 {

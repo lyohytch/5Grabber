@@ -6,6 +6,8 @@
 #include <QMutex>
 #include <QUrl>
 
+#include <datastructure/cdatastructure.h>
+
 class CReciveThread : public QThread
 {
     Q_OBJECT
@@ -16,8 +18,20 @@ public:
     void setId(int id) {m_threadId=id;}
     int id() {return m_threadId;}
 
+    bool setDataStructure(CDataStructure* data)
+    {
+        if(!data)
+        {
+            return false;
+        }
+        m_data=data;
+    };
+
+    CDataStructure* data() {return m_data;}
+
 signals:
-    void dataReady(int id, QByteArray data);
+//    void dataReady(int id, QByteArray data);
+    void dataReady(int id);
 
 protected:
     virtual void run();
@@ -26,7 +40,8 @@ protected:
     QHttp m_http;
     int m_threadId;
     int m_httpId;
-    QByteArray recivedData;
+
+    CDataStructure* m_data;
 
 protected slots:
     void onRecieveComplete(int id, bool error);

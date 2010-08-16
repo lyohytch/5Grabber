@@ -11,12 +11,13 @@ HEADERS += cmaindispatcher.h \
     cparserhandler.h \
     parsedocxls.h \
     recieve_modules/crecievetask.h \
-    recieve_modules/crecievetasksignaller.h
-
+    recieve_modules/crecievetasksignaller.h \
+    datastructure/cdatastructure.h
 SOURCES += cmaindispatcher.cpp \
     cconfighandler.cpp \
     cdatabasehandler.cpp \
     loadbalancer.cpp \
     cparserhandler.cpp \
     main.cpp \
-    parsedocxls.cpp
+    parsedocxls.cpp \
+    datastructure/cdatastructure.cpp

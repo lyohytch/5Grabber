@@ -36,5 +36,7 @@ void CReciveThread::onRecieveComplete(int id, bool error)
 
     QByteArray data=m_http.readAll();
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<data.size();
-    emit dataReady(m_threadId,data);
+    m_data->write(data);
+//    emit dataReady(m_threadId,data);
+    emit dataReady(m_threadId);
 }

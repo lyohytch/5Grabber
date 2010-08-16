@@ -9,6 +9,7 @@
 
 #include <crecievetask.h>
 #include <crecivethread.h>
+#include <datastructure/cdatastructure.h>
 
 class CRecieveTask_zakazrf_ru : public QObject, public CRecieveTask
 {
@@ -22,14 +23,16 @@ public:
 
 private:
     QUrl createFullUrlFromRule(QUrl url,QVariant rule);
-
+    int getUrlDataType(QUrl &url);
     QList<CReciveThread*> m_threads;
+    QList<CDataStructure*> m_dataStructures;
     QUrl m_url;
     QVariantList m_rules;
     int m_maxThreads;
     CRecieveTaskSignaller *m_signaller;
+
 public slots:
-    virtual void onDataReady(int i, QByteArray data);
+    virtual void onDataReady(int i/*, QByteArray data*/);
     virtual void onThreadFinished();
 };
 

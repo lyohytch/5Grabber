@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QDebug>
+#include <datastructure/cdatastructure.h>
+
 class CRecieveTask;
 
 class CRecieveTaskSignaller : public QObject
@@ -17,8 +19,14 @@ public slots:
         emit finished(task);
     }
 
+    void onDataReady(CDataStructure* data)
+    {
+        emit dataReady(data);
+    }
+
 signals:
     void finished(CRecieveTask*);
+    void dataReady(CDataStructure*);
 };
 
 #endif //CRECIEVETASKSIGNALLER_H
