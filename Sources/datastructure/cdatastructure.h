@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QList>
 #include <QUrl>
+#include <QRegExp>
+#include <QStringList>
 
 class CDataStructure : public QObject
 {
@@ -33,11 +35,20 @@ public:
     void flush();
 
     QUrl url() const {return m_url;}
+    QStringList findLinks(QList<QRegExp>& regexps);
+    bool isFinished();
+    bool isDone() {return m_isDone;}
+    void done() {m_isDone=true;}
+
+    bool isRoot() {return m_isRoot;}
+    void setRoot() {m_isRoot=true;}
 private:
     DataTypes m_type;
     QList<CDataStructure* > m_childs;
     QByteArray m_data;
     QUrl m_url;
+    bool m_isDone;
+    bool m_isRoot;
 };
 
 #endif // CDATASTRUCTURE_H

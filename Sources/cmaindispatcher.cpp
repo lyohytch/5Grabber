@@ -128,7 +128,7 @@ void CMainDispatcher::startRecieveTasks()
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
         //replace it!
-        QPluginLoader recievetask("./bin/recieve-modules/libmodule-zakazrf_ru.so");
+        QPluginLoader recievetask("/home/semlanik/Mydocuments/Work/Grabber/semlanik_branch/Sources/bin/recieve-modules/libmodule-zakazrf_ru.so");
         recievetask.load();
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<recievetask.errorString();
 
@@ -162,7 +162,7 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 //    }
 }
 
-void onRecieveDataReady(CDataStructure* data)
+void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
 }

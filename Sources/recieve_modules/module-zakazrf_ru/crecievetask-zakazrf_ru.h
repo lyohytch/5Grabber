@@ -32,7 +32,7 @@ private:
     CRecieveTaskSignaller *m_signaller;
 
 public slots:
-    virtual void onDataReady(int i/*, QByteArray data*/);
+    virtual void onDataReady(int threadId/*, QByteArray data*/);
     virtual void onThreadFinished();
 };
 

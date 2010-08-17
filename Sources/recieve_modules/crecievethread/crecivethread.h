@@ -25,6 +25,7 @@ public:
             return false;
         }
         m_data=data;
+        return true;
     };
 
     CDataStructure* data() {return m_data;}
@@ -45,5 +46,6 @@ protected:
 
 protected slots:
     void onRecieveComplete(int id, bool error);
+    void onError();
 };
 #endif //CRECIEVETHREAD_H
