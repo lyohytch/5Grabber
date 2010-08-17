@@ -1,3 +1,5 @@
+#include "cparserhandler.h"
+
 #include <QDebug>
 #include <QString>
 
@@ -6,8 +8,7 @@ CParserHandler::CParserHandler(QObject *parent) :
 {
 }
 
-void CParserHandler::startParsing(CDataBaseHandler* database)
+void CParserHandler::startParsing(CDataStructure* data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parsing started";
-    qDebug()<<database->read().size();
 }

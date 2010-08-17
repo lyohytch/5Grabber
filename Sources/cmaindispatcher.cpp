@@ -1,5 +1,6 @@
 #include "cmaindispatcher.h"
 #include <QDebug>
+#include <QPluginLoader>
 
 CMainDispatcher::CMainDispatcher(QObject *parent) :
     QObject(parent)
@@ -39,12 +40,6 @@ bool CMainDispatcher::init(const QString &configUrl)
         return false;
     }
 
-    if(!prepareDataBases())
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
-        return false;
-    }
-
     if(!connectActions())
     {
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
@@ -63,70 +58,39 @@ bool CMainDispatcher::init(const QString &configUrl)
 
 void CMainDispatcher::deinit()
 {
-    QMapIterator<QUrl, CDataBaseHandler*> Iter(m_preparedDataBases);
-    while(Iter.hasNext())
-    {
-        Iter.next();
-        delete(Iter.value());
-    }
-    m_preparedDataBases.clear();
 
-    for(int i=0;i<m_activeTasksList.count();i++)
-    {
-        delete m_activeTasksList.at(i);
-    }
-
-    m_activeTasksList.clear();
+//    for(int i=0;i<m_activeTasksList.count();i++)
+//    {
+//        delete m_activeTasksList.at(i);
+//    }
+//
+//    m_activeTasksList.clear();
 
     m_sites.clear();
 }
 
-bool CMainDispatcher::prepareDataBases()
-{
-    CDataBaseHandler* tmpDatabase;
-    siterules_ti Iter(m_sites);
-
-    while(Iter.hasNext())
-    {
-        Iter.next();
-        tmpDatabase=new CDataBaseHandler();
-        if(!tmpDatabase->open(Iter.key()))
-        {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Can't create database for URL:"<<Iter.key();
-            delete tmpDatabase;
-            continue;
-        }
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Create database for URL:"<<Iter.key();
-        m_preparedDataBases.insert(Iter.key(), tmpDatabase);
-
-    }
-    return true;
-}
-
 void CMainDispatcher::startRecieveTasks()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    CRecieveTask* tmpTask;
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<m_sites.count();
+//    CRecieveTask* tmpTask;
     siterules_ti Iter(m_sites);
-
-    if(m_preparedDataBases.isEmpty())
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"DataBase List corrupted";
-        return;
-    }
 
     while(Iter.hasNext())
     {
         Iter.next();
-        if(!m_preparedDataBases.contains(Iter.key()))
-        {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"DataBase List corrupted";
-            return;
-        }
-        tmpTask = new CRecieveTask(m_preparedDataBases.value(Iter.key()), Iter);
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
-        m_activeTasksList.append(tmpTask);
-        connect(tmpTask, SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+        //replace it!
+        QPluginLoader recievetask("/home/semlanik/Mydocuments/Work/Grabber/semlanik_branch/Sources/bin/recieve-modules/libmodule-zakazrf_ru.so");
+        recievetask.load();
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<recievetask.errorString();
+
+        CRecieveTask* plugin=qobject_cast<CRecieveTask *>(recievetask.instance());
+        plugin->init(2, Iter);
+
+        m_activeTasksList.append(plugin);
+        connect(plugin->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+        connect(plugin->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
     }
 
     for(int i=0;i<m_activeTasksList.count();i++)
@@ -138,18 +102,25 @@ void CMainDispatcher::startRecieveTasks()
 void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Task Finished";
-    CDataBaseHandler* tmpDB;
-    tmpDB=task->database();
-    task->destroy();
-    m_activeTasksList.removeOne(task);
-    delete task;
-
-    m_parser.startParsing(tmpDB);
-    if(m_activeTasksList.isEmpty())
-    {
-        emit done();
-    }
+//    CDataBaseHandler* tmpDB;
+//    tmpDB=task->database();
+//    task->destroy();
+//    m_activeTasksList.removeOne(task);
+//    delete task;
+//
+//    m_parser.startParsing(tmpDB);
+//    if(m_activeTasksList.isEmpty())
+//    {
+//        emit done();
+//    }
 }
+
+void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
+{
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
+    m_parser.startParsing(data);
+}
+
 
 void CMainDispatcher::onDone()
 {

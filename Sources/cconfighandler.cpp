@@ -14,6 +14,7 @@ bool CConfigHandler::load(const QUrl&)
 bool CConfigHandler::loadDefaults()
 {
     m_configValues.insert(QString("core_max_threads"), QVariant(2));
+    m_configValues.insert(QString("core_plugin_dir"), QVariant(QString("./plugins/")));
 }
 
 

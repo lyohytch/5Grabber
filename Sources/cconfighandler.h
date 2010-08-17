@@ -19,10 +19,9 @@ public:
     siterules_t loadSites()
     {
         siterules_t rules;
-        QUrl tmpSite("http://ntl.nnov.ru");
+        QUrl tmpSite("http://zakazrf.ru/");
         QVariantList tmpRules;
-        tmpRules.append(QVariant("/"));
-        tmpRules.append(QVariant("/p15aa1.html"));
+        tmpRules.append(QVariant("/LotList.aspx?Subject="));
         rules.insert(tmpSite,tmpRules);
         return rules;
     }
