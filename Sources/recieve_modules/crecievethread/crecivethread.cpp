@@ -16,15 +16,13 @@ void CReciveThread :: run()
 {
     m_http.setHost(m_url.host());
     connect(&m_http, SIGNAL(requestFinished(int,bool)), this, SLOT(onRecieveComplete(int,bool)));
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<QString("%1?%2").arg(m_url.path()).arg(QString(m_url.encodedQuery()));
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"dataPinter raw value:"<<m_data<<"threadId:"<<m_threadId<<"path:"<<QString("%1?%2").arg(m_url.path()).arg(QString(m_url.encodedQuery()));
     m_httpId=m_http.get(QString("%1?%2").arg(m_url.path()).arg(QString(m_url.encodedQuery())));
     exec();
 }
 
 void CReciveThread::onRecieveComplete(int id, bool error)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-
     if(m_httpId!=id)
     {
         return;

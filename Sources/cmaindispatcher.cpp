@@ -165,6 +165,7 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
+    m_parser.startParsing(data);
 }
 
 

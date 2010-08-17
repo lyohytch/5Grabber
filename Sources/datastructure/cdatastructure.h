@@ -26,8 +26,8 @@ public:
     void appendChild(CDataStructure* child);
     void removeChild(CDataStructure*);
 
-    void setType(int type){m_type=(DataTypes)type;}
-    int type() const {return (int)m_type;}
+    void setType(int type){m_type=type;}
+    int type() const {return m_type;}
 
     void write(QByteArray& data);
     QByteArray read() const {return m_data;}
@@ -42,13 +42,20 @@ public:
 
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
+
+
+    bool isRunned() {return m_isRunned;}
+    void setRunned() {m_isRunned=true;}
+
+    bool contains(QUrl &url);
 private:
-    DataTypes m_type;
+    int m_type;
     QList<CDataStructure* > m_childs;
     QByteArray m_data;
     QUrl m_url;
     bool m_isDone;
     bool m_isRoot;
+    bool m_isRunned;
 };
 
 #endif // CDATASTRUCTURE_H

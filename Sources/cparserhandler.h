@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "cdatabasehandler.h"
+#include <datastructure/cdatastructure.h>
 class CParserHandler : public QObject
 {
 Q_OBJECT
@@ -13,7 +13,7 @@ public:
 signals:
 
 public slots:
-    void startParsing(CDataBaseHandler* database);
+    void startParsing(CDataStructure* data);
 
 };
 

@@ -5,6 +5,7 @@ CDataStructure::CDataStructure(QUrl url, QObject *parent) :
     QObject(parent)
     ,m_isDone(false)
     ,m_isRoot(false)
+    ,m_isRunned(false)
 {
     m_url=url;
 }
@@ -89,12 +90,30 @@ bool CDataStructure::isFinished()
 
     for(int i=0; i<m_childs.count();i++)
     {
-        if(!m_childs.at(i)->isDone())
+        if(!m_childs.at(i)->isFinished())
         {
             return false;
         }
     }
 
     return true;
+}
+
+bool CDataStructure::contains(QUrl &url)
+{
+    if(m_url==url)
+    {
+        return true;
+    }
+
+    for(int i=0; i<m_childs.count();i++)
+    {
+        if(m_childs.at(i)->contains(url))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
