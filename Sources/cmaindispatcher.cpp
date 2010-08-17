@@ -40,12 +40,6 @@ bool CMainDispatcher::init(const QString &configUrl)
         return false;
     }
 
-    if(!prepareDataBases())
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
-        return false;
-    }
-
     if(!connectActions())
     {
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
@@ -64,13 +58,6 @@ bool CMainDispatcher::init(const QString &configUrl)
 
 void CMainDispatcher::deinit()
 {
-    QMapIterator<QUrl, CDataBaseHandler*> Iter(m_preparedDataBases);
-    while(Iter.hasNext())
-    {
-        Iter.next();
-        delete(Iter.value());
-    }
-    m_preparedDataBases.clear();
 
 //    for(int i=0;i<m_activeTasksList.count();i++)
 //    {
@@ -82,49 +69,15 @@ void CMainDispatcher::deinit()
     m_sites.clear();
 }
 
-bool CMainDispatcher::prepareDataBases()
-{
-    CDataBaseHandler* tmpDatabase;
-    siterules_ti Iter(m_sites);
-
-    while(Iter.hasNext())
-    {
-        Iter.next();
-        tmpDatabase=new CDataBaseHandler();
-        if(!tmpDatabase->open(Iter.key()))
-        {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Can't create database for URL:"<<Iter.key();
-            delete tmpDatabase;
-            continue;
-        }
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Create database for URL:"<<Iter.key();
-        m_preparedDataBases.insert(Iter.key(), tmpDatabase);
-
-    }
-    return true;
-}
-
 void CMainDispatcher::startRecieveTasks()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<m_sites.count();
 //    CRecieveTask* tmpTask;
     siterules_ti Iter(m_sites);
 
-    if(m_preparedDataBases.isEmpty())
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"DataBase List corrupted";
-        return;
-    }
-
     while(Iter.hasNext())
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"here";
         Iter.next();
-        if(!m_preparedDataBases.contains(Iter.key()))
-        {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"DataBase List corrupted";
-            return;
-        }
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
         //replace it!

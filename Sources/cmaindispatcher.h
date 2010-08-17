@@ -8,7 +8,6 @@
 #include <crecievetask.h>
 
 #include "cconfighandler.h"
-#include "cdatabasehandler.h"
 #include "constants.h"
 #include "cparserhandler.h"
 
@@ -25,12 +24,10 @@ public:
 protected:
 //    void addTask(CRecieveTask* task);
     bool checkUrl(const QUrl& configUrl) {return true;}
-    bool prepareDataBases();
     bool connectActions();
 
     QTimer m_startTasksTimer;
     QList<CRecieveTask*> m_activeTasksList;
-    QMap<QUrl, CDataBaseHandler*> m_preparedDataBases;
 
     siterules_t m_sites;
     CParserHandler m_parser;
