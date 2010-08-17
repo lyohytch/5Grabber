@@ -111,7 +111,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
 //        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"isFinished"<<m_dataStructures.at(i)->isFinished();
         if(m_dataStructures.at(i)->isRoot() && m_dataStructures.at(i)->isFinished())
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+//            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
             m_signaller->onDataReady(m_dataStructures.value(i));
             continue;
         }
