@@ -5,7 +5,6 @@ DESTDIR = ./bin
 INCLUDEPATH += ./recieve_modules
 HEADERS += cmaindispatcher.h \
     cconfighandler.h \
-    cdatabasehandler.h \
     loadbalancer.h \
     constants.h \
     cparserhandler.h \
@@ -15,7 +14,6 @@ HEADERS += cmaindispatcher.h \
     datastructure/cdatastructure.h
 SOURCES += cmaindispatcher.cpp \
     cconfighandler.cpp \
-    cdatabasehandler.cpp \
     loadbalancer.cpp \
     cparserhandler.cpp \
     main.cpp \
