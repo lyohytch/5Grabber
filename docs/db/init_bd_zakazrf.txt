@@ -1,0 +1,46 @@
+CREATE TABLE IF NOT EXISTS Reduction(
+    id MEDIUMINT UNSIGNED NOT NULL,
+    string_number CHAR(20) NOT NULL,
+    id_customer MEDIUMINT UNSIGNED NOT NULL,
+    date_registration DATETIME,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS Lot (
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    num_lot SMALLINT UNSIGNED NOT NULL,
+    id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    status SMALLINT UNSIGNED NOT NULL,
+    subject VARCHAR(1000),
+    id_contract MEDIUMINT UNSIGNED,
+    obespechenie FLOAT,
+    start_price FLOAT NOT NULL,
+    best_price FLOAT,
+    start_time DATETIME,
+    protocol VARCHAR(200),
+    PRIMARY KEY (id_reduction, num_lot)
+);
+
+CREATE TABLE IF NOT EXISTS Custoner (
+    id_customer MEDIUMINT UNSIGNED NOT NULL,
+    name VARCHAR(300),
+    adress VARCHAR(400),
+    post_adress VARCHAR(400),
+    email VARCHAR(100),
+    telephone VARCHAR(100),
+    PRIMARY KEY (id_customer)
+);
+
+CREATE TABLE IF NOT EXISTS Participant (
+    id_participant MEDIUMINT UNSIGNED NOT NULL,
+    name VARCHAR(300),
+    inn CHAR(30),
+    kpp CHAR(30),
+    PRIMARY KEY (id_participant)
+);
+
+CREATE TABLE IF NOT EXISTS Status (
+    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    status CHAR(30),
+    PRIMARY KEY (id_status)
+);
