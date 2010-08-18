@@ -13,7 +13,7 @@ CONFIG   += console
 CONFIG   -= app_bundle
 INCLUDEPATH += ../modules/
 
-TEMPLATE = app
+TEMPLATE = lib
 
 
 SOURCES += main.cpp \

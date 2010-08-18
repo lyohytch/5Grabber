@@ -9,7 +9,7 @@
 
 #include <crecievetask.h>
 #include <crecivethread.h>
-#include <datastructure/cdatastructure.h>
+#include <cdatastructure.h>
 
 class CRecieveTask_zakazrf_ru : public QObject, public CRecieveTask
 {

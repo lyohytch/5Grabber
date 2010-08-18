@@ -2,13 +2,15 @@
 #define CMAINDISPATCHER_H
 
 #include <QObject>
+#include <QUrl>
+#include <QString>
 #include <QTimer>
 #include <QList>
 
+#include <constants.h>
 #include <crecievetask.h>
-
-#include "cconfighandler.h"
-#include "constants.h"
+#include <cconfighandler.h>
+#include <cdatastructure.h>
 #include "cparserhandler.h"
 
 class CMainDispatcher : public QObject

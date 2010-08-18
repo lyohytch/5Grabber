@@ -6,7 +6,7 @@
 #include <QMutex>
 #include <QUrl>
 
-#include <datastructure/cdatastructure.h>
+#include <cdatastructure.h>
 
 class CReciveThread : public QThread
 {

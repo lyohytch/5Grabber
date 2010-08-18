@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <datastructure/cdatastructure.h>
+#include <cdatastructure.h>
 class CParserHandler : public QObject
 {
 Q_OBJECT

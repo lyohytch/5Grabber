@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
-#include <datastructure/cdatastructure.h>
+#include <cdatastructure.h>
 
 class CRecieveTask;
 
