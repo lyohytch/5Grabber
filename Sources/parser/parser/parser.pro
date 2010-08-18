@@ -1,25 +1,31 @@
-#-------------------------------------------------
-#
+# -------------------------------------------------
 # Project created by QtCreator 2010-08-16T19:42:34
-#
-#-------------------------------------------------
-
-QT       += core
-QT       += webkit
-QT       += gui
+# -------------------------------------------------
+QT += core
+QT += webkit
+QT += gui
 
 TARGET = parser
-CONFIG   += console
-CONFIG   -= app_bundle
-INCLUDEPATH += ../modules/
-
+CONFIG += console
+CONFIG -= app_bundle
 TEMPLATE = lib
 
+GBR_SOURCE_ROOT=../..
+include($$GBR_SOURCE_ROOT/paths.pri)
 
-SOURCES += main.cpp \
-    tparsereceiver.cpp \
-    cdatastructure.cpp
+DESTDIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_LIBS_BIN_PATH
 
-HEADERS += \
-    tparsereceiver.h \
-    cdatastructure.h
+OBJECTS_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/obj
+MOC_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/moc
+
+INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
+    $$GBR_SOURCE_ROOT/$$GRB_DSP_MODULES_PATH
+
+INCLUDEPATH += ../modules/
+
+HEADERS += tparsereceiver.h \
+    $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h
+
+SOURCES += tparsereceiver.cpp \
+    $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp
+
