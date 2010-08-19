@@ -25,7 +25,7 @@ bool CRecieveTask_zakazrf_ru::run()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
 
-    QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=4031");
+    QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=2943");
     CDataStructure* data = new CDataStructure(testUrl);
     m_dataStructures.push_back(data);
     data->setType(getUrlDataType(testUrl));
@@ -172,13 +172,13 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 
     QStringList childLinks=data->findLinks(regexps);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Start processing child links: "<<childLinks;
+//    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Parent is: "<<data->url();
     CDataStructure* child;
     for(int i=0; i<childLinks.count(); i++)
     {
         QUrl newUrl=QUrl(QString("%1://%2/%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Full child url:"<<newUrl;
-
-        if(data->root()->contains(newUrl))
+        if(data->contains(newUrl))
         {
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Url already in structure: "<<newUrl;
             continue;
