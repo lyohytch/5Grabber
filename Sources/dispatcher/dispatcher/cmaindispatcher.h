@@ -38,6 +38,8 @@ signals:
 public slots:
     void onRecieveTaskFinished(CRecieveTask *task);
     void onRecieveDataReady(CDataStructure* data);
+    void onParceFinished(int error, QUrl url);
+
 protected slots:
     void startRecieveTasks();
     void onDone();

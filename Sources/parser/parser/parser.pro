@@ -1,9 +1,15 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-08-16T19:42:34
 # -------------------------------------------------
+
 QT += core
-QT += webkit
 QT += gui
+QT += network
+QT += phonon
+QT += xml
+QT += xmlpatterns
+QT += webkit
+QT += dbus
 
 TARGET = parser
 CONFIG += console

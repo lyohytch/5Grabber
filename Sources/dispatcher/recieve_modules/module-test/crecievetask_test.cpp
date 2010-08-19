@@ -5,6 +5,11 @@ CRecieveTask_test::CRecieveTask_test()
 
 }
 
+QString CRecieveTask_test::taskHost() const
+{
+    return QString("testhost");
+}
+
 bool CRecieveTask_test::init(int maxThreads, const siterules_ti &rule)
 {
     Q_UNUSED(maxThreads)
@@ -18,6 +23,7 @@ bool CRecieveTask_test::run()
     qDebug("RUNNED!!!!!!!!!!!!!!!!!!!");
     return true;
 }
+
 CRecieveTaskSignaller* CRecieveTask_test::signaller()
 {
     return m_signaller;

@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QUrl>
+#include <QProcessEnvironment>
 
 #include <cdatastructure.h>
 

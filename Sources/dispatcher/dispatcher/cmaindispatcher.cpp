@@ -51,6 +51,11 @@ bool CMainDispatcher::init(const QString &configUrl)
         return false;
     }
 
+    if(!connect(&m_parser,SIGNAL(parceFinished(int,QUrl)),this,SLOT(onParceFinished(int,QUrl))))
+    {
+        return false;
+    }
+
     startRecieveTasks();
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Succed";
     return true;
@@ -63,8 +68,8 @@ void CMainDispatcher::deinit()
 //    {
 //        delete m_activeTasksList.at(i);
 //    }
-//
-//    m_activeTasksList.clear();
+
+    m_activeTasksList.clear();
 
     m_sites.clear();
 }
@@ -81,16 +86,21 @@ void CMainDispatcher::startRecieveTasks()
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
         //replace it!
-        QPluginLoader recievetask(QString("./modules/reciever/%1").arg(Iter.key().host().replace(".","_")));
-        recievetask.load();
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<recievetask.errorString();
+        qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH<<"\nlibpath :"<<QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"));
+        QPluginLoader loader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
+        if(!loader.load())
+        {
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<loader.errorString();
+            continue;
+        }
 
-        CRecieveTask* plugin=qobject_cast<CRecieveTask *>(recievetask.instance());
-        plugin->init(2, Iter);
 
-        m_activeTasksList.append(plugin);
-        connect(plugin->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
-        connect(plugin->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
+        CRecieveTask* task=qobject_cast<CRecieveTask *>(loader.instance());
+        task->init(2, Iter);
+
+        m_activeTasksList.append(task);
+        connect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+        connect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
     }
 
     for(int i=0;i<m_activeTasksList.count();i++)
@@ -115,10 +125,32 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 //    }
 }
 
+
+void CMainDispatcher :: onParceFinished(int error, QUrl url)
+{
+      qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
+//    CRecieveTask* task=NULL;
+//    for(int i=0; i<m_activeTasksList.count();i)
+//    {
+//        if(m_activeTasksList.at(i)->taskHost()==url.host())
+//        {
+//            task=m_activeTasksList.value(i);
+//        }
+//    }
+
+//    if(!task)
+//    {
+//        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
+//    }
+}
+
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
-    m_parser.startParsing(data);
+    QUrl url;
+    url.setHost(data->url().host());
+    url.setScheme(data->url().scheme());
+    m_parser.startParsing(data, url);
 }
 
 

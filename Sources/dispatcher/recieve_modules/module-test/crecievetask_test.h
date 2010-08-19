@@ -15,6 +15,8 @@ public:
     virtual bool init(int maxThreads, const siterules_ti& rule);
     virtual CRecieveTaskSignaller* signaller();
     virtual bool run();
+    virtual QString taskHost() const;
+
 private:
     CRecieveTaskSignaller *m_signaller;
 };
