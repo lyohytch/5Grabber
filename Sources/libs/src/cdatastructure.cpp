@@ -17,7 +17,7 @@ CDataStructure::~CDataStructure()
 
 CDataStructure* CDataStructure::childAt(int i)
 {
-    if(m_childs.count()>=i)
+    if(m_childs.count()<=i)
     {
         return NULL;
     }

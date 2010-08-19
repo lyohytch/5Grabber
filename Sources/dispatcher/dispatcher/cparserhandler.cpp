@@ -16,7 +16,7 @@ CParserHandler::~CParserHandler()
 
 bool CParserHandler::init()
 {
-    return connect(m_parcer, SIGNAL(finished(int,QByteArray)), this, SLOT(onParceFinished(int,QByteArray)));
+    return connect(m_parcer, SIGNAL(finished(int,const QByteArray)), this, SLOT(onParceFinished(int,const QByteArray)),Qt::QueuedConnection);
 }
 
 void CParserHandler::startParsing(CDataStructure *data, const QUrl &url)
@@ -25,8 +25,11 @@ void CParserHandler::startParsing(CDataStructure *data, const QUrl &url)
     m_parcer->parse(data, url.toString().toUtf8());
 }
 
-void CParserHandler::onParceFinished(int _error, const QByteArray &_url)
+void CParserHandler::onParceFinished(int _error, const QByteArray _url)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parse finished with code:"<<_error;
-
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parse finished with code:"<<_error<<_url;
+//    QString urlStr;
+//    urlStr.fromUtf8(_url);
+//    QUrl url(urlStr);
+//    emit parceFinished(_error, url);
 }

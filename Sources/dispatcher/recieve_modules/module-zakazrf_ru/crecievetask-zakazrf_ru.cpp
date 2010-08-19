@@ -21,6 +21,12 @@ CRecieveTaskSignaller* CRecieveTask_zakazrf_ru::signaller()
     return m_signaller;
 }
 
+QString CRecieveTask_zakazrf_ru::taskHost() const
+{
+    return QString("zakazrf.ru");
+}
+
+
 bool CRecieveTask_zakazrf_ru::run()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
