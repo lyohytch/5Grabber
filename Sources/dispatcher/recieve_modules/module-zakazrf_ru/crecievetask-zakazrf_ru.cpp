@@ -184,12 +184,8 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
             continue;
         }
 
-//        if(newUrl==data->url())
-//        {
-//            //It's hack for now
-//            continue;
-//        }
         child = new CDataStructure(newUrl);
+        child->setRoot(data->root());
         child->setType(getUrlDataType(newUrl));
         data->appendChild(child);
         m_dataStructures.push_back(child);

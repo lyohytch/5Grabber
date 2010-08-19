@@ -6,9 +6,27 @@
 CParserHandler::CParserHandler(QObject *parent) :
     QObject(parent)
 {
+    m_parcer = new TParseReceiver();
 }
 
-void CParserHandler::startParsing(CDataStructure* data)
+CParserHandler::~CParserHandler()
+{
+    delete m_parcer;
+}
+
+bool CParserHandler::init()
+{
+    return connect(m_parcer, SIGNAL(finished(int,QByteArray)), this, SLOT(onParceFinished(int,QByteArray)));
+}
+
+void CParserHandler::startParsing(CDataStructure *data, const QUrl &url)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parsing started";
+    m_parcer->parse(data, url.toString().toUtf8());
+}
+
+void CParserHandler::onParceFinished(int _error, const QByteArray &_url)
+{
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parse finished with code:"<<_error;
+
 }

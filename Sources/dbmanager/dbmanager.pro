@@ -1,1 +1,1 @@
- 
+TEMPLATE = lib

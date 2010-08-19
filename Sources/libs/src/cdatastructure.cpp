@@ -101,6 +101,8 @@ bool CDataStructure::isFinished()
 
 bool CDataStructure::contains(QUrl &url)
 {
+//    qDebug()<<"!!!!!!!!!"<<url<<" == "<<m_url;
+
     if(m_url==url)
     {
         return true;
@@ -117,3 +119,12 @@ bool CDataStructure::contains(QUrl &url)
     return false;
 }
 
+CDataStructure* CDataStructure::root()
+{
+    if(m_isRoot)
+    {
+        return this;
+    }
+
+    return m_root;
+}
