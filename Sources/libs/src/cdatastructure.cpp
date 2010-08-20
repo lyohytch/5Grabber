@@ -48,10 +48,11 @@ void CDataStructure::write(QByteArray& data)
 
 void CDataStructure::flush()
 {
-//    for(int i=0; i<m_childs.count(); i++)
-//    {
-//        m_childs.at(i)->flush();
-//    }
+    for(int i=0; i<m_childs.count(); i++)
+    {
+        m_childs.at(i)->flush();
+        delete m_childs.value(i);
+    }
     m_data.clear();
 }
 
