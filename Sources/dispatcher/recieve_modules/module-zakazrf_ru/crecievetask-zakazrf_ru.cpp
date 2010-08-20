@@ -24,7 +24,7 @@ CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
     QMultiMap<QUrl, CDataStructure*>::iterator dataStructuresIter;
     for(dataStructuresIter=m_dataStructures.begin(); dataStructuresIter!=m_dataStructures.end(); dataStructuresIter++)
     {
-       delete i.value();
+       delete dataStructuresIter.value();
     }
     m_dataStructures.clear();
 }
@@ -67,7 +67,7 @@ for(int i=1; i<10000; i++)
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
-    m_dataStructures.push_back(tmpdata);
+    m_dataStructures.insert(testUrl, tmpdata);
     m_activeDataStructures.push_back(tmpdata);
 }
 #endif
@@ -261,7 +261,7 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
     dataStructuresIter = m_dataStructures.find(root);
     rootData=dataStructuresIter.value()->root();
     rootData->flush();
-    dataStructuresIter = m_dataStructures.remove(root);
+    m_dataStructures.remove(root);
 //    for(dataStructuresIter = m_dataStructures.begin(); dataStructuresIter != m_dataStructures.end();)
 //    {
 //        CDataStructure* data=dataStructuresIter.value();
