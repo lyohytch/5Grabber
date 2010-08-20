@@ -19,13 +19,14 @@ CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
     }
     m_threads.clear();
 
-    for(int i=0; i<m_dataStructures.count(); i++)
+    m_activeDataStructures.clear();
+
+    QMultiMap<QUrl, CDataStructure*>::iterator dataStructuresIter;
+    for(dataStructuresIter=m_dataStructures.begin(); dataStructuresIter!=m_dataStructures.end(); dataStructuresIter++)
     {
-        delete m_dataStructures.value(i);
+       delete dataStructuresIter.value();
     }
     m_dataStructures.clear();
-
-    m_activeDataStructures.clear();
 }
 
 bool CRecieveTask_zakazrf_ru::init(int maxThreads, const siterules_ti &rule)
@@ -55,7 +56,7 @@ bool CRecieveTask_zakazrf_ru::run()
 #ifndef RUN_ALL_TASKS
     QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=2943");
     CDataStructure* tmpdata = new CDataStructure(testUrl);
-    m_dataStructures.push_back(tmpdata);
+    m_dataStructures.insert(testUrl, tmpdata);
     m_activeDataStructures.push_back(tmpdata);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
@@ -66,29 +67,34 @@ for(int i=1; i<10000; i++)
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
-    m_dataStructures.push_back(tmpdata);
+    m_dataStructures.insert(testUrl, tmpdata);
     m_activeDataStructures.push_back(tmpdata);
 }
 #endif
 
     CDataStructure* data=NULL;
     QList<CDataStructure*>::iterator activeDataStructuresIter;
-    for(activeDataStructuresIter = m_activeDataStructures.begin(); activeDataStructuresIter != m_activeDataStructures.end() && m_threads.count()<(m_maxThreads+1);)
+    for(activeDataStructuresIter = m_activeDataStructures.begin(); activeDataStructuresIter != m_activeDataStructures.end();)
     {
-        data=(*activeDataStructuresIter);
-        CReciveThread *thread=new CReciveThread(data->url(), m_threadCounter++);
-        thread->setDataStructure(data);
-        m_threads.push_back(thread);
-        connect(thread, SIGNAL(dataReady(int/*,QByteArray*/)), this, SLOT(onDataReady(int/*,QByteArray*/)));
-        connect(thread, SIGNAL(finished()), this, SLOT(onThreadFinished()));
-        thread->start();
-        activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
+        if(m_threads.count()<(m_maxThreads+1))
+        {
+            data=(*activeDataStructuresIter);
+            CReciveThread *thread=new CReciveThread(data->url(), m_threadCounter++);
+            thread->setDataStructure(data);
+            m_threads.push_back(thread);
+            connect(thread, SIGNAL(dataReady(int/*,QByteArray*/)), this, SLOT(onDataReady(int/*,QByteArray*/)));
+            connect(thread, SIGNAL(finished()), this, SLOT(onThreadFinished()));
+            thread->start();
+            activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
+            break;
+        }
+        break;
     }
 
-    if(m_rules.count()>0)
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Thread pool is full. New Threads will be oppened afer finished one of runned";
-    }
+//    if(m_rules.count()>0)
+//    {
+//        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Thread pool is full. New Threads will be oppened afer finished one of runned";
+//    }
     return true;
 }
 
@@ -217,7 +223,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         child->setRoot(data->root());
         child->setType(getUrlDataType(newUrl));
         data->appendChild(child);        
-        m_dataStructures.push_back(child);
+        m_dataStructures.insert(data->root()->url(), child);
         m_activeDataStructures.push_back(child);
     }
     data->done();
@@ -251,36 +257,40 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
 
     CDataStructure* rootData=NULL;
 
-    QList<CDataStructure*>::iterator dataStructuresIter;
-    for(dataStructuresIter = m_dataStructures.begin(); dataStructuresIter != m_dataStructures.end();)
-    {
-        CDataStructure* data=(*dataStructuresIter);
-        if(!data)
-        {
-            qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found NULL pointer to data structure in active structures\n remove it";
-            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
-            continue;
-        }
+    QMultiMap<QUrl, CDataStructure*>::iterator dataStructuresIter;
+    dataStructuresIter = m_dataStructures.find(root);
+    rootData=dataStructuresIter.value()->root();
+    rootData->flush();
+    m_dataStructures.remove(root);
+//    for(dataStructuresIter = m_dataStructures.begin(); dataStructuresIter != m_dataStructures.end();)
+//    {
+//        CDataStructure* data=dataStructuresIter.value();
+//        if(!data)
+//        {
+//            qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found NULL pointer to data structure in active structures\n remove it";
+//            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
+//            continue;
+//        }
 
-        if(data->isRoot())
-        {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"We should remove root at last";
-            rootData=data;
-            dataStructuresIter++;
-            continue;
-        }
+//        if(data->isRoot())
+//        {
+//            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"We should remove root at last";
+//            rootData=data;
+//            dataStructuresIter++;
+//            continue;
+//        }
 
-        if(data->root()->url()==root && !data->isRoot())
-        {
-            delete data;
-            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
-            continue;
-        }
-        dataStructuresIter++;
-    }
+//        if(data->root()->url()==root && !data->isRoot())
+//        {
+//            delete data;
+//            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
+//            continue;
+//        }
+//        dataStructuresIter++;
+//    }
 
-    m_dataStructures.removeOne(rootData);
-    delete rootData;
+//    m_dataStructures.removeOne(rootData);
+//    delete rootData;
 
     if(m_dataStructures.count()<=0)
     {
