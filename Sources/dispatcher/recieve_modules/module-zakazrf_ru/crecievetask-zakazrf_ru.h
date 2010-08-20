@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QVariantList>
 #include <QtPlugin>
+#include <QMultiMap>
 
 #include <crecievetask.h>
 #include <crecivethread.h>
@@ -28,7 +29,7 @@ private:
     QUrl createFullUrlFromRule(QUrl url,QVariant rule);
     int getUrlDataType(QUrl &url);
     QList<CReciveThread*> m_threads;
-    QList<CDataStructure*> m_dataStructures;
+    QMultiMap<QUrl, CDataStructure*> m_dataStructures;
     QList<CDataStructure*> m_activeDataStructures;
     QUrl m_url;
     QVariantList m_rules;
