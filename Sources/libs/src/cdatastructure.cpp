@@ -13,6 +13,7 @@ CDataStructure::CDataStructure(QUrl url, QObject *parent) :
 CDataStructure::~CDataStructure()
 {
     flush();
+    m_childs.clear();
 }
 
 CDataStructure* CDataStructure::childAt(int i)
@@ -47,10 +48,10 @@ void CDataStructure::write(QByteArray& data)
 
 void CDataStructure::flush()
 {
-    for(int i=0; i<m_childs.count(); i++)
-    {
-        m_childs.at(i)->flush();
-    }
+//    for(int i=0; i<m_childs.count(); i++)
+//    {
+//        m_childs.at(i)->flush();
+//    }
     m_data.clear();
 }
 
@@ -85,6 +86,7 @@ bool CDataStructure::isFinished()
 {
     if(!m_isDone)
     {
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Hi i'm stupied link and i'm not done "<<url();
         return false;
     }
 

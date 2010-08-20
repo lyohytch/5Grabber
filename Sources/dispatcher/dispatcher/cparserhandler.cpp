@@ -28,8 +28,9 @@ void CParserHandler::startParsing(CDataStructure *data, const QUrl &url)
 void CParserHandler::onParceFinished(int _error, const QByteArray _url)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parse finished with code:"<<_error<<_url;
-//    QString urlStr;
-//    urlStr.fromUtf8(_url);
-//    QUrl url(urlStr);
-//    emit parceFinished(_error, url);
+    QString urlStr(_url);
+    qDebug()<<urlStr;
+    QUrl url(urlStr);
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Parse finished with code:"<<_error<<url;
+    emit parceFinished(_error, url);
 }

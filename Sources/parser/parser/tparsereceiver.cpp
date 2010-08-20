@@ -37,7 +37,7 @@ void TParseReceiver::onThreadFinished()
         qDebug() << m_threads.value(i)->result();
 
         //write(vdata);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!отдать данные Диме
-        emit finished(m_threads.value(i)->error(), m_threads.value(i)->url());
+        emit finished(m_threads.value(i)->error(), m_threads.value(i)->data()->root()->url().toString().toUtf8());
         delete m_threads.value(i);
         m_threads.removeAt(i);
     }

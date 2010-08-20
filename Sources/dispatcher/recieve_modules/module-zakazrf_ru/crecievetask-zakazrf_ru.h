@@ -17,6 +17,8 @@ class CRecieveTask_zakazrf_ru : public QObject, public CRecieveTask
     Q_INTERFACES(CRecieveTask)
 public:
     CRecieveTask_zakazrf_ru();
+    ~CRecieveTask_zakazrf_ru();
+
     virtual bool init(int maxThreads, const siterules_ti& rule);
     virtual CRecieveTaskSignaller* signaller();
     virtual bool run();
@@ -27,14 +29,16 @@ private:
     int getUrlDataType(QUrl &url);
     QList<CReciveThread*> m_threads;
     QList<CDataStructure*> m_dataStructures;
+    QList<CDataStructure*> m_activeDataStructures;
     QUrl m_url;
     QVariantList m_rules;
     int m_maxThreads;
     CRecieveTaskSignaller *m_signaller;
-
+    qint64 m_threadCounter;
 public slots:
     virtual void onDataReady(int threadId/*, QByteArray data*/);
     virtual void onThreadFinished();
+    void removeData(QUrl root);
 };
 
 #endif // CRECIEVETASK_ZAKAZRF_RU_H
