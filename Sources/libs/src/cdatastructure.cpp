@@ -28,6 +28,7 @@ CDataStructure* CDataStructure::childAt(int i)
 
 void CDataStructure::appendChild(CDataStructure* child)
 {
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Append child"<<child->url()<<" to "<<url();
     m_childs.push_back(child);
 }
 
