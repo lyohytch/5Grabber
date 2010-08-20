@@ -83,6 +83,7 @@ void CMainDispatcher::startRecieveTasks()
     while(Iter.hasNext())
     {
         Iter.next();
+
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
         //replace it!
@@ -94,9 +95,9 @@ void CMainDispatcher::startRecieveTasks()
             continue;
         }
 
-
         CRecieveTask* task=qobject_cast<CRecieveTask *>(loader.instance());
         task->init(2, Iter);
+//        loader.unload();
 
         m_activeTasksList.append(task);
         connect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
@@ -112,41 +113,39 @@ void CMainDispatcher::startRecieveTasks()
 void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Task Finished";
-//    CDataBaseHandler* tmpDB;
-//    tmpDB=task->database();
-//    task->destroy();
-//    m_activeTasksList.removeOne(task);
-//    delete task;
-//
-//    m_parser.startParsing(tmpDB);
-//    if(m_activeTasksList.isEmpty())
-//    {
-//        emit done();
-//    }
+
+    m_activeTasksList.removeOne(task);
+
+    if(m_activeTasksList.isEmpty())
+    {
+        emit done();
+    }
 }
 
 
 void CMainDispatcher :: onParceFinished(int error, QUrl url)
 {
-      qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
-//    CRecieveTask* task=NULL;
-//    for(int i=0; i<m_activeTasksList.count();i)
-//    {
-//        if(m_activeTasksList.at(i)->taskHost()==url.host())
-//        {
-//            task=m_activeTasksList.value(i);
-//        }
-//    }
+    qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
+    CRecieveTask* task=NULL;
+    for(int i=0; i<m_activeTasksList.count(); i++)
+    {
+        if(m_activeTasksList.at(i)->taskHost()==url.host())
+        {
+            task=m_activeTasksList.value(i);
+        }
+    }
 
-//    if(!task)
-//    {
-//        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
-//    }
+    if(!task)
+    {
+        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
+    }
+
+    task->signaller()->onDataParsed(url);
 }
 
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready:"<<data->url();
     QUrl url;
     url.setHost(data->url().host());
     url.setScheme(data->url().scheme());
@@ -156,9 +155,9 @@ void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 
 void CMainDispatcher::onDone()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    m_startTasksTimer.setSingleShot(true);
-    m_startTasksTimer.start(5000);
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Multi launch mode is switched off for preview";
+//    m_startTasksTimer.setSingleShot(true);
+//    m_startTasksTimer.start(20000);
 }
 
 bool CMainDispatcher::connectActions()

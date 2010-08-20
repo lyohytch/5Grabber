@@ -24,9 +24,16 @@ public slots:
         emit dataReady(data);
     }
 
+    void onDataParsed(QUrl url)
+    {
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+        emit dataParsed(url);
+    }
+
 signals:
     void finished(CRecieveTask*);
     void dataReady(CDataStructure*);
+    void dataParsed(QUrl);
 };
 
 #endif //CRECIEVETASKSIGNALLER_H

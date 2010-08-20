@@ -43,9 +43,8 @@ public:
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
 
-
-    bool isRunned() {return m_isRunned;}
-    void setRunned() {m_isRunned=true;}
+//    bool isRunned() {return m_isRunned;}
+//    void setRunned() {m_isRunned=true;}
 
     bool contains(QUrl &url);
 
