@@ -15,6 +15,8 @@ bool TParseReceiver::parse(CDataStructure* _data, const QByteArray& _url)
         return FALSE;
     }
 
+    qDebug()<<_data->childscCount();
+    qDebug()<<_data->url();
     TParseThread *thread = new TParseThread(m_id,_data,_url);
 //    m_threads.insert(m_id,thread);
     m_threads.push_back(thread);

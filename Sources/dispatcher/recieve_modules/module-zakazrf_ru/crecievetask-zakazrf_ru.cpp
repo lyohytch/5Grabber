@@ -199,7 +199,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         data->done();
         if(data->root()->isFinished())
         {
-            m_signaller->onDataReady(data);
+            m_signaller->onDataReady(data->root());
         }
         m_threads.at(threadNum)->exit(0);
         return;
@@ -229,7 +229,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
     data->done();
     if(data->root()->isFinished())
     {
-        m_signaller->onDataReady(data);
+        m_signaller->onDataReady(data->root());
     }
     m_threads.at(threadNum)->exit(0);
 }
