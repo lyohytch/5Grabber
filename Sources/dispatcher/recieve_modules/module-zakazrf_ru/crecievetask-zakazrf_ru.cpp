@@ -54,7 +54,7 @@ bool CRecieveTask_zakazrf_ru::run()
 
     connect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
 #ifndef RUN_ALL_TASKS
-    QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=2943");
+    QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=4781");
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     m_dataStructures.insert(testUrl, tmpdata);
     m_activeDataStructures.push_back(tmpdata);
