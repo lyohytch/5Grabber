@@ -43,11 +43,14 @@ public:
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
 
-
-    bool isRunned() {return m_isRunned;}
-    void setRunned() {m_isRunned=true;}
+//    bool isRunned() {return m_isRunned;}
+//    void setRunned() {m_isRunned=true;}
 
     bool contains(QUrl &url);
+
+    CDataStructure* root();
+    void setRoot(CDataStructure* root) {m_root=root;}
+
 private:
     int m_type;
     QList<CDataStructure* > m_childs;
@@ -56,6 +59,8 @@ private:
     bool m_isDone;
     bool m_isRoot;
     bool m_isRunned;
+
+    CDataStructure* m_root;
 };
 
 #endif // CDATASTRUCTURE_H

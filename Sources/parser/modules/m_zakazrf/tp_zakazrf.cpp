@@ -15,6 +15,12 @@ QMap<QString,QVariant> TP_zakazrf::parse(CDataStructure* _data)
     for(int i = 0;  i < _data->childscCount(); i++)
     {
         CDataStructure* child= _data->childAt(i);
+        if(!child)
+        {
+            qCritical()<<"Fatal!!!! Chils is null";
+            continue;
+        }
+
         switch(child->type())
         {
             case 0:

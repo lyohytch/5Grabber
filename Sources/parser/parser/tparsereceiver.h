@@ -9,7 +9,7 @@
 
 //======================================================
 //modules
-const QString PATH_MODULES = "../bin/";
+const QString PATH_MODULES = "./modules/parse/";
 const QString URL1 = "http://zakazrf.ru";
 const QString SO1 = "libm_zakazrf.so";
 
@@ -27,18 +27,24 @@ class TParseThread: public QThread
 public:
     TParseThread(int _id,CDataStructure* _data, const QByteArray& _url);
 
-signals:
-    void end_parsing_signal(int _id,int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data);
+//signals:
+//    void end_parsing_signal(int _id,int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data);
+    QMap<QString,QVariant> result() {return m_result;}
+    int id() const {return m_id;}
+    QByteArray url() const {return m_url;}
+    CDataStructure* data() const {return m_data;}
+    int error(){return m_error;}
 
 protected:
     virtual void run();
 
 private:
-    int id;
-    QByteArray url;
-    CDataStructure* data;
-
-    QString path;
+    int m_id;
+    QByteArray m_url;
+    CDataStructure* m_data;
+    QMap<QString,QVariant> m_result;
+    QString m_path;
+    int m_error;
 };
 
 class TParseReceiver: public QObject
@@ -49,13 +55,15 @@ public:
     bool parse(CDataStructure* _data,const QByteArray& _url);
 
 signals:
-    void finished(int _error,const QByteArray& _url);
+    void finished(int _error,const QByteArray _url);
 
-private slots:
-    void end_parsing(int _id, int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data);
+public slots:
+    void onThreadFinished();
+//    void end_parsing(int _id, int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data);
 
 private:
-    QMap<int,TParseThread*> m_threads;
+//    QMap<int,TParseThread*> m_threads;
+    QList<TParseThread*> m_threads;
     int m_id;
 };
 

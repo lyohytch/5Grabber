@@ -51,6 +51,11 @@ bool CMainDispatcher::init(const QString &configUrl)
         return false;
     }
 
+    if(!connect(&m_parser,SIGNAL(parceFinished(int,QUrl)),this,SLOT(onParceFinished(int,QUrl))))
+    {
+        return false;
+    }
+
     startRecieveTasks();
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Succed";
     return true;
@@ -63,8 +68,8 @@ void CMainDispatcher::deinit()
 //    {
 //        delete m_activeTasksList.at(i);
 //    }
-//
-//    m_activeTasksList.clear();
+
+    m_activeTasksList.clear();
 
     m_sites.clear();
 }
@@ -78,19 +83,25 @@ void CMainDispatcher::startRecieveTasks()
     while(Iter.hasNext())
     {
         Iter.next();
+
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
         //replace it!
-        QPluginLoader recievetask("/home/semlanik/Mydocuments/Work/Grabber/semlanik_branch/Sources/bin/recieve-modules/libmodule-zakazrf_ru.so");
-        recievetask.load();
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<recievetask.errorString();
+        qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH<<"\nlibpath :"<<QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"));
+        QPluginLoader loader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
+        if(!loader.load())
+        {
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<loader.errorString();
+            continue;
+        }
 
-        CRecieveTask* plugin=qobject_cast<CRecieveTask *>(recievetask.instance());
-        plugin->init(2, Iter);
+        CRecieveTask* task=qobject_cast<CRecieveTask *>(loader.instance());
+        task->init(2, Iter);
+//        loader.unload();
 
-        m_activeTasksList.append(plugin);
-        connect(plugin->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
-        connect(plugin->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
+        m_activeTasksList.append(task);
+        connect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+        connect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
     }
 
     for(int i=0;i<m_activeTasksList.count();i++)
@@ -102,31 +113,51 @@ void CMainDispatcher::startRecieveTasks()
 void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Task Finished";
-//    CDataBaseHandler* tmpDB;
-//    tmpDB=task->database();
-//    task->destroy();
-//    m_activeTasksList.removeOne(task);
-//    delete task;
-//
-//    m_parser.startParsing(tmpDB);
-//    if(m_activeTasksList.isEmpty())
-//    {
-//        emit done();
-//    }
+
+    m_activeTasksList.removeOne(task);
+
+    if(m_activeTasksList.isEmpty())
+    {
+        emit done();
+    }
+}
+
+
+void CMainDispatcher :: onParceFinished(int error, QUrl url)
+{
+    qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
+    CRecieveTask* task=NULL;
+    for(int i=0; i<m_activeTasksList.count(); i++)
+    {
+        if(m_activeTasksList.at(i)->taskHost()==url.host())
+        {
+            task=m_activeTasksList.value(i);
+        }
+    }
+
+    if(!task)
+    {
+        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
+    }
+
+    task->signaller()->onDataParsed(url);
 }
 
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready";
-    m_parser.startParsing(data);
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready:"<<data->url();
+    QUrl url;
+    url.setHost(data->url().host());
+    url.setScheme(data->url().scheme());
+    m_parser.startParsing(data, url);
 }
 
 
 void CMainDispatcher::onDone()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    m_startTasksTimer.setSingleShot(true);
-    m_startTasksTimer.start(5000);
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Multi launch mode is switched off for preview";
+//    m_startTasksTimer.setSingleShot(true);
+//    m_startTasksTimer.start(20000);
 }
 
 bool CMainDispatcher::connectActions()

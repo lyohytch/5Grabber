@@ -13,11 +13,12 @@ CDataStructure::CDataStructure(QUrl url, QObject *parent) :
 CDataStructure::~CDataStructure()
 {
     flush();
+    m_childs.clear();
 }
 
 CDataStructure* CDataStructure::childAt(int i)
 {
-    if(m_childs.count()>=i)
+    if(m_childs.count()<=i)
     {
         return NULL;
     }
@@ -50,6 +51,7 @@ void CDataStructure::flush()
     for(int i=0; i<m_childs.count(); i++)
     {
         m_childs.at(i)->flush();
+        delete m_childs.value(i);
     }
     m_data.clear();
 }
@@ -85,6 +87,7 @@ bool CDataStructure::isFinished()
 {
     if(!m_isDone)
     {
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Hi i'm stupied link and i'm not done "<<url();
         return false;
     }
 
@@ -101,6 +104,8 @@ bool CDataStructure::isFinished()
 
 bool CDataStructure::contains(QUrl &url)
 {
+//    qDebug()<<"!!!!!!!!!"<<url<<" == "<<m_url;
+
     if(m_url==url)
     {
         return true;
@@ -117,3 +122,12 @@ bool CDataStructure::contains(QUrl &url)
     return false;
 }
 
+CDataStructure* CDataStructure::root()
+{
+    if(m_isRoot)
+    {
+        return this;
+    }
+
+    return m_root;
+}

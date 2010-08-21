@@ -1,6 +1,12 @@
-QT += sql
-QT -= gui
 TARGET = DBmanager
+TEMPLATE = lib
+
+GBR_SOURCE_ROOT=../../..
+include($$GBR_SOURCE_ROOT/paths.pri)
+
+#QT += sql
+#QT -= gui
+
 #CONFIG += console
 #CONFIG -= app_bundle
 #TEMPLATE = app
@@ -8,7 +14,7 @@ TARGET = DBmanager
 #    dbmanager.cpp \
 #HEADERS += dbmanager.h
 
-TEMPLATE = lib
-DEFINES += fPIC
-SOURCES += dbmanager.cpp
-HEADERS += dbmanager.h
+
+#DEFINES += fPIC
+#SOURCES += dbmanager.cpp
+#HEADERS += dbmanager.h

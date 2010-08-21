@@ -16,63 +16,64 @@ bool TParseReceiver::parse(CDataStructure* _data, const QByteArray& _url)
     }
 
     TParseThread *thread = new TParseThread(m_id,_data,_url);
-    m_threads.insert(m_id,thread);
+//    m_threads.insert(m_id,thread);
+    m_threads.push_back(thread);
     m_id++;
-    connect(thread, SIGNAL(end_parsing_signal(int,int,const QByteArray&,const QMap<QString,QVariant>&)), this, SLOT(end_parsing(int,int,const QByteArray&,const QMap<QString,QVariant>&)));
+    connect(thread, SIGNAL(finished()), this, SLOT(onThreadFinished()));
     thread->start();
     return TRUE;
 }
 
-void TParseReceiver::end_parsing(int _id,int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data)
+void TParseReceiver::onThreadFinished()
 {
-    m_threads.value(_id)->exit();
-    delete m_threads.value(_id);
-    m_threads.remove(_id);
+    for(int i=0; i<m_threads.count(); i++)
+    {
+        if(!m_threads.value(i)->isFinished())
+        {
+            continue;
+        }
 
-    QVariant vdata(_data);
-    qDebug() << _data;
+        QVariant vdata(m_threads.value(i)->result());
+        qDebug() << m_threads.value(i)->result();
 
-    //write(vdata);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!отдать данные Диме
-    emit finished(_error,_url);
+        //write(vdata);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!отдать данные Диме
+        emit finished(m_threads.value(i)->error(), m_threads.value(i)->data()->root()->url().toString().toUtf8());
+        delete m_threads.value(i);
+        m_threads.removeAt(i);
+    }
 }
-
-
 
 
 
 
 TParseThread::TParseThread(int _id, CDataStructure* _data, const QByteArray& _url)
 {
-    id = _id;
-    url = _url;
-    data = _data;
+    m_id = _id;
+    m_url = _url;
+    m_data = _data;
 
 
-    if(url == URL1)
+    if(m_url == URL1)
     {
-        path = PATH_MODULES + SO1;
+        m_path = PATH_MODULES + SO1;
     }
     else
     {
-        path = "";
+        m_path = "";
     }
 }
 
 void TParseThread::run()
 {
-    QPluginLoader task(path);
+    QPluginLoader task(m_path);
     if( FALSE == task.load() )
     {
-        qDebug() << "run: load error";
-        emit end_parsing_signal(id,DATA_NOT_FOUND,url,QMap<QString,QVariant>());
+        qDebug() << "run: load error"<<task.errorString();
         return;
     }
 
     TP_Task* plugin=qobject_cast<TP_Task *>(task.instance());
-    QMap<QString,QVariant> result = plugin->parse(data);
-    emit end_parsing_signal(id,NO_ERROR,url,result);
+    m_result = plugin->parse(m_data);
+    m_error=NO_ERROR;
+
 }
-
-
-
-
