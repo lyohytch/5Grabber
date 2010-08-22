@@ -33,6 +33,7 @@ public:
     ParseDoc(QObject *parent = 0, const QString &filename = 0);
     virtual void readConfig(const QString &filename);
     virtual QVariant ParseFile();
+    QVariant parseProcess(const QVariant & outArr);
 signals:
 
 public slots:
@@ -46,6 +47,7 @@ public:
     ParseXls(QObject *parent = 0, const QString &filename = 0);
     virtual void readConfig(const QString &filename);
     virtual QVariant ParseFile();
+    QVariant parseProcess(const QVariant & outArr);
 signals:
 
 public slots:
