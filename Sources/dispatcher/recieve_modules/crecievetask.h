@@ -13,7 +13,7 @@ public:
     virtual bool init(int maxThreads, const siterules_ti& rule) = 0;
     virtual CRecieveTaskSignaller* signaller() = 0;
     virtual bool run() = 0;
-    virtual QString taskHost() const= 0;
+    virtual QString taskHost() const = 0;
 };
 
 Q_DECLARE_INTERFACE (CRecieveTask, "recievetask.grabber.interface/1.0");

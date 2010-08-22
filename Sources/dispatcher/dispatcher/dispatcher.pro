@@ -24,7 +24,8 @@ MOC_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/moc
 
 INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
                $$GBR_SOURCE_ROOT/$$GRB_DSP_MODULES_PATH \
-               $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH
+               $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH \
+               $$GBR_SOURCE_ROOT/$$GRB_PARSER_MODULE_PATH
 
 LIBS +=-L$$PWD/$$GBR_SOURCE_ROOT/$$GRB_LIBS_BIN_PATH -lparser
 
@@ -36,7 +37,9 @@ HEADERS += cmaindispatcher.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/constants.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cconfighandler.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h \
-    $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH/tparsereceiver.h
+    $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH/tparsereceiver.h \
+    $$GBR_SOURCE_ROOT/$$GRB_PARSER_MODULE_PATH/tp_task.h \
+    $$GBR_SOURCE_ROOT/$$GRB_PARSER_MODULE_PATH/cparsesignaller.h
 
 SOURCES += cmaindispatcher.cpp \
     loadbalancer.cpp \

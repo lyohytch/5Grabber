@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include <cdatastructure.h>
-#include <tparsereceiver.h>
+#include "tparsereceiver.h"
 
 class CParserHandler : public QObject
 {

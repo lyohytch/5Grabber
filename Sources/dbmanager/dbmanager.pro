@@ -2,7 +2,7 @@ TARGET = DBmanager
 TEMPLATE = lib
 
 GBR_SOURCE_ROOT=../../..
-include($$GBR_SOURCE_ROOT/paths.pri)
+#include($$GBR_SOURCE_ROOT/paths.pri)
 
 #QT += sql
 #QT -= gui

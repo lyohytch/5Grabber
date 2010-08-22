@@ -56,10 +56,16 @@ bool CRecieveTask_zakazrf_ru::run()
 #ifndef RUN_ALL_TASKS
     QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=4781");
     CDataStructure* tmpdata = new CDataStructure(testUrl);
-    m_dataStructures.insert(testUrl, tmpdata);
-    m_activeDataStructures.push_back(tmpdata);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
+    m_dataStructures.insert(testUrl, tmpdata);
+    m_activeDataStructures.push_back(tmpdata);
+    QUrl testUrl2("http://zakazrf.ru/ViewReduction.aspx?id=2943");
+    CDataStructure* tmpdata2 = new CDataStructure(testUrl2);
+    tmpdata2->setType(getUrlDataType(testUrl2));
+    tmpdata2->setRoot();
+    m_dataStructures.insert(testUrl, tmpdata2);
+    m_activeDataStructures.push_back(tmpdata2);
 #else
 for(int i=1; i<10000; i++)
 {

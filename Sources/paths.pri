@@ -13,9 +13,10 @@ GRB_LIBS_BIN_PATH=$$GRB_BIN_PATH/libs
 GRB_LIBS_PATH=libs
 GRB_LIBS_SRC_PATH=$$GRB_LIBS_PATH/src
 
-#paths only fro dispatcher
+#paths only for dispatcher
 
 GRB_DSP_MODULES_PATH=dispatcher/recieve_modules
 
 #parser paths
 GRB_PARSER_PATH=parser/parser
+GRB_PARSER_MODULE_PATH=parser/modules
