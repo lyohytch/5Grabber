@@ -1,0 +1,51 @@
+ppt2text(1)                                                        ppt2text(1)
+
+
+
+1mNAME0m
+       catppt - reads MS-PowerPoint file and puts its content on standard out-
+       put
+
+1mSYNOPSIS0m
+       1mcatppt 22m[1m-lV22m] [1m-b  4m22mstring24m ] [1m-s  4m22mcharset24m ] [1m-d  4m22mcharset24m ] 4mfiles0m
+
+
+1mDESCRIPTION0m
+       1mcatppt 22mreads MS-PowerPoint presentations and dumps its content to  std-
+       out.
+
+1mOPTIONS0m
+       1m-l      22mlist known charsets and exit successfully
+
+       1m-b4m22mstring0m
+               slides  break string. This string (by default - formfeed) would
+               be output at the end of each slide page.
+
+
+       1m-d4m22mcharset`0m
+               - specifies destination charset name. Charset file  has  format
+               described  in  CHARACTER SETS section of 1mcatdoc22m(1) manual page.
+               By default, current locale charset would be  used  if  langinfo
+               support was enabled at the compile time.
+
+
+       1m-s4m22mcharset0m
+               -  specifies  source  charset.  Typically, PowerPoint files use
+               UNICODE strings with known charsets, but for  some  reason  you
+               may wish to override it.
+
+
+       1m-V      22moutputs version number
+
+
+1mSEE ALSO0m
+       1mcat22m(1), 1mcatdoc22m(1), 1mxls2csv22m(1), 1mstrings22m(1), 1mutf22m(4), 1municode22m(4)
+
+
+1mAUTHOR0m
+       Alex Ott <alexott@gmail.com>
+
+
+
+
+MS-PowerPoint reader            Version 0.94.2                     ppt2text(1)

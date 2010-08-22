@@ -1,0 +1,260 @@
+catdoc(1)                                                            catdoc(1)
+
+
+
+1mNAME0m
+       catdoc - reads MS-Word file and puts its content as plain text on stan-
+       dard output
+
+1mSYNOPSIS0m
+       1mcatdoc 22m[1m-vlu8btawxV22m] [1m-m 4m22mnumber24m] [ 1m-s 4m22mcharset24m] [ 1m-d 4m22mcharset24m] [ 1m-f  4m22mout-0m
+       4mput-format24m] 4mfile0m
+
+
+1mDESCRIPTION0m
+       1mcatdoc  22mbehaves much like 1mcat22m(1) but it reads MS-Word file and produces
+       human-readable text on standard output.  Optionally it can use 1mlatex22m(1)
+       escape  sequences  for characters which have special meaning for LaTeX.
+       It also makes some effort to  recognize  MS-Word  tables,  although  it
+       never  tries  to  write  correct headers for LaTeX tabular environment.
+       Additional output formats, such is HTML can be easily defined.
+
+       1mcatdoc 22mdoesn't attempt to extract  formatting  information  other  than
+       tables  from  MS-Word  document, so different output modes means mainly
+       that different characters should be escaped and different ways used  to
+       represent  characters,  missing from output charset. See CHARACTER SUB-
+       STITUTION below
+
+
+       1mcatdoc 22muses internal 1municode22m(4) representation of text, so it  is  able
+       to  convert texts when charset in source document doesn't match charset
+       on target system.  See CHARACTER SETS below.
+
+       If no file names supplied, 1mcatdoc 22mprocesses its standard  input  unless
+       it  is  terminal. It is unlikely that somebody could type Word document
+       from keyboard, so if 1mcatdoc 22minvoked without arguments and stdin is  not
+       redirected,  it  prints  brief  usage message and exits.  Processing of
+       standard input (even among other files) can be forced using dash '-' as
+       file name.
+
+       By  default,  1mcatdoc  22mwraps lines which are more than 72 chars long and
+       separates paragraphs by blank lines. This behavior can be turned of  by
+       1m-w  22mswitch. In 4mwide24m mode 1mcatdoc prints each paragraph as one long line,0m
+       1msuitable for import into 22mword processors which  perform  word  wrapping
+       theirselves.
+
+
+
+1mOPTIONS0m
+       1m-a      22m-  shortcut for -f ascii. Produces ASCII text as output.  Sepa-
+               rates table columns with TAB
+
+       1m-b      22m- process broken MS-Word file. Normally, 1mcatdoc checks if first0m
+               1m8 bytes 22mof file is Microsoft OLE signature. If so, it processes
+               file, otherwise it just copies it to stdin. It is  intended  to
+               use 1mcatdoc 22mas filter for viewing all files with 4m.doc24m extension.
+
+       1m-d4m22mcharset0m
+               - specifies destination charset name. Charset file  has  format
+               described  in  CHARACTER SETS below and should have 1m.txt 22mexten-
+               sion  and reside in  1mcatdoc  library  directory  (  ${exec_pre-0m
+               1mfix}/lib/catdoc). By default, current 22mlocale charset is used if
+               langinfo support compiled in.
+
+       1m-f4m22mformat0m
+               - specifies output format as described in  CHARACTER  SUBSTITU-
+               TION  below.   1mcatdoc 22mcomes with two output formats - ascii and
+               tex. You can add your own if you wish.
+
+       1m-l      22mCauses 1mcatdoc 22mto list names of available charsets to the stdout
+               and exit successfully.
+
+       1m-m4m22mnumber0m
+               Specifies right margin for text  (default 72).  1m-m 0 22mis equiva-
+               lent to 1m-w0m
+
+       1m-s4m22mcharset0m
+               Specifies source charset. (one used in Word document), if  Word
+               document  doesn't  contain UTF-16  text. When reading rtf docu-
+               ments, it is typically not  necessary,  because  rtf  documents
+               contain  ansicpg specification. But it can be set wrong by Word
+               (I've seen RTF documents on Russian, where  cp1252  was  speci-
+               fied).  In  this  case  this  option would take precedence over
+               charset, specified in the document. But  source_charset  state-
+               ment  in the configuration file have less priority than charset
+               in the document.
+
+       1m-t      22m- shortcut for 1m-f tex0m
+                converts all printable chars, which have special  meaning  for
+               1mLaTeX22m(1)  into  appropriate  control sequences. Separates table
+               columns by 1m&.0m
+
+       1m-u      22m- declares that Word   document   contain   UNICODE    (UTF-16)
+               representation  of  text (as some Word-97 documents). If catdoc
+               fails to correct  Word document with   default  charset,    try
+               this  option.
+
+       1m-8      22m- declares is Word document is 8 bit. Just in case that catdoc
+                recognizes file format incorrectly.
+
+       1m-w      22mdisables  word  wrapping.  By default 1mcatdoc 22moutput is splitted
+               into lines not longer than 72  (or   number,  specified  by  -m
+               option)    characters  and  paragraphs  are  separated by blank
+               line. With this option each paragraph is one long line.
+
+       1m-x      22mcauses catdoc to output unknown UNICODE  character  as  \xNNNN,
+               instead of question marks.
+
+       1m-v      22mcauses catdoc to print some useless information about word doc-
+               ument structure to stdout before actual start of text.
+
+       1m-V      22moutputs catdoc version
+
+
+1mCHARACTER SETS0m
+       When processing MS-Word file 1mcatdoc 22muses information about two  charac-
+       ter sets, typically different
+        -   input  and  output.  They are stored in plain text files in 1mcatdoc0m
+       library directory. Character set files should contain  two  whitespace-
+       separated  hexadecimal numbers - 8-bit code in character set and 16-bit
+       Unicode code.  Anything from hash mark to end of line  is  ignored,  as
+       well as blank lines.
+
+       1mcatdoc  22mdistribution  includes some of these character sets. Additional
+       character set definitions, directly usable by 1mcatdoc  22mcan  be  obtained
+       from  ftp.unicode.org.  Charset files have 1m.txt 22msuffix, which shouldn't
+       be specified in command-line or configuration files.
+
+       Note that 1mcatdoc 22mis distributed with Cyrillic charsets as  default.  If
+       you  are not Russian, you probably don't want it, an should reconfigure
+       catdoc at compile time or in runtime configuration file.
+
+       When dealing with documents with charsets other than default,  remember
+       that  Microsoft  never  uses ISO charsets. While letters in, say cp1252
+       are at the same position as in ISO-8859-1, some punctuation signs would
+       be lost, if you specify ISO-8859-1 as input charset. If you use cp1252,
+       catdoc would deal with those signs as described in CHARACTER  SUBSTITU-
+       TION below.
+
+
+1mCHARACTER SUBSTITUTION0m
+       1mcatdoc 22mconverts  MS-Word file into following internal Unicode represen-
+       tation:
+
+       1. Paragraphs are separated by ASCII Line Feed symbol (0x000A)
+
+       2. Table cells within row are separated by ASCII Field Separator symbol
+           (0x001C)
+
+       3. Table rows are separated by ASCII Record Separator (0x001E)
+
+       4. All printable characters, including whitespace are represented  with
+       their
+           respective UNICODE codes.
+
+       This UNICODE representation is subsequently converted into  8-bit  text
+       in target character set using following four-step algorithm:
+
+       1.  List of special characters is searched for given Unicode character.
+           If  found,  then  appropriate  multi-character  sequence  is output
+           instead of character.
+
+       2. If there is an equivalent in target character set, it is output.
+
+       3. Otherwise, replacement list is searched and, if there is multi-char-
+       acter
+           substitution for this UNICODE char, it is output.
+
+       4. If all above fails, "Unknown char" symbol (question mark) is output.
+
+       Lists of special characters and list of substitution are character set-
+       independent,  because  special  chars  should  be escaped regardless of
+       their existence in target character set  (usually, they  are  parts  of
+       US-ASCII,  and  therefore  exist  in any character set) and replacement
+       list is searched only for those characters, which are not found in tar-
+       get character set.
+
+       These lists are stored in 1mcatdoc 22mlibrary directory in files with prefix
+       of format name. These files have following format:
+
+       Each line can be either comment (starting with hash  mark)  or  contain
+       hexadecimal  UNICODE  value, separated by whitespace from string, which
+       would be substituted instead of it. If string contain no whitespace  it
+       can  be used as is, otherwise it should be enclosed in single or double
+       quotes. Usual backslash sequences like 4m'\n'24m,4m'\t'24m can be used  in  these
+       string.
+
+
+
+1mRUNTIME CONFIGURATION0m
+       Upon startup catdoc reads its system-wide configuration file ( 1mcatdocrc0m
+       1min catdoc 22mlibrary directory) and then user-specific configuration  file
+       1m${HOME}/.catdocrc.0m
+
+       These files can contain following directives:
+
+       1msource_charset = 4m22mcharset-name0m
+               Sets  default  source  charset,  which  would  be used if no 1m-s0m
+               option  specified.  Consult  configuration  of  nearby  windows
+               workstation to find one you need.
+
+       1mtarget_charset = 4m22mcharset-name0m
+                Sets  default output charset. You probably know, which one you
+               use.
+
+       1mcharset_path = 4m22mdirectory-list0m
+               colon-separated list of directories,  which  are  searched  for
+               charset  files.  This allows you to install additional charsets
+               in your home directory.  If first directory component  of  path
+               is  ~  it is replaced by contents of 1mHOME 22menvironment variable.
+               On MS-DOS platform, if directory name starts  with  %s,  it  is
+               replaced  with  directory  of executable file. Empty element in
+               list (i.e. two consequitve colons) is considered current direc-
+               tory.
+
+       1mmap_path = 4m22mdirectory-list0m
+               colon-separated  list  of  directories,  which are searched for
+               special character map and replacement map.   Same  substitution
+               rules as in 1mcharset_path 22mare applied.
+
+       1mformat = 4m22mformat24m 4mname0m
+               Output  format  which  would  be used by default.  1mcatdoc 22mcomes
+               with two formats - 1mascii 22mand 1mtex 22mbut nothing prevents you  from
+               writing  your own format (set two map files - special character
+               map and replacement map).
+
+       1munknown_char = 4m22mcharacter24m 4mspecification0m
+               sets character to output instead of unknown  Unicode  character
+               (default '?')  Character specification can have one of two form
+               - character enclosed in single quotes or hexadecimal code.
+
+       1muse_locale =4m22m(yes|no)0m
+               Enables or  disables  automatic  selection  of  output  charset
+               (default 1myes22m),
+                based  on system locale settings (if enabled at compile time).
+               If automatic detection is enabled, than output charset settings
+               in  the  configuration  files (but not in the command line) are
+               ignored, and current system locale  charset  is  used  instead.
+               There are no automatic choice of input charset, based of locale
+               language, because most modern Word files (since  Word  97)  are
+               Unicode anyway
+
+
+1mBUGS0m
+       Doesn't  handle fast-saves properly. Prints footnotes as separate para-
+       graphs at the end of file, instead of producing correct LaTeX commands.
+       Cannot distinguish between empty table cell and end of table row.
+
+
+
+
+1mSEE ALSO0m
+       1mxls2csv22m(1), 1mcat22m(1), 1mstrings22m(1), 1mutf22m(4), 1municode22m(4)
+
+
+1mAUTHOR0m
+       V.B.Wagner <vitus@45.free.net>
+
+
+
+MS-Word reader                  Version 0.94.2                       catdoc(1)

@@ -1,0 +1,85 @@
+xls2csv(1)                                                          xls2csv(1)
+
+
+
+1mNAME0m
+       xls2csv  -  reads MS-Excel file and puts its content as comma-separated
+       data on standard output
+
+1mSYNOPSIS0m
+       1mxls2csv 22m[1m-xlV22m] [1m-f  4m22mformat24m ] [1m-b  4m22mstring24m ] [1m-s  4m22mcharset24m ] [1m-d   4m22mcharset0m
+       ] [-q  4mnumber24m ] [1m-c  4m22mchar24m] 4mfiles0m
+
+
+1mDESCRIPTION0m
+       1mxls2csv 22mreads MS-Excel spreadsheet and dumps its content as comma-sepa-
+       rated values to stdout. Numbers are printed without delimiters, strings
+       are enclosed in the double quotes. Double-quotes inside string are dou-
+       bled.
+
+1mOPTIONS0m
+       1m-x      22mprint unknown Unicode chars as \xNNNN, rather than as  question
+               marks
+
+       1m-l      22mlist known charsets and exit successfully
+
+       1m-c4m22mchar24m  cell separator char. By default - comma.
+
+       1m-b4m22mstring0m
+               sheet  break  string. This string (by default - formfeed) would
+               be output at the end of each  workbook  page.  This  string  is
+               printed  after  page starting at start of line, but no linefeed
+               would be automatically added at the end of string. Include new-
+               line  at the ent of sheet separator if you want it to appear on
+               separate line by itself
+
+       1m-g4m22mnumber24m number of decimal digits in the numbers.  By  default  maximal
+                double precision (system-dependent macro DBL_DIG) is used.
+
+       1m-q4m22mnumber0m
+               set  quote mode. In quote mode 0 cell contents is never quoted.
+               In quote mode 1  only  strings  which  contain  spaces,  double
+               quotes  or  commas  are  quoted.  In quote mode 2 (default) all
+               cells with type string are quoted.  In quote mode 3  all  cells
+               are quoted.
+
+
+       1m-d4m22mcharset`0m
+               -  specifies  destination charset name. Charset file has format
+               described in CHARACTER SETS section of 1mcatdoc22m(1)  manual  page.
+               By  default,  current  locale charset would be used if langinfo
+               support was enabled at the compile time.
+
+
+       1m-s4m22mcharset0m
+               - specifies source charset. Typically, Excel  files  have  CODE
+               PAGE  record,  which denotes input charset, but for some reason
+               you may wish to override it.
+
+       1m-f4m22mformat0m
+               - specifies date/time format to use for  output  of  all  Excel
+               date  and  time  values.  If this option is not specified, for-
+               mat, specified in the spreadsheet is used. On POSIX system  any
+               format,  allowed  by  1mstrftime22m(3)  can be used as value of this
+               option. Under MS-DOS 1mxls2csv 22mimplements limited set of 1mstrftime0m
+               formats, namely 1mm22m, 1md22m, 1my22m, 1mY22m, 1mb22m, 1ml22m, 1mp22m, 1mH22m, 1mM22m, 1mS22m.
+
+
+       1m-V      22moutputs version number
+
+
+1mFILES0m
+       ${HOME}/.catdocrc, catdoc charset files and substitution map files (see
+       1mcatdoc22m(1) manual page for details,
+
+
+1mSEE ALSO0m
+       1mcat22m(1), 1mcatdoc22m(1), 1mstrings22m(1), 1mutf22m(4), 1municode22m(4)
+
+
+1mAUTHOR0m
+       V.B.Wagner <vitus@45.free.net>, based on biffview by David Rysdam
+
+
+
+MS-Word reader                  Version 0.94.2                      xls2csv(1)
