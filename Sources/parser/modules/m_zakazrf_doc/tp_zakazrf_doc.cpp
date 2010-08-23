@@ -128,7 +128,7 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Error" << err;
         }
     }
-    //file.remove();
+    file.remove();
 }
 
 QString TP_zakazrf_doc::findProviding(const QByteArray &source)
