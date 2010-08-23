@@ -140,6 +140,7 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
     if(!task)
     {
         qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
+        return;
     }
 
     task->signaller()->onDataParsed(url);
