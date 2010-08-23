@@ -3,6 +3,8 @@
 #include <QByteArray>
 #include <QFile>
 #include <QFileInfo>
+#include <QTextStream>
+#include <QRegExp>
 
 #include "tp_zakazrf_doc.h"
 
@@ -10,17 +12,20 @@ TP_zakazrf_doc::TP_zakazrf_doc()
 {
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
+    m_db = new DBmanager();
 }
 
 TP_zakazrf_doc::~TP_zakazrf_doc()
 {
     delete m_signaller;
+    delete m_db;
 }
 
 bool TP_zakazrf_doc::init(int maxThreads, CDataStructure *data)
 {
     m_maxThreads = maxThreads;
     m_data = data;
+    m_db->init();
     return TRUE;
 }
 
@@ -66,14 +71,13 @@ CParseSignaller* TP_zakazrf_doc::signaller()
 
 bool TP_zakazrf_doc::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!";
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE DOC TASK!!!";
 
     for (int i = 0; i < m_data->childscCount(); i++)
     {
         if (m_data->childAt(i)->type() == CDataStructure::eDataTypeDocument)
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< m_data->childAt(i)->url() << " type = " << m_data->childAt(i)->type();
-            //docToTxt(m_data->childAt(i));
+            docToXml(m_data->childAt(i));
         }
     }
 
@@ -81,8 +85,9 @@ bool TP_zakazrf_doc::run()
     return TRUE;
 }
 
-void TP_zakazrf_doc::docToTxt(CDataStructure *p_data)
+void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
 {
+    bool valid = true;
     QFile file(QString("%1.doc").arg(p_data->url().toString().section("=",1)));
     bool ok = file.open(QFile::WriteOnly);
     if (ok)
@@ -90,18 +95,59 @@ void TP_zakazrf_doc::docToTxt(CDataStructure *p_data)
         file.write(p_data->read());
         file.close();
         QFileInfo fileInfo(file);
+//        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "DOC Saved in " << file.fileName();
+
         QStringList args;
-        args.append("-t");
-        args.append("-d utf-8");
+        args << "-x" << "db";
+//        args.append("-t");
+//        args.append("-d utf-8");
         args.append(fileInfo.filePath());
+        //args << ">";
+        //args.append(QString("%1.txt").arg(p_data->url().toString().section("=",1)));
         QProcess runner;
         runner.setReadChannel(QProcess::StandardOutput);
-        runner.start("catdoc", args);
+//        runner.start("catdoc", args);
+        runner.start("antiword", args);
         runner.waitForFinished(15000); //15 sec
         QByteArray output = runner.readAllStandardOutput();
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Output " << output.left(20);
+        QByteArray err = runner.readAllStandardError();
+        if (err.isEmpty())
+        {
+            QString info = findProviding(output);
+            //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
+            QVariantMap db_data;
+            db_data.insert("info", info);
+            db_data.insert("url", p_data->url().toString());
+            db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
+            m_db->writeDoc(db_data);
+            //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Output " << output.left(50);
+        }
+        else
+        {
+            valid = FALSE;
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Error" << err;
+        }
     }
-    file.remove();
+    //file.remove();
+}
+
+QString TP_zakazrf_doc::findProviding(const QByteArray &source)
+{
+   QTextStream stream(source);
+   QString sourceStr(stream.readAll());
+   sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+   QString found;
+   QRegExp regexp(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
+   for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
+   {
+       QString tmp = regexp.capturedTexts().at(0);
+       if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive))
+       {
+           found.append(tmp + "\n");
+       }
+   }
+
+   return found;
 }
 
 //QMap<QString,QVariant> TP_zakazrf_doc::parse(CDataStructure* _data)

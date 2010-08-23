@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Reduction(
-    id MEDIUMINT UNSIGNED NOT NULL,
+    id MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     string_number CHAR(20) NOT NULL,
     id_customer MEDIUMINT UNSIGNED NOT NULL,
     date_registration DATETIME,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Lot (
 );
 
 CREATE TABLE IF NOT EXISTS Custoner (
-    id_customer MEDIUMINT UNSIGNED NOT NULL,
+    id_customer MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     adress VARCHAR(400),
     post_adress VARCHAR(400),
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS Custoner (
 );
 
 CREATE TABLE IF NOT EXISTS Participant (
-    id_participant MEDIUMINT UNSIGNED NOT NULL,
+    id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     inn CHAR(30),
     kpp CHAR(30),
@@ -40,7 +40,18 @@ CREATE TABLE IF NOT EXISTS Participant (
 );
 
 CREATE TABLE IF NOT EXISTS Status (
-    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
     status CHAR(30),
     PRIMARY KEY (id_status)
+);
+
+CREATE TABLE IF NOT EXISTS DocFile (
+    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    name VARCHAR(256),
+    url VARCHAR(300),
+    uploaded DATETIME,
+    last_parsed DATETIME,
+    info VARCHAR(5000),
+    PRIMARY KEY (id_file)
 );

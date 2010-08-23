@@ -64,13 +64,14 @@ void TParseReceiver::onParseFinished()
 
 void TParseReceiver::onParseDocFinished()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
     m_doneDocs = TRUE;
     if (m_done && m_doneDocs)
     {
         m_doneDocs = FALSE;
         m_done = FALSE;
-        emit finishedParse(0, m_data->url().toString().toUtf8());
+        const QByteArray ba = m_data->url().toString().toUtf8();
+        emit finishedParse(0, ba);
     }
 }
 

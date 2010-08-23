@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QStringList>
+#include <QDateTime>
 
 DBmanager::DBmanager(): m_dbName("zakazrf"), m_dbHost("localhost"), m_dbUser("project"), m_dbPass("project_pass")
 // DBmanager::DBmanager(const QString &db_name):m_dbName(db_name)
@@ -57,6 +58,30 @@ bool DBmanager::write(QVariantMap &data)
 //        }
     }
     return ok;
+}
+
+bool DBmanager::writeDoc(QVariantMap &data)
+{
+    bool ok = false;
+    if (m_status)
+    {
+        QSqlQuery query(m_db);
+        query.prepare("INSERT INTO DocFile VALUES (:id_file, :id_reduction, :name, :url, :uploaded, :last_parsed, :info);");
+        query.bindValue(":id_file", QVariant());
+        query.bindValue(":id_reduction", data.value("id_reduction"));
+        query.bindValue(":name", QVariant(""));
+        query.bindValue(":url", data.value("url"));
+        query.bindValue(":uploaded", QVariant());
+        query.bindValue(":last_parsed", QVariant(QDateTime::currentDateTime()));
+        query.bindValue(":info", data.value("info"));
+        ok = query.exec();
+        if (!ok)
+        {
+            qDebug() << "===> qury error is: " << query.lastError().text();
+        }
+    }
+
+    return true;
 }
 
 bool DBmanager::read()

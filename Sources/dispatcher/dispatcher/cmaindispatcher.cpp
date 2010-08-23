@@ -1,6 +1,7 @@
 #include "cmaindispatcher.h"
 #include <QDebug>
 #include <QPluginLoader>
+#include <QDateTime>
 
 CMainDispatcher::CMainDispatcher(QObject *parent) :
     QObject(parent)
@@ -126,6 +127,7 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 void CMainDispatcher :: onParceFinished(int error, QUrl url)
 {
     qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
+    qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "##############################" << QDateTime::currentDateTime();
     CRecieveTask* task=NULL;
     for(int i=0; i<m_activeTasksList.count(); i++)
     {

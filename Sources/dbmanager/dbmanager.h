@@ -14,6 +14,7 @@ public:
     bool init();
     bool is_open();
     bool write(QVariantMap &data);
+    bool writeDoc(QVariantMap &data);
     bool read();
 
 private:

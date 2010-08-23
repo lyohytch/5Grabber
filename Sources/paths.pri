@@ -20,3 +20,7 @@ GRB_DSP_MODULES_PATH=dispatcher/recieve_modules
 #parser paths
 GRB_PARSER_PATH=parser/parser
 GRB_PARSER_MODULE_PATH=parser/modules
+
+#parser paths
+GRB_DBMANAGER_PATH=dbmanager
+

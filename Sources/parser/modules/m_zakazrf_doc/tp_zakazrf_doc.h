@@ -3,6 +3,7 @@
 
 #include <tp_task.h>
 #include <cdatastructure.h>
+#include "dbmanager.h"
 
 #include <QObject>
 #include <QStringList>
@@ -26,11 +27,13 @@ private:
 //    QMap<QString,QVariant> parse_html_auk(const QString& _html);
 //    QMap<QString,QVariant> parse_html_lot(const QString& _html);
 //    QString html_to_txt(const QString& _html);
-    void docToTxt(CDataStructure* p_data);
+    void docToXml(CDataStructure* p_data);
+    QString findProviding(const QByteArray &source);
     qint64 m_threadCounter;
     int m_maxThreads;
     CDataStructure *m_data;
     CParseSignaller* m_signaller;
+    DBmanager* m_db;
 };
 
 //class ParseDocXls : public QObject, public TP_Task

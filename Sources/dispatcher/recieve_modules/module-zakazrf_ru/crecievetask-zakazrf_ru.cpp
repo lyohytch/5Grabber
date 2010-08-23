@@ -2,6 +2,10 @@
 #include <QDebug>
 #include <QFile>
 #include <QThreadPool>
+#include <QDateTime>
+
+//#undef RUN_ALL_TASKS
+#define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 {
@@ -64,8 +68,14 @@ bool CRecieveTask_zakazrf_ru::run()
     CDataStructure* tmpdata2 = new CDataStructure(testUrl2);
     tmpdata2->setType(getUrlDataType(testUrl2));
     tmpdata2->setRoot();
-    m_dataStructures.insert(testUrl, tmpdata2);
+    m_dataStructures.insert(testUrl2, tmpdata2);
     m_activeDataStructures.push_back(tmpdata2);
+    QUrl testUrl3("http://zakazrf.ru/ViewReduction.aspx?id=5319");
+    CDataStructure* tmpdata3 = new CDataStructure(testUrl3);
+    tmpdata3->setType(getUrlDataType(testUrl3));
+    tmpdata3->setRoot();
+    m_dataStructures.insert(testUrl3, tmpdata3);
+    m_activeDataStructures.push_back(tmpdata3);
 #else
 for(int i=1; i<10000; i++)
 {
@@ -230,7 +240,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         child->setType(getUrlDataType(newUrl));
         data->appendChild(child);        
         m_dataStructures.insert(data->root()->url(), child);
-        m_activeDataStructures.push_back(child);
+        m_activeDataStructures.push_front(child);
     }
     data->done();
     if(data->root()->isFinished())
@@ -300,7 +310,7 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
 
     if(m_dataStructures.count()<=0)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Amazing! We just finished task!";
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Amazing! We just finished task!" << QDateTime::currentDateTime();
         m_signaller->onRecieveFinished(this);
     }
 }
