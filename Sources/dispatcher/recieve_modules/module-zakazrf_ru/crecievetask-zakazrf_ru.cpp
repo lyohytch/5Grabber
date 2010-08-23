@@ -4,8 +4,8 @@
 #include <QThreadPool>
 #include <QDateTime>
 
-//#undef RUN_ALL_TASKS
-#define RUN_ALL_TASKS
+#undef RUN_ALL_TASKS
+//#define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 {
@@ -58,6 +58,7 @@ bool CRecieveTask_zakazrf_ru::run()
 
     connect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
 #ifndef RUN_ALL_TASKS
+    qDebug()<<__FILE__<<"("<<__LINE__<<")"<<" undef RUN_ALL_TASKS";
     QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=4781");
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     tmpdata->setType(getUrlDataType(testUrl));
