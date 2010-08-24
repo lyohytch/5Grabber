@@ -10,6 +10,8 @@
 #include <QVariant>
 #include <QtPlugin>
 
+#include "dbmanager.h"
+
 class TP_zakazrf : public QObject, public TP_Task
 {
     Q_OBJECT
@@ -27,11 +29,13 @@ public:
 private:
     QMap<QString,QVariant> parse_html_auk(const QString& _html);
     QMap<QString,QVariant> parse_html_lot(const QString& _html);
-    QString html_to_txt(const QString& _html);
+    void html_to_db(const CDataStructure *);
+    QString findProviding(const QByteArray &source);
     qint64 m_threadCounter;
     int m_maxThreads;
     CDataStructure *m_data;
     CParseSignaller* m_signaller;
+    DBmanager* m_db;
 };
 
 #endif

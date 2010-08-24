@@ -2,25 +2,28 @@
 
 #include <QDebug>
 #include <QByteArray>
-#include <QtWebKit/QWebPage>
-#include <QtWebKit/QWebFrame>
-#include <QtWebKit/QWebElement>
+//#include <QtWebKit/QWebPage>
+//#include <QtWebKit/QWebFrame>
+//#include <QtWebKit/QWebElement>
 
 TP_zakazrf::TP_zakazrf()
 {
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
+    m_db = new DBmanager();
 }
 
 TP_zakazrf::~TP_zakazrf()
 {
     delete m_signaller;
+    delete m_db;
 }
 
 bool TP_zakazrf::init(int maxThreads, CDataStructure *data)
 {
     m_maxThreads = maxThreads;
     m_data = data;
+    m_db->init();
     return TRUE;
 }
 
@@ -67,10 +70,18 @@ CParseSignaller* TP_zakazrf::signaller()
 bool TP_zakazrf::run()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!";
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< parse_html_lot(QString(""));
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< parse_html_auk(QString(""));
+
+    for (int i = 0; i < m_data->childscCount(); i++)
+    {
+        if (m_data->childAt(i)->type() == CDataStructure::eDataTypePage)
+        {
+            html_to_db(m_data->childAt(i));
+        }
+    }
+
     m_signaller->onParseFinished();
     return TRUE;
+
 }
 
 QMap<QString,QVariant> TP_zakazrf::parse_html_auk(const QString& _html)
@@ -90,13 +101,48 @@ QMap<QString,QVariant> TP_zakazrf::parse_html_lot(const QString& _html)
     return result;
 }
 
-QString TP_zakazrf::html_to_txt(const QString& _html)
+void  TP_zakazrf::html_to_db(const CDataStructure *m_data)
 {
-    QWebPage page(this);
-    QWebFrame *frame = page.mainFrame();
-    frame->setHtml(_html);
-    QWebElement document = frame->documentElement();
-    return document.toPlainText();
+    // TODO initial variant of parser
+    QString info = findProviding(m_data->read());
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
+    QVariantMap db_data;
+    db_data.insert("info", info);
+    db_data.insert("url", m_data->url().toString());
+    //db_data.insert("id_reduction", m_data->root()->url().toString().section("=", 1));
+    m_db->write(db_data);
+
+}
+
+QString TP_zakazrf::findProviding(const QByteArray &source)
+{
+    QTextStream stream(source);
+    QString sourceStr(stream.readAll());
+    sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+    QString found;
+    bool isFound = false;
+    QRegExp regexp(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
+    for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
+    {
+        QString tmp = regexp.capturedTexts().at(0);
+        /*
+        //If you found "obespechenie" then you should read next word
+        if (isFound)
+        {
+            isFound = false;
+            found.append(tmp + "\n");
+            continue;
+        }
+        */
+        qDebug()<<__LINE__<<Q_FUNC_INFO<<" xx "<<tmp;
+        if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive))
+        {
+            isFound = true;
+            found.append(tmp + " ");
+        }
+    }
+
+    return found;
 }
 
 Q_EXPORT_PLUGIN2(TP_zakazrf, TP_zakazrf);
