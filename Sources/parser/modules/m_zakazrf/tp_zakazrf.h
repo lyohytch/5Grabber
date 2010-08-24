@@ -27,15 +27,17 @@ public:
     virtual CParseSignaller* signaller();
 
 private:
-    QMap<QString,QVariant> parse_html_auk(const QString& _html);
-    QMap<QString,QVariant> parse_html_lot(const QString& _html);
-    void html_to_db(const CDataStructure *);
-    QString findProviding(const QByteArray &source);
+    void html_to_db(CDataStructure *, const QStringList &m_ids, bool isLot); //хтмл в стринглист
+    QStringList findProviding(const QByteArray &source, const QStringList &);
     qint64 m_threadCounter;
     int m_maxThreads;
     CDataStructure *m_data;
     CParseSignaller* m_signaller;
     DBmanager* m_db;
+    QStringList m_ids_Auc;
+    QStringList m_ids_Lot;
+    QString extractFromSpanTag(const QString & tagTxt);
+
 };
 
 #endif

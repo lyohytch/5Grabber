@@ -2,15 +2,55 @@
 
 #include <QDebug>
 #include <QByteArray>
-//#include <QtWebKit/QWebPage>
-//#include <QtWebKit/QWebFrame>
-//#include <QtWebKit/QWebElement>
+
+//Reduction
+enum
+{
+    NumberLabel,
+    PublicationDateLabel,
+    CustomerLabel,
+    CustomerPlaceLabel,
+    CustomerPostAddressLabel,
+    CustomerEMailLabel,
+    CustomerContactPhoneLabel,
+    noId
+};
+
+//Lot
+
+enum
+{
+    Content_NumberLabel,
+    Content_StageLabel,
+    Content_SubjectLabel,
+    Content_MaintenanceSumLabel,
+    Content_FinalPriceLabel,
+    Content_TradeBeginDateLabel
+};
 
 TP_zakazrf::TP_zakazrf()
 {
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
     m_db = new DBmanager();
+    //Reduction
+    m_ids_Auc<<"ctl00_Content_ReductionViewForm_NumberLabel"  //Номер аукциона
+             <<"ctl00_Content_ReductionViewForm_PublicationDateLabel" //Дата регистрации аукциона
+    //Customer
+             <<"ctl00_Content_ReductionViewForm_CustomerLabel"  //Имя заказчика
+             <<"ctl00_Content_ReductionViewForm_CustomerPlaceLabel"  //Адрес заказчика
+             <<"ctl00_Content_ReductionViewForm_CustomerPostAddressLabel"  //Почтовый адрес заказчика
+             <<"ctl00_Content_ReductionViewForm_CustomerEMailLabel"  //Электронный адрес заказчика
+             <<"ctl00_Content_ReductionViewForm_CustomerContactPhoneLabel"; //Контактный телефон
+    //Lot
+    m_ids_Lot<<"ctl00_Content_NumberLabel" //Номер лота
+             <<"ctl00_Content_StageLabel" // Статус
+             <<"ctl00_Content_SubjectLabel" //Предмет
+             <<"ctl00_Content_MaintenanceSumLabel" //Размер обеспечения
+             <<"ctl00_Content_FinalPriceLabel" //Лучшая цена
+             <<"ctl00_Content_TradeBeginDateLabel"; // Дата проведения торгов в электр форме
+
+
 }
 
 TP_zakazrf::~TP_zakazrf()
@@ -32,50 +72,19 @@ CParseSignaller* TP_zakazrf::signaller()
     return m_signaller;
 }
 
-//QMap<QString,QVariant> TP_zakazrf::parse(CDataStructure* _data)
-//{
-//    QMap<QString,QVariant> result;
-//    QString sdata(_data->read());
-//    result = parse_html_auk(sdata);
-//
-//    for(int i = 0;  i < _data->childscCount(); i++)
-//    {
-//        CDataStructure* child= _data->childAt(i);
-//        if(!child)
-//        {
-//            qCritical()<<"Fatal!!!! Childs is null";
-//            continue;
-//        }
-//
-//        switch(child->type())
-//        {
-//            case 0:
-//            {
-//                QString sdata(child->read());
-//                result.unite(parse_html_lot(sdata));
-//                break;
-//            }
-//            case 1:
-//            {
-//                break;
-//            }
-//            default:
-//                break;
-//        }
-//    }
-//
-//    return result;
-//}
-
 bool TP_zakazrf::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!";
-
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!" << m_data->childscCount();
+    //QStringList addToDBList;
+    //Парсим аукцион
+    html_to_db(m_data->root(), m_ids_Auc, false);
+    //Парсим лоты
     for (int i = 0; i < m_data->childscCount(); i++)
     {
         if (m_data->childAt(i)->type() == CDataStructure::eDataTypePage)
         {
-            html_to_db(m_data->childAt(i));
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<m_data->childAt(i)->url().toString();
+            html_to_db(m_data->childAt(i), m_ids_Lot, true);
         }
     }
 
@@ -84,65 +93,118 @@ bool TP_zakazrf::run()
 
 }
 
-QMap<QString,QVariant> TP_zakazrf::parse_html_auk(const QString& _html)
-{
-    //QString html_txt = html_to_txt(_html);
-    QMap<QString,QVariant> result;
-    result.insert("text1","aaa");
-    return result;
-
-}
-
-QMap<QString,QVariant> TP_zakazrf::parse_html_lot(const QString& _html)
-{
-    //QString html_txt = html_to_txt(_html);
-    QMap<QString,QVariant> result;
-    result.insert("text2","bbb");
-    return result;
-}
-
-void  TP_zakazrf::html_to_db(const CDataStructure *m_data)
+void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, bool isLot)
 {
     // TODO initial variant of parser
-    QString info = findProviding(m_data->read());
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
+    QStringList info = findProviding(p_data->read(),m_ids);
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info<<"\n"<<isLot;
     QVariantMap db_data;
-    db_data.insert("info", info);
-    db_data.insert("url", m_data->url().toString());
-    //db_data.insert("id_reduction", m_data->root()->url().toString().section("=", 1));
-    m_db->write(db_data);
 
+    if(isLot)
+    {
+        //Write in Status table
+        db_data.clear();
+        db_data.insert("table","Status");
+        db_data.insert("id_status", (p_data->url().toString()).section("=", 1));
+        db_data.insert("status", info[Content_StageLabel]);
+        m_db->write(db_data);
+
+        //Write in Lot table
+        db_data.clear();
+        db_data.insert("table","LOT");
+        db_data.insert("num_lot",info[Content_NumberLabel]);
+        db_data.insert("id_reduction",p_data->root()->url().toString().section("=",1));
+        db_data.insert("status", (p_data->url().toString()).section("=", 1));
+        db_data.insert("subject", info[Content_SubjectLabel]);
+        db_data.insert("id_contract", (p_data->url().toString()).section("=", 1));
+        db_data.insert("obespechenie", info[Content_MaintenanceSumLabel]);
+        db_data.insert("start_price", info[Content_FinalPriceLabel]);
+        db_data.insert("best_price", info[Content_FinalPriceLabel]);
+        db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
+        db_data.insert("protocol","");
+        m_db->write(db_data);
+    }
+    //Customer and Reduction tables
+    else
+    {
+        //Write in Customer Table
+        db_data.clear();
+        db_data.insert("table","Customer");
+        db_data.insert("id_customer", (p_data->url().toString()).section("=", 1));
+        db_data.insert("name", info[CustomerLabel]);
+        db_data.insert("adress",info[CustomerPlaceLabel]);
+        db_data.insert("post_adress", info[CustomerPostAddressLabel]);
+        db_data.insert("email", info[CustomerEMailLabel]);
+        db_data.insert("telephone", info[CustomerContactPhoneLabel]);
+        m_db->write(db_data);
+
+        //Write in Reduction Table
+        db_data.clear();
+        db_data.insert("table", "Reduction");
+        db_data.insert("id_reduction", (p_data->url().toString()).section("=", 1));
+        db_data.insert("string_number", info[NumberLabel]);
+        db_data.insert("id_customer", (p_data->url().toString()).section("=", 1));
+        db_data.insert("date_registration", info[PublicationDateLabel]);
+        m_db->write(db_data);
+    }
 }
 
-QString TP_zakazrf::findProviding(const QByteArray &source)
+QStringList TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)
 {
     QTextStream stream(source);
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
-    QString found;
-    bool isFound = false;
-    QRegExp regexp(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
-    for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
+    QStringList appToDB;
+
+    //QRegExp regexp(QString("<[^<]*>[^<]*</[^<]*>"), Qt::CaseInsensitive);
+    //for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
+    //{
+    //    QString tmp = regexp.capturedTexts().at(0);
+    //    foreach(QString id,a_ids)
+    //    {
+    //       if (tmp.contains(id,Qt::CaseInsensitive))
+    //       {
+    //            appToDB.append(extractFromSpanTag(tmp));
+    //       }
+    //    }
+    //}
+    //Ищем каждый айдишник в файлике
+    foreach(QString id, a_ids)
     {
-        QString tmp = regexp.capturedTexts().at(0);
-        /*
-        //If you found "obespechenie" then you should read next word
-        if (isFound)
+        QString retStr;
+        int pos = sourceStr.lastIndexOf(id);
+        while(sourceStr[pos++] != '>' && pos < sourceStr.length());
+        while(sourceStr[pos] != '<' && pos < sourceStr.length())
         {
-            isFound = false;
-            found.append(tmp + "\n");
-            continue;
+            retStr += sourceStr[pos];
+            pos++;
         }
-        */
-        qDebug()<<__LINE__<<Q_FUNC_INFO<<" xx "<<tmp;
-        if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive))
+        if (retStr.isEmpty())
         {
-            isFound = true;
-            found.append(tmp + " ");
+            qDebug()<<Q_FUNC_INFO<<" Template not found";            
+        }
+        else
+        {
+            appToDB.append(retStr);
         }
     }
 
-    return found;
+    return appToDB;
+
+}
+
+QString TP_zakazrf::extractFromSpanTag(const QString & tagTxt)
+{
+    QString retStr;
+    int i = 0;
+    while(tagTxt[i++] != '>' && i < tagTxt.length());
+    while(tagTxt[i] != '<' && i < tagTxt.length())
+    {
+       retStr += tagTxt[i];
+       i++;
+    }
+
+    return retStr;
 }
 
 Q_EXPORT_PLUGIN2(TP_zakazrf, TP_zakazrf);
