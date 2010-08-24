@@ -16,7 +16,11 @@ CParserHandler::~CParserHandler()
 
 bool CParserHandler::init()
 {
-    return connect(m_parcer, SIGNAL(finishedParse(int,const QByteArray)), this, SLOT(onParceFinished(int,const QByteArray)),Qt::QueuedConnection);
+    if (m_parcer->init())
+    {
+        return connect(m_parcer, SIGNAL(finishedParse(int,const QByteArray)), this, SLOT(onParceFinished(int,const QByteArray)),Qt::QueuedConnection);
+    }
+    return FALSE;
 }
 
 void CParserHandler::startParsing(CDataStructure *data, const QUrl &url)

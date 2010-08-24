@@ -4,6 +4,7 @@
 #include <cdatastructure.h>
 #include <tparsethread.h>
 #include "tp_task.h"
+#include "cparsedispatcher.h"
 
 #include <QObject>
 #include <QThread>
@@ -27,24 +28,28 @@ class TParseReceiver: public QObject
     Q_OBJECT
     
 public:
-    TParseReceiver():m_id(0), m_done(FALSE), m_doneDocs(FALSE){}
+    TParseReceiver():/*m_id(0),*/ m_done(FALSE), m_doneDocs(FALSE){}
     bool parse(CDataStructure* _data,const QByteArray& _url);
+    bool init();
 
 signals:
     void finishedParse(int _error, const QByteArray _url);
+    void addToQueue();
 
 public slots:
-    void onParseFinished();
-    void onParseDocFinished();
+//    void onParseFinished();
+//    void onParseDocFinished();
+    void onQueueMemberParsed(CDataStructure* p_data);
 //    void onThreadFinished();
 //    void onTimeOut();
 //    void end_parsing(int _id, int _error,const QByteArray& _url,const QMap<QString,QVariant>& _data);
 
 private:
-    int m_id;
+//    int m_id;
+    CParseDispatcher* m_dispatcher;
     bool m_done;
     bool m_doneDocs;
-    CDataStructure* m_data;
+//    CDataStructure* m_data;
 //    QMap<int,TParseThread*> m_threads;
     //QList<TParseThread*> m_threads;
     QList<TP_Task*> m_parseTasksList;
