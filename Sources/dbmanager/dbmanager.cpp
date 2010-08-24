@@ -25,7 +25,10 @@ bool DBmanager::init()
 {
     m_status = m_db.open();
     qDebug() << "===> db open is " << m_status;
-    qDebug() << m_db.tables(QSql::Tables);
+    if(m_status)
+    {
+        qDebug() << m_db.tables(QSql::Tables);
+    }
     return m_status;
 }
 
