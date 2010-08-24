@@ -26,6 +26,7 @@ public:
     virtual QString taskHost() const;
 
 private:
+    QStringList findLinks(QList<QRegExp>& regexps, const QByteArray& data);
     QUrl createFullUrlFromRule(QUrl url,QVariant rule);
     int getUrlDataType(QUrl &url);
     QList<CReciveThread*> m_threads;

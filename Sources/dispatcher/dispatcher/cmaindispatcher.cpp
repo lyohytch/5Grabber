@@ -87,7 +87,6 @@ void CMainDispatcher::startRecieveTasks()
 
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
 
-        //replace it!
         qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH<<"\nlibpath :"<<QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"));
         QPluginLoader loader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
         if(!loader.load())

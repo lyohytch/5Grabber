@@ -4,7 +4,6 @@
 #include <QThreadPool>
 #include <QDateTime>
 
-//#undef RUN_ALL_TASKS
 #define RUN_ALL_TASKS
 
 CRecieveTask_sberbank_ast_ru::CRecieveTask_sberbank_ast_ru()
@@ -188,7 +187,7 @@ void CRecieveTask_sberbank_ast_ru::onDataReady(int threadId/*, QByteArray data*/
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<threadId;
 
     QList<QRegExp> regexps;
-    regexps.push_back(QRegExp("ViewDocument.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
+    regexps.push_back(QRegExp("docid\\&gt\\;[0-9]{1,}", Qt::CaseSensitive));
 //    regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
 
     CDataStructure* data=NULL;
@@ -202,6 +201,8 @@ void CRecieveTask_sberbank_ast_ru::onDataReady(int threadId/*, QByteArray data*/
             break;
         }
     }
+
+
 
     if(!data)
     {
@@ -221,13 +222,13 @@ void CRecieveTask_sberbank_ast_ru::onDataReady(int threadId/*, QByteArray data*/
         return;
     }
 
-    QStringList childLinks=data->findLinks(regexps);
+    QStringList childLinks=findLinks(regexps, data->read());
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Start processing child links: "<<childLinks;
 
     CDataStructure* child;
     for(int i=0; i<childLinks.count(); i++)
     {
-        QUrl newUrl=QUrl(QString("%1://%2/%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
+        QUrl newUrl=QUrl(QString("%1://%2/ViewDocument.aspx?id=%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Full child url:"<<newUrl;
         if(data->root()->contains(newUrl))
         {
@@ -247,6 +248,7 @@ void CRecieveTask_sberbank_ast_ru::onDataReady(int threadId/*, QByteArray data*/
     {
         m_signaller->onDataReady(data->root());
     }
+    regexps.clear();
     m_threads.at(threadNum)->exit(0);
 }
 
@@ -315,4 +317,33 @@ void CRecieveTask_sberbank_ast_ru::removeData(QUrl root)
     }
 }
 
+QStringList CRecieveTask_sberbank_ast_ru::findLinks(QList<QRegExp> &regexps, const QByteArray &data)
+{
+    if(data.isEmpty())
+    {
+        return QStringList();
+    }
+    QStringList foundLinks;
+
+    QString str(data);
+    for(int i=0;i<regexps.count();i++)
+    {
+        QRegExp regexp=regexps.value(i);
+        for(int pos=regexp.indexIn(str); pos!=-1; pos=regexp.indexIn(str,pos+1))
+        {
+            QString tmp1=regexp.capturedTexts().at(0);
+            tmp1.remove(QRegExp("[a-zA-Z;&]"));
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<tmp1;
+            if(foundLinks.contains(tmp1))
+            {
+                qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+                continue;
+            }
+
+            foundLinks.append(tmp1);
+        }
+    }
+
+    return foundLinks;
+}
 Q_EXPORT_PLUGIN2(recievetask_4_sberbank_ast_ru, CRecieveTask_sberbank_ast_ru)

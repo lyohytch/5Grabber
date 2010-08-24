@@ -4,7 +4,6 @@
 #include <QThreadPool>
 #include <QDateTime>
 
-//#undef RUN_ALL_TASKS
 #define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
@@ -221,7 +220,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         return;
     }
 
-    QStringList childLinks=data->findLinks(regexps);
+    QStringList childLinks=findLinks(regexps, data->read());
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Start processing child links: "<<childLinks;
 
     CDataStructure* child;
@@ -313,6 +312,40 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Amazing! We just finished task!" << QDateTime::currentDateTime();
         m_signaller->onRecieveFinished(this);
     }
+}
+
+QStringList CRecieveTask_zakazrf_ru::findLinks(QList<QRegExp> &regexps, const QByteArray &data)
+{
+    if(data.isEmpty())
+    {
+        return QStringList();
+    }
+    QStringList foundLinks;
+
+    QString str(data);
+    for(int i=0;i<regexps.count();i++)
+    {
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+
+        QRegExp regexp=regexps.value(i);
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+        for(int pos=regexp.indexIn(str); pos!=-1; pos=regexp.indexIn(str,pos+1))
+        {
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+            if(foundLinks.contains(regexp.capturedTexts().at(0)))
+            {
+                qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+                continue;
+            }
+
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+            foundLinks.append(regexp.capturedTexts().at(0));
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+        }
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    }
+
+    return foundLinks;
 }
 
 Q_EXPORT_PLUGIN2(recievetask_4_zakazrf_ru, CRecieveTask_zakazrf_ru)

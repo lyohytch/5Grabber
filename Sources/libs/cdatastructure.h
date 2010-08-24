@@ -35,7 +35,7 @@ public:
     void flush();
 
     QUrl url() const {return m_url;}
-    QStringList findLinks(QList<QRegExp>& regexps);
+
     bool isFinished();
     bool isDone() {return m_isDone;}
     void done() {m_isDone=true;}
