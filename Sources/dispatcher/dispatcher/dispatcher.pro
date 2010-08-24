@@ -9,6 +9,7 @@ QT += xml
 QT += xmlpatterns
 QT += webkit
 QT += dbus
+QT += sql
 
 
 CONFIG += console
