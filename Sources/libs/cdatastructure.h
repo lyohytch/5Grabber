@@ -16,7 +16,8 @@ public:
         eDataTypeAuctionPage=0,
         eDataTypeLotPage=1,
         eDataTypeDocument=2,
-        eDataTypeLotStatisticPage=3
+        eDataTypeLotStatisticPage=3,
+        eDataEventPage=4
     };
 
     CDataStructure(QUrl url, QObject *parent = 0);
