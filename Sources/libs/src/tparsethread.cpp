@@ -14,7 +14,7 @@ TParseThread::TParseThread()
     {
         for (int i = 0; i < m_data->childscCount(); i++)
         {
-            if (m_data->childAt(i)->type() == CDataStructure::eDataTypePage)
+            if (m_data->childAt(i)->type() == CDataStructure::eDataTypeAuctionPage)
             {
 //                QFile file(QString("%1.txt").arg(m_data->childAt(i)->url().toString().section("=",1)));
 //                QFileInfo fileInfo(file);
