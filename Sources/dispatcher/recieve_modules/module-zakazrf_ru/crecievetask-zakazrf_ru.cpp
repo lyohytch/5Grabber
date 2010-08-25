@@ -188,8 +188,6 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 
     QList<QRegExp> regexps;
     regexps.push_back(QRegExp("ViewLot.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
-    regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
-    regexps.push_back(QRegExp("ViewLotStatisticPre.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
 
     CDataStructure* data=NULL;
     int threadNum=-1;
@@ -203,12 +201,19 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         }
     }
 
+    if(data->type()==CDataStructure::eDataTypeLotPage)
+    {
+        regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
+        regexps.push_back(QRegExp("ViewLotStatisticPre.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
+    }
+
     if(!data)
     {
         qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"FATAL ERROR"<<"Thread with id:"<<threadId<<"not found";
         m_threads.at(threadNum)->exit(0);
         return;
     }
+
 
     if(data->type()==CDataStructure::eDataTypeDocument)
     {
