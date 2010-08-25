@@ -261,12 +261,12 @@ QUrl CRecieveTask_sberbank_ast_ru::createFullUrlFromRule(QUrl url, QVariant rule
 
 int CRecieveTask_sberbank_ast_ru::getUrlDataType(QUrl &url)
 {
-    if(url.toString().contains("DFile.ashx"))
+    if(url.toString().contains("ViewDocument.ashx"))
     {
-        return CDataStructure::eDataTypeDocument;
+        return CDataStructure::eDataEventPage;
     }
 
-    return CDataStructure::eDataTypePage;
+    return CDataStructure::eDataTypeAuctionPage;
 }
 
 void CRecieveTask_sberbank_ast_ru::removeData(QUrl root)
