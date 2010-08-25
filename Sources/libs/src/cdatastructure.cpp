@@ -1,5 +1,5 @@
 #include "cdatastructure.h"
-#include <QDebug>
+#include <constants.h>
 
 CDataStructure::CDataStructure(QUrl url, QObject *parent) :
     QObject(parent)
@@ -28,7 +28,7 @@ CDataStructure* CDataStructure::childAt(int i)
 
 void CDataStructure::appendChild(CDataStructure* child)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Append child"<<child->url()<<" to "<<url();
+    qDebug()<<"Append child"<<child->url()<<" to "<<url();
     m_childs.push_back(child);
 }
 
@@ -61,7 +61,7 @@ bool CDataStructure::isFinished()
 {
     if(!m_isDone)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Hi i'm stupied link and i'm not done "<<url();
+        qDebug()<<"Hi i'm stupied link and i'm not done for now (it is joke message don't see for them') "<<url();
         return false;
     }
 

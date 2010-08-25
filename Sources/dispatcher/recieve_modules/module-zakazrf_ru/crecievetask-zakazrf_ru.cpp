@@ -1,8 +1,10 @@
 #include "crecievetask-zakazrf_ru.h"
-#include <QDebug>
+
 #include <QFile>
 #include <QThreadPool>
 #include <QDateTime>
+
+#include <constants.h>
 
 #define RUN_ALL_TASKS
 
@@ -34,6 +36,7 @@ CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
 
 bool CRecieveTask_zakazrf_ru::init(int maxThreads, const siterules_ti &rule)
 {
+    qDebug()<<"Max threads:"<<maxThreads;
     m_url=rule.key();
     m_rules=rule.value();
     m_maxThreads=maxThreads;
@@ -53,7 +56,7 @@ QString CRecieveTask_zakazrf_ru::taskHost() const
 
 bool CRecieveTask_zakazrf_ru::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    qDebug();
 
     connect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
 #ifndef RUN_ALL_TASKS
@@ -108,14 +111,14 @@ for(int i=2000; i<10000; i++)
 
 //    if(m_rules.count()>0)
 //    {
-//        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Thread pool is full. New Threads will be oppened afer finished one of runned";
+//        qDebug()<<"Thread pool is full. New Threads will be oppened afer finished one of runned";
 //    }
     return true;
 }
 
 void  CRecieveTask_zakazrf_ru::onThreadFinished()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    qDebug();
     QMutex m_mutex;
     m_mutex.lock();
 
@@ -125,7 +128,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
         CReciveThread* thread=(*threadIter);
         if(!thread)
         {
-            qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found NULL pointer to thread\n remove it";
+            qCritical()<<"Found NULL pointer to thread\n remove it";
             threadIter=m_threads.erase(threadIter);
             continue;
         }
@@ -139,7 +142,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
         threadIter++;
     }
 
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Active data structures amount:"<<m_activeDataStructures.count();
+    qDebug()<<"Active data structures amount:"<<m_activeDataStructures.count();
 
     QList<CDataStructure*>::iterator activeDataStructuresIter;
     for(activeDataStructuresIter = m_activeDataStructures.begin(); activeDataStructuresIter != m_activeDataStructures.end();)
@@ -147,21 +150,21 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
         CDataStructure* data=(*activeDataStructuresIter);
         if(!data)
         {
-            qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found NULL pointer to data structure in active structures\n remove it";
+            qCritical()<<"Found NULL pointer to data structure in active structures\n remove it";
             activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
             continue;
         }
 
         if(data->isRoot() && data->isFinished())
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found finished data structure in task list\n remove it";
+            qDebug()<<"Found finished data structure in task list\n remove it";
             activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
             continue;
         }
 
         if(data->isDone())
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found done data structure in task list\n remove it";
+            qDebug()<<"Found done data structure in task list\n remove it";
             activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
             continue;
         }
@@ -184,7 +187,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
 
 void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<threadId;
+    qDebug()<<threadId;
 
     QList<QRegExp> regexps;
     regexps.push_back(QRegExp("ViewLot.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
@@ -209,7 +212,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 
     if(!data)
     {
-        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"FATAL ERROR"<<"Thread with id:"<<threadId<<"not found";
+        qCritical()<<"Thread with id:"<<threadId<<"not found";
         m_threads.at(threadNum)->exit(0);
         return;
     }
@@ -227,16 +230,16 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
     }
 
     QStringList childLinks=findLinks(regexps, data->read());
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Start processing child links: "<<childLinks;
+    qDebug()<<"Start processing child links: "<<childLinks;
 
     CDataStructure* child;
     for(int i=0; i<childLinks.count(); i++)
     {
         QUrl newUrl=QUrl(QString("%1://%2/%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Full child url:"<<newUrl;
+        qDebug()<<"Full child url:"<<newUrl;
         if(data->root()->contains(newUrl))
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Url already in structure: "<<newUrl;
+            qDebug()<<"Url already in structure: "<<newUrl;
             continue;
         }
 
@@ -284,7 +287,7 @@ int CRecieveTask_zakazrf_ru::getUrlDataType(QUrl &url)
 
 void CRecieveTask_zakazrf_ru::removeData(QUrl root)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<root;
+    qDebug()<<root;
 
     CDataStructure* rootData=NULL;
 
@@ -293,39 +296,10 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
     rootData=dataStructuresIter.value()->root();
     rootData->flush();
     m_dataStructures.remove(root);
-//    for(dataStructuresIter = m_dataStructures.begin(); dataStructuresIter != m_dataStructures.end();)
-//    {
-//        CDataStructure* data=dataStructuresIter.value();
-//        if(!data)
-//        {
-//            qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Found NULL pointer to data structure in active structures\n remove it";
-//            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
-//            continue;
-//        }
-
-//        if(data->isRoot())
-//        {
-//            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"We should remove root at last";
-//            rootData=data;
-//            dataStructuresIter++;
-//            continue;
-//        }
-
-//        if(data->root()->url()==root && !data->isRoot())
-//        {
-//            delete data;
-//            dataStructuresIter=m_dataStructures.erase(dataStructuresIter);
-//            continue;
-//        }
-//        dataStructuresIter++;
-//    }
-
-//    m_dataStructures.removeOne(rootData);
-//    delete rootData;
 
     if(m_dataStructures.count()<=0)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Amazing! We just finished task!" << QDateTime::currentDateTime();
+        qDebug()<<"Amazing! We just finished task!" << QDateTime::currentDateTime().toTime_t();
         m_signaller->onRecieveFinished(this);
     }
 }
@@ -341,24 +315,16 @@ QStringList CRecieveTask_zakazrf_ru::findLinks(QList<QRegExp> &regexps, const QB
     QString str(data);
     for(int i=0;i<regexps.count();i++)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-
         QRegExp regexp=regexps.value(i);
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
         for(int pos=regexp.indexIn(str); pos!=-1; pos=regexp.indexIn(str,pos+1))
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
             if(foundLinks.contains(regexp.capturedTexts().at(0)))
             {
-                qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
                 continue;
             }
 
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
             foundLinks.append(regexp.capturedTexts().at(0));
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
         }
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
     }
 
     return foundLinks;
