@@ -189,6 +189,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
     QList<QRegExp> regexps;
     regexps.push_back(QRegExp("ViewLot.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
     regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
+    regexps.push_back(QRegExp("ViewLotStatisticPre.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
 
     CDataStructure* data=NULL;
     int threadNum=-1;
@@ -263,7 +264,17 @@ int CRecieveTask_zakazrf_ru::getUrlDataType(QUrl &url)
         return CDataStructure::eDataTypeDocument;
     }
 
-    return CDataStructure::eDataTypePage;
+    if(url.toString().contains("ViewLot.aspx"))
+    {
+        return CDataStructure::eDataTypeLotPage;
+    }
+
+    if(url.toString().contains("ViewLotStatisticPre.aspx"))
+    {
+        return CDataStructure::eDataTypeLotStatisticPage;
+    }
+
+    return CDataStructure::eDataTypeAuctionPage;
 }
 
 void CRecieveTask_zakazrf_ru::removeData(QUrl root)

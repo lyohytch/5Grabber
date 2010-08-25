@@ -13,8 +13,10 @@ Q_OBJECT
 public:
     enum DataTypes
     {
-        eDataTypePage=0,
-        eDataTypeDocument=1
+        eDataTypeAuctionPage=0,
+        eDataTypeLotPage=1,
+        eDataTypeDocument=2,
+        eDataTypeLotStatisticPage=3
     };
 
     CDataStructure(QUrl url, QObject *parent = 0);
