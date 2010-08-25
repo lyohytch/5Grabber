@@ -4,29 +4,23 @@
 #include <QByteArray>
 
 //Reduction
-enum
-{
-    NumberLabel,
-    PublicationDateLabel,
-    CustomerLabel,
-    CustomerPlaceLabel,
-    CustomerPostAddressLabel,
-    CustomerEMailLabel,
-    CustomerContactPhoneLabel,
-    noId
-};
+const QString NumberLabel                 = "ctl00_Content_ReductionViewForm_NumberLabel";
+const QString PublicationDateLabel        = "ctl00_Content_ReductionViewForm_PublicationDateLabel";
+const QString CustomerLabel               = "ctl00_Content_ReductionViewForm_CustomerLabel";
+const QString CustomerPlaceLabel          = "ctl00_Content_ReductionViewForm_CustomerPlaceLabel";
+const QString CustomerPostAddressLabel    = "ctl00_Content_ReductionViewForm_CustomerPostAddressLabel";
+const QString CustomerEMailLabel          = "ctl00_Content_ReductionViewForm_CustomerEMailLabel";
+const QString CustomerContactPhoneLabel   = "ctl00_Content_ReductionViewForm_CustomerContactPhoneLabel";
 
 //Lot
 
-enum
-{
-    Content_NumberLabel,
-    Content_StageLabel,
-    Content_SubjectLabel,
-    Content_MaintenanceSumLabel,
-    Content_FinalPriceLabel,
-    Content_TradeBeginDateLabel
-};
+const QString Content_NumberLabel         = "ctl00_Content_NumberLabel";
+const QString Content_StageLabel          = "ctl00_Content_StageLabel";
+const QString Content_SubjectLabel        = "ctl00_Content_SubjectLabel";
+const QString Content_MaintenanceSumLabel = "ctl00_Content_MaintenanceSumLabel";
+const QString Content_FinalPriceLabel     = "ctl00_Content_FinalPriceLabel";
+const QString Content_TradeBeginDateLabel = "ctl00_Content_TradeBeginDateLabel";
+
 
 TP_zakazrf::TP_zakazrf()
 {
@@ -96,7 +90,7 @@ bool TP_zakazrf::run()
 void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, bool isLot)
 {
     // TODO initial variant of parser
-    QStringList info = findProviding(p_data->read(),m_ids);
+    QVariantMap info = findProviding(p_data->read(),m_ids);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info<<"\n"<<isLot;
     QVariantMap db_data;
 
@@ -149,12 +143,12 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
     }
 }
 
-QStringList TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)
+QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)
 {
     QTextStream stream(source);
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
-    QStringList appToDB;
+    QVariantMap appToDB;
 
     //QRegExp regexp(QString("<[^<]*>[^<]*</[^<]*>"), Qt::CaseInsensitive);
     //for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
@@ -181,11 +175,12 @@ QStringList TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
         }
         if (retStr.isEmpty())
         {
+            // TODO remove debug
             qDebug()<<Q_FUNC_INFO<<" Template not found";            
         }
         else
         {
-            appToDB.append(retStr);
+            appToDB.insert(id,retStr);
         }
     }
 

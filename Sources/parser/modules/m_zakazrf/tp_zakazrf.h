@@ -28,7 +28,7 @@ public:
 
 private:
     void html_to_db(CDataStructure *, const QStringList &m_ids, bool isLot); //хтмл в стринглист
-    QStringList findProviding(const QByteArray &source, const QStringList &);
+    QVariantMap findProviding(const QByteArray &source, const QStringList &);
     qint64 m_threadCounter;
     int m_maxThreads;
     CDataStructure *m_data;
