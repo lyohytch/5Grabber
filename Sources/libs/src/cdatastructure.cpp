@@ -57,33 +57,6 @@ void CDataStructure::flush()
     m_data.clear();
 }
 
-
-QStringList CDataStructure::findLinks(QList<QRegExp>& regexps)
-{
-    if(m_data.isEmpty())
-    {
-        return QStringList();
-    }
-    QStringList foundLinks;
-
-    QString str(m_data);
-    for(int i=0;i<regexps.count();i++)
-    {
-        QRegExp regexp=regexps.value(i);
-        for(int pos=regexp.indexIn(str); pos!=-1; pos=regexp.indexIn(str,pos+1))
-        {
-            if(foundLinks.contains(regexp.capturedTexts().at(0)))
-            {
-                continue;
-            }
-
-            foundLinks.append(regexp.capturedTexts().at(0));
-        }
-    }
-
-    return foundLinks;
-}
-
 bool CDataStructure::isFinished()
 {
     if(!m_isDone)

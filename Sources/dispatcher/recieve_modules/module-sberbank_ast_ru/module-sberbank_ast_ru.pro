@@ -1,4 +1,4 @@
-TARGET = module-zakazrf_ru
+TARGET = module-sberbank-ast_ru
 TEMPLATE = lib
 
 QT += network
@@ -16,11 +16,11 @@ MOC_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/moc
 INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
     $$GBR_SOURCE_ROOT/$$GRB_DSP_MODULES_PATH
 
-HEADERS += crecievetask-zakazrf_ru.h \
+HEADERS += crecievetask-sberbank_ast_ru.h \
     ../crecievetask.h \
     ../crecievetasksignaller.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/crecivethread.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h
-SOURCES += crecievetask-zakazrf_ru.cpp \
+SOURCES += crecievetask-sberbank_ast_ru.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/crecivethread.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp

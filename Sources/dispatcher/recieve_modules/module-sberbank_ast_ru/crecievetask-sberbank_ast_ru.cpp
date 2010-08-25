@@ -1,19 +1,18 @@
-#include "crecievetask-zakazrf_ru.h"
+#include "crecievetask-sberbank_ast_ru.h"
 #include <QDebug>
 #include <QFile>
 #include <QThreadPool>
 #include <QDateTime>
 
-#undef RUN_ALL_TASKS
-//#define RUN_ALL_TASKS
+#define RUN_ALL_TASKS
 
-CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
+CRecieveTask_sberbank_ast_ru::CRecieveTask_sberbank_ast_ru()
 {
     m_threadCounter=0;
     m_signaller=new CRecieveTaskSignaller;
 }
 
-CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
+CRecieveTask_sberbank_ast_ru::~CRecieveTask_sberbank_ast_ru()
 {
     delete m_signaller;
 
@@ -33,7 +32,7 @@ CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
     m_dataStructures.clear();
 }
 
-bool CRecieveTask_zakazrf_ru::init(int maxThreads, const siterules_ti &rule)
+bool CRecieveTask_sberbank_ast_ru::init(int maxThreads, const siterules_ti &rule)
 {
     m_url=rule.key();
     m_rules=rule.value();
@@ -41,37 +40,36 @@ bool CRecieveTask_zakazrf_ru::init(int maxThreads, const siterules_ti &rule)
     return true;
 }
 
-CRecieveTaskSignaller* CRecieveTask_zakazrf_ru::signaller()
+CRecieveTaskSignaller* CRecieveTask_sberbank_ast_ru::signaller()
 {
     return m_signaller;
 }
 
-QString CRecieveTask_zakazrf_ru::taskHost() const
+QString CRecieveTask_sberbank_ast_ru::taskHost() const
 {
-    return QString("zakazrf.ru");
+    return QString("sberbank-ast.ru");
 }
 
 
-bool CRecieveTask_zakazrf_ru::run()
+bool CRecieveTask_sberbank_ast_ru::run()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
 
     connect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
 #ifndef RUN_ALL_TASKS
-    qDebug()<<__FILE__<<"("<<__LINE__<<")"<<" undef RUN_ALL_TASKS";
-    QUrl testUrl("http://zakazrf.ru/ViewReduction.aspx?id=4781");
+    QUrl testUrl("http://sberbank-ast.ru/purchaseview.aspx?id=31223");
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
     m_dataStructures.insert(testUrl, tmpdata);
     m_activeDataStructures.push_back(tmpdata);
-    QUrl testUrl2("http://zakazrf.ru/ViewReduction.aspx?id=2943");
+    QUrl testUrl2("http://sberbank-ast.ru/purchaseview.aspx?id=31218");
     CDataStructure* tmpdata2 = new CDataStructure(testUrl2);
     tmpdata2->setType(getUrlDataType(testUrl2));
     tmpdata2->setRoot();
     m_dataStructures.insert(testUrl2, tmpdata2);
     m_activeDataStructures.push_back(tmpdata2);
-    QUrl testUrl3("http://zakazrf.ru/ViewReduction.aspx?id=5319");
+    QUrl testUrl3("http://sberbank-ast.ru/purchaseview.aspx?id=31215");
     CDataStructure* tmpdata3 = new CDataStructure(testUrl3);
     tmpdata3->setType(getUrlDataType(testUrl3));
     tmpdata3->setRoot();
@@ -80,7 +78,7 @@ bool CRecieveTask_zakazrf_ru::run()
 #else
 for(int i=2000; i<10000; i++)
 {
-    QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
+    QUrl testUrl(QString("http://sberbank-ast.ru/purchaseview.aspx?id=%1").arg(i));
     CDataStructure* tmpdata = new CDataStructure(testUrl);
     tmpdata->setType(getUrlDataType(testUrl));
     tmpdata->setRoot();
@@ -115,7 +113,7 @@ for(int i=2000; i<10000; i++)
     return true;
 }
 
-void  CRecieveTask_zakazrf_ru::onThreadFinished()
+void  CRecieveTask_sberbank_ast_ru::onThreadFinished()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
     QMutex m_mutex;
@@ -184,12 +182,13 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
     m_mutex.unlock();
 }
 
-void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
+void CRecieveTask_sberbank_ast_ru::onDataReady(int threadId/*, QByteArray data*/)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<threadId;
 
     QList<QRegExp> regexps;
-    regexps.push_back(QRegExp("ViewLot.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
+    regexps.push_back(QRegExp("docid\\&gt\\;[0-9]{1,}", Qt::CaseSensitive));
+//    regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
 
     CDataStructure* data=NULL;
     int threadNum=-1;
@@ -203,11 +202,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         }
     }
 
-    if(data->type()==CDataStructure::eDataTypeLotPage)
-    {
-        regexps.push_back(QRegExp("DFile.ashx\\?id=[0-9]{1,}", Qt::CaseSensitive));
-        regexps.push_back(QRegExp("ViewLotStatisticPre.aspx\\?id=[0-9]{1,}", Qt::CaseSensitive));
-    }
+
 
     if(!data)
     {
@@ -215,7 +210,6 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         m_threads.at(threadNum)->exit(0);
         return;
     }
-
 
     if(data->type()==CDataStructure::eDataTypeDocument)
     {
@@ -234,7 +228,7 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
     CDataStructure* child;
     for(int i=0; i<childLinks.count(); i++)
     {
-        QUrl newUrl=QUrl(QString("%1://%2/%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
+        QUrl newUrl=QUrl(QString("%1://%2/ViewDocument.aspx?id=%3").arg(data->url().scheme()).arg(data->url().host()).arg(childLinks.at(i)));
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Full child url:"<<newUrl;
         if(data->root()->contains(newUrl))
         {
@@ -254,37 +248,28 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
     {
         m_signaller->onDataReady(data->root());
     }
+    regexps.clear();
     m_threads.at(threadNum)->exit(0);
 }
 
 
-QUrl CRecieveTask_zakazrf_ru::createFullUrlFromRule(QUrl url, QVariant rule)
+QUrl CRecieveTask_sberbank_ast_ru::createFullUrlFromRule(QUrl url, QVariant rule)
 {
     url.setPath(rule.toString());
     return url;
 }
 
-int CRecieveTask_zakazrf_ru::getUrlDataType(QUrl &url)
+int CRecieveTask_sberbank_ast_ru::getUrlDataType(QUrl &url)
 {
     if(url.toString().contains("DFile.ashx"))
     {
         return CDataStructure::eDataTypeDocument;
     }
 
-    if(url.toString().contains("ViewLot.aspx"))
-    {
-        return CDataStructure::eDataTypeLotPage;
-    }
-
-    if(url.toString().contains("ViewLotStatisticPre.aspx"))
-    {
-        return CDataStructure::eDataTypeLotStatisticPage;
-    }
-
-    return CDataStructure::eDataTypeAuctionPage;
+    return CDataStructure::eDataTypePage;
 }
 
-void CRecieveTask_zakazrf_ru::removeData(QUrl root)
+void CRecieveTask_sberbank_ast_ru::removeData(QUrl root)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<root;
 
@@ -332,7 +317,7 @@ void CRecieveTask_zakazrf_ru::removeData(QUrl root)
     }
 }
 
-QStringList CRecieveTask_zakazrf_ru::findLinks(QList<QRegExp> &regexps, const QByteArray &data)
+QStringList CRecieveTask_sberbank_ast_ru::findLinks(QList<QRegExp> &regexps, const QByteArray &data)
 {
     if(data.isEmpty())
     {
@@ -343,27 +328,22 @@ QStringList CRecieveTask_zakazrf_ru::findLinks(QList<QRegExp> &regexps, const QB
     QString str(data);
     for(int i=0;i<regexps.count();i++)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-
         QRegExp regexp=regexps.value(i);
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
         for(int pos=regexp.indexIn(str); pos!=-1; pos=regexp.indexIn(str,pos+1))
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-            if(foundLinks.contains(regexp.capturedTexts().at(0)))
+            QString tmp1=regexp.capturedTexts().at(0);
+            tmp1.remove(QRegExp("[a-zA-Z;&]"));
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<tmp1;
+            if(foundLinks.contains(tmp1))
             {
                 qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
                 continue;
             }
 
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-            foundLinks.append(regexp.capturedTexts().at(0));
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+            foundLinks.append(tmp1);
         }
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
     }
 
     return foundLinks;
 }
-
-Q_EXPORT_PLUGIN2(recievetask_4_zakazrf_ru, CRecieveTask_zakazrf_ru)
+Q_EXPORT_PLUGIN2(recievetask_4_sberbank_ast_ru, CRecieveTask_sberbank_ast_ru)

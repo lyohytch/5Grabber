@@ -12,13 +12,13 @@
 #include <crecivethread.h>
 #include <cdatastructure.h>
 
-class CRecieveTask_zakazrf_ru : public QObject, public CRecieveTask
+class CRecieveTask_sberbank_ast_ru : public QObject, public CRecieveTask
 {
     Q_OBJECT
     Q_INTERFACES(CRecieveTask)
 public:
-    CRecieveTask_zakazrf_ru();
-    ~CRecieveTask_zakazrf_ru();
+    CRecieveTask_sberbank_ast_ru();
+    ~CRecieveTask_sberbank_ast_ru();
 
     virtual bool init(int maxThreads, const siterules_ti& rule);
     virtual CRecieveTaskSignaller* signaller();
@@ -37,7 +37,6 @@ private:
     int m_maxThreads;
     CRecieveTaskSignaller *m_signaller;
     qint64 m_threadCounter;
-
 public slots:
     virtual void onDataReady(int threadId/*, QByteArray data*/);
     virtual void onThreadFinished();
