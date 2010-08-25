@@ -61,7 +61,7 @@ private:
     QUrl m_url;
     bool m_isDone;
     bool m_isRoot;
-    bool m_isRunned;
+//    bool m_isRunned;
 
     CDataStructure* m_root;
 };
