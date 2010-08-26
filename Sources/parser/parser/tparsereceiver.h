@@ -26,7 +26,7 @@ class TParseReceiver: public QObject
     Q_OBJECT
     
 public:
-    TParseReceiver():/*m_id(0),*/ m_done(FALSE), m_doneDocs(FALSE){}
+    TParseReceiver()/*:m_id(0), m_done(FALSE), m_doneDocs(FALSE)*/{}
     bool parse(CDataStructure* _data,const QByteArray& _url);
     bool init();
 

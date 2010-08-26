@@ -23,4 +23,3 @@ GRB_PARSER_MODULE_PATH=parser/modules
 
 #parser paths
 GRB_DBMANAGER_PATH=dbmanager
-
