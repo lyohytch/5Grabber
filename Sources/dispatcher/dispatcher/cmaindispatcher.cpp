@@ -11,39 +11,41 @@ CMainDispatcher::CMainDispatcher(QObject *parent) :
 CMainDispatcher::~CMainDispatcher()
 {
     deinit();
+    CConfigHandler::flush();
 }
 
 bool CMainDispatcher::init()
 {
-    return init(cConfigUrl.toString());
+    return init(cConfigUrl);
 }
 
 bool CMainDispatcher::init(const QString &configUrl)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    QUrl tmpConfigUrl(configUrl);
+    qDebug()<<"======================Start Grabber====================";
+    qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH;;
+    qDebug()<<"Time"<<QDateTime::currentDateTime().toTime_t();
 
-    if(tmpConfigUrl!=cConfigUrl && !checkUrl(tmpConfigUrl))
+    if(!CConfigHandler::load(configUrl))
     {
-        tmpConfigUrl=cConfigUrl;
-    }
-
-    if(!g_config.load(tmpConfigUrl))
-    {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
+        qDebug()<<"Config initialization error";
         return false;
     }
 
-    m_sites = g_config.loadSites();
+    if(!CConfigHandler::loadSites(m_sites))
+    {
+        qDebug()<<"Failed to load sites";
+        return false;
+    }
+
     if(m_sites.isEmpty())
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
+        qDebug()<<"No sites to download";
         return false;
     }
 
     if(!connectActions())
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Failed";
+        qDebug()<<"Failed";
         return false;
     }
 
@@ -58,7 +60,7 @@ bool CMainDispatcher::init(const QString &configUrl)
     }
 
     startRecieveTasks();
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Succed";
+    qDebug()"Succed";
     return true;
 }
 
@@ -77,26 +79,25 @@ void CMainDispatcher::deinit()
 
 void CMainDispatcher::startRecieveTasks()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<m_sites.count();
+    qDebug()<<m_sites.count();
 //    CRecieveTask* tmpTask;
     siterules_ti Iter(m_sites);
+    qDebug()<<m_sites;
 
     while(Iter.hasNext())
     {
         Iter.next();
 
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<Iter.key().host().replace(".","_");
-
-        qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH<<"\nlibpath :"<<QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"));
+        qDebug()<<Iter.key().host().replace(".","_");
         QPluginLoader loader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
         if(!loader.load())
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<loader.errorString();
+            qWarning()<<"Library: "<< QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"))<<loader.errorString();
             continue;
         }
 
         CRecieveTask* task=qobject_cast<CRecieveTask *>(loader.instance());
-        task->init(2, Iter);
+        task->init(getConfigurationValue("main/max_threads",QVariant(5)).toInt(), Iter);
 //        loader.unload();
 
         m_activeTasksList.append(task);
@@ -112,7 +113,7 @@ void CMainDispatcher::startRecieveTasks()
 
 void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Task Finished";
+    qDebug()<<"Task Finished";
 
     m_activeTasksList.removeOne(task);
 
@@ -125,8 +126,7 @@ void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 
 void CMainDispatcher :: onParceFinished(int error, QUrl url)
 {
-    qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": url"<<url.host();
-    qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "##############################" << QDateTime::currentDateTime();
+    qDebug()<<"url:"<<url.host()<<"error:"<<error;
     CRecieveTask* task=NULL;
     for(int i=0; i<m_activeTasksList.count(); i++)
     {
@@ -138,7 +138,7 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
 
     if(!task)
     {
-        qCritical()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": task for host "<<url.host()<<" not found";
+        qCritical()"task for host "<<url.host()<<" not found";
         return;
     }
 
@@ -147,7 +147,7 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
 
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Data structure is ready:"<<data->url();
+    qDebug()<<"Data structure is ready:"<<data->url();
     QUrl url;
     url.setHost(data->url().host());
     url.setScheme(data->url().scheme());
@@ -157,7 +157,7 @@ void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 
 void CMainDispatcher::onDone()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"Multi launch mode is switched off for preview";
+    qDebug()<<"Multi launch mode is switched off for preview";
 //    m_startTasksTimer.setSingleShot(true);
 //    m_startTasksTimer.start(20000);
 }

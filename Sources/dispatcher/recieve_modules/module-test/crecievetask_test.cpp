@@ -1,4 +1,5 @@
 #include "crecievetask_test.h"
+#include <constants.h>
 
 CRecieveTask_test::CRecieveTask_test()
 {
@@ -20,7 +21,7 @@ bool CRecieveTask_test::init(int maxThreads, const siterules_ti &rule)
 
 bool CRecieveTask_test::run()
 {
-    qDebug("RUNNED!!!!!!!!!!!!!!!!!!!");
+    qDebug()<<"RUNNED!!!!!!!!!!!!!!!!!!!";
     return true;
 }
 

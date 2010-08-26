@@ -25,7 +25,6 @@ public:
 
 protected:
 //    void addTask(CRecieveTask* task);
-    bool checkUrl(const QUrl& configUrl) {return true;}
     bool connectActions();
 
     QTimer m_startTasksTimer;
