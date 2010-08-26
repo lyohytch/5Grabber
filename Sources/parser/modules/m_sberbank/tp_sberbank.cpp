@@ -34,7 +34,7 @@ bool TP_sberbank::run()
     QVariantMap info = parse(m_data,true);
     for (int i = 0; i < m_data->childscCount(); i++)
     {
-        if (m_data->childAt(i)->type() == CDataStructure::eDataTypePage)
+        if (m_data->childAt(i)->type() == CDataStructure::eDataTypeAuctionPage)
         {
             info.unite(parse(m_data->childAt(i),false));
         }
