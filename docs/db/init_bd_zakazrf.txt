@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS Reduction(
 CREATE TABLE IF NOT EXISTS Lot (
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
-    id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),
     id_contract MEDIUMINT UNSIGNED,
@@ -21,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Lot (
     PRIMARY KEY (id_reduction, num_lot)
 );
 
-CREATE TABLE IF NOT EXISTS Custoner (
+CREATE TABLE IF NOT EXISTS Customer (
     id_customer MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     adress VARCHAR(400),
@@ -32,11 +31,13 @@ CREATE TABLE IF NOT EXISTS Custoner (
 );
 
 CREATE TABLE IF NOT EXISTS Participant (
-    id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
+    id_participant MEDIUMINT UNSIGNED NOT NULL,
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(300),
     inn CHAR(30),
     kpp CHAR(30),
-    PRIMARY KEY (id_participant)
+    PRIMARY KEY (id_participant,id_reduction,num_lot)
 );
 
 CREATE TABLE IF NOT EXISTS Status (

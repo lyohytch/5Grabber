@@ -37,9 +37,10 @@ private:
     QStringList m_ids_Auc;
     QStringList m_ids_Lot;
     QString extractFromSpanTag(const QString & tagTxt);
+    int participantsCount;
 
     // todo
-    QString tempFindWinner(const QByteArray &source, const QString &templ);
+    QStringList findParticipants(const QByteArray &source, const QString &templ);
 
 };
 

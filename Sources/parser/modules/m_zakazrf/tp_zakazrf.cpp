@@ -1,6 +1,6 @@
 #include "tp_zakazrf.h"
 
-#include <QDebug>
+#include "constants.h"
 #include <QByteArray>
 
 //Reduction
@@ -20,6 +20,7 @@ const QString Content_SubjectLabel        = "ctl00_Content_SubjectLabel";
 const QString Content_MaintenanceSumLabel = "ctl00_Content_MaintenanceSumLabel";
 const QString Content_FinalPriceLabel     = "ctl00_Content_FinalPriceLabel";
 const QString Content_TradeBeginDateLabel = "ctl00_Content_TradeBeginDateLabel";
+const QString labelLotParticipantCount    = "ctl00_Content_labelLotParticipantCount";
 
 
 TP_zakazrf::TP_zakazrf()
@@ -27,6 +28,7 @@ TP_zakazrf::TP_zakazrf()
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
     m_db = new DBmanager();
+    //TODO сделать константами
     //Reduction
     m_ids_Auc<<"ctl00_Content_ReductionViewForm_NumberLabel"  //Номер аукциона
              <<"ctl00_Content_ReductionViewForm_PublicationDateLabel" //Дата регистрации аукциона
@@ -42,7 +44,8 @@ TP_zakazrf::TP_zakazrf()
              <<"ctl00_Content_SubjectLabel" //Предмет
              <<"ctl00_Content_MaintenanceSumLabel" //Размер обеспечения
              <<"ctl00_Content_FinalPriceLabel" //Лучшая цена
-             <<"ctl00_Content_TradeBeginDateLabel"; // Дата проведения торгов в электр форме
+             <<"ctl00_Content_TradeBeginDateLabel" // Дата проведения торгов в электр форме
+             <<"ctl00_Content_labelLotParticipantCount";
 
 
 }
@@ -68,7 +71,7 @@ CParseSignaller* TP_zakazrf::signaller()
 
 bool TP_zakazrf::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!" << m_data->childscCount();
+    qDebug()<< "RUN PARSE TASK!!!" << m_data->childscCount();
     //QStringList addToDBList;
     //Парсим аукцион
     html_to_db(m_data->root(), m_ids_Auc, false);
@@ -77,7 +80,7 @@ bool TP_zakazrf::run()
     {
         if (m_data->childAt(i)->type() == CDataStructure::eDataTypeLotPage)
         {
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<m_data->childAt(i)->url().toString();
+            qDebug()<<m_data->childAt(i)->url().toString();
             html_to_db(m_data->childAt(i), m_ids_Lot, true);
         }
     }
@@ -91,7 +94,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
 {
     // TODO initial variant of parser
     QVariantMap info = findProviding(p_data->read(),m_ids);
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info<<"\n"<<isLot;
+    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info<<"\n"<<isLot;
     QVariantMap db_data;
 
     if(isLot)
@@ -103,23 +106,31 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
             {
                 db_data.clear();
                 db_data.insert("table", "Participant");
-                qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# "<<i<<QString::fromUtf8(p_data->childAt(i)->read());
-                if( info[Content_StageLabel].toString() != "Закрыт")
+                //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# "<<i<<QString::fromUtf8(p_data->childAt(i)->read());
+               // "<table"
+
+                if( info[labelLotParticipantCount].toString().isEmpty())
                 {
-                  //Нет победителя - берём участников
-                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# not implemented yet";
-                    //db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
-                    //db_data.insert("num_lot",info[Content_NumberLabel]);
-                    //m_db->write(db_data);
+
+                  //Нет участников
+                    qDebug()<<"# Participants not found";
+                    participantsCount = 0;
+                    db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
+                    db_data.insert("num_lot",info[Content_NumberLabel]);
+                    db_data.insert("participants",QStringList());
+                    m_db->write(db_data);
                 }
                 else
                 {
-                    //Аукцион окончен.
-                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended";
-                    //db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
-                    //db_data.insert("num_lot",info[Content_NumberLabel]);
-                    db_data.insert("winner",tempFindWinner(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString()));
-                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended. \nWinner is "<<db_data.value("winner");
+                    //Есть участники
+                    //победитель имеет всегда первый id
+                    participantsCount = info[labelLotParticipantCount].toInt();
+                    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended";
+                    db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
+                    db_data.insert("num_lot",info[Content_NumberLabel]);
+                    QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
+                    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<partNames;
+                    db_data.insert("participants",partNames);
                     m_db->write(db_data);
                 }
             }
@@ -172,21 +183,24 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
     }
 }
 
-QString TP_zakazrf::tempFindWinner(const QByteArray &source, const QString &templ)
+QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString &templ)
 {
-    qDebug()<<Q_FUNC_INFO<<" start";
+    //Какие-то участники точно есть
+   // qDebug()<<Q_FUNC_INFO<<" start";
+    int tmpCount = participantsCount;
     QTextStream stream(source);
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
-    QString retStr;
+    QString winner;
     int pos = sourceStr.lastIndexOf(templ);
+    //TODO check pos
     //Сдвиг
     int c = 0;
     while(c < 2)
     {
         if( pos >= sourceStr.length())
         {
-            retStr.clear();
+            winner.clear();
             break;
         }
         if(sourceStr[pos++] == '>')
@@ -197,11 +211,63 @@ QString TP_zakazrf::tempFindWinner(const QByteArray &source, const QString &temp
     //Получаем название фирмы
     while(sourceStr[pos] != '<' && pos < sourceStr.length())
     {
-        retStr += sourceStr[pos];
+        winner += sourceStr[pos];
         pos++;
     }
-    qDebug()<<Q_FUNC_INFO<<" end";
-    return retStr;
+    QStringList retList;
+    //Получаем других участников
+    retList.append(winner);
+
+    ////БОЛЬШОЙ ВЁРКЭРАУНД
+    //*********************************
+    tmpCount--;
+    QString start = "<table";
+    QString end   = "</table>";
+    QString strStart = "<td";
+    QString strEnd   = "</td>";
+    int posTable = sourceStr.lastIndexOf(start);
+    int posEndTable = sourceStr.indexOf(end);
+    //Взяли табличку
+    QString tableStr = sourceStr.mid(posTable, posEndTable - posTable);
+    //qDebug()<<Q_FUNC_INFO<<"::::"<<tableStr;
+    QRegExp regexp(QString("<[^<]*>[^<]*</[^<]*>"), Qt::CaseInsensitive);
+    posTable = 0;
+    int l = 0;
+    for (int posL = regexp.indexIn(tableStr); posL >= 0; posL = regexp.indexIn(tableStr,posL + 1))
+    {
+        QString tmp = regexp.capturedTexts().at(0);
+        if(tmp.contains(strStart))
+        {
+            l++;
+            //TODO пропускаем два td считываем третий
+           if(l==3)
+            {
+                l = 0;
+                int p = 0;
+                QString part;
+                while(p < tmp.length() && tmp[p++] != '>');
+                while(p < tmp.length() && tmp[p] != '<')
+                {
+                    part += tmp[p++];
+                }
+                if(retList.contains(part)) continue;
+                retList.append(part);
+                tmpCount--;
+                if(tmpCount == 0) break;
+            }
+        }
+        //*********************************
+    //    foreach(QString id,a_ids)
+    //    {
+    //       if (tmp.contains(id,Qt::CaseInsensitive))
+    //       {
+    //            appToDB.append(extractFromSpanTag(tmp));
+    //       }
+    //    }
+    }
+
+    //qDebug()<<Q_FUNC_INFO<<" end";
+    return retList;
 }
 
 QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)
@@ -228,8 +294,9 @@ QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
     {
         QString retStr;
         int pos = sourceStr.lastIndexOf(id);
-        while(sourceStr[pos++] != '>' && pos < sourceStr.length());
-        while(sourceStr[pos] != '<' && pos < sourceStr.length())
+        if(pos == -1 ) continue;
+        while(pos < sourceStr.length() && sourceStr[pos++] != '>');
+        while(pos < sourceStr.length() && sourceStr[pos] != '<')
         {
             retStr += sourceStr[pos];
             pos++;
@@ -237,7 +304,7 @@ QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
         if (retStr.isEmpty())
         {
             // TODO remove debug
-            qDebug()<<Q_FUNC_INFO<<" Template not found";            
+            qDebug()<<" Template not found";
         }
         else
         {
