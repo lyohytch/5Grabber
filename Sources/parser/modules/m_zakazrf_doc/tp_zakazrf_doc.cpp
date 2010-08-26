@@ -95,7 +95,7 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
         file.write(p_data->read());
         file.close();
         QFileInfo fileInfo(file);
-//        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "DOC Saved in " << file.fileName();
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "DOC Saved in " << file.fileName();
 
         QStringList args;
         args << "-x" << "db";
@@ -114,13 +114,13 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
         if (err.isEmpty())
         {
             QString info = findProviding(output);
-            //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
             QVariantMap db_data;
             db_data.insert("info", info);
             db_data.insert("url", p_data->url().toString());
             db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
             m_db->writeDoc(db_data);
-            //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Output " << output.left(50);
+            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Output " << output.left(50);
         }
         else
         {

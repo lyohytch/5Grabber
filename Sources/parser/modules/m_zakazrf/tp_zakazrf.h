@@ -10,6 +10,8 @@
 #include <QVariant>
 #include <QtPlugin>
 
+#include "dbmanager.h"
+
 class TP_zakazrf : public QObject, public TP_Task
 {
     Q_OBJECT
@@ -25,13 +27,20 @@ public:
     virtual CParseSignaller* signaller();
 
 private:
-    QMap<QString,QVariant> parse_html_auk(const QString& _html);
-    QMap<QString,QVariant> parse_html_lot(const QString& _html);
-    QString html_to_txt(const QString& _html);
+    void html_to_db(CDataStructure *, const QStringList &m_ids, bool isLot); //хтмл в стринглист
+    QVariantMap findProviding(const QByteArray &source, const QStringList &);
     qint64 m_threadCounter;
     int m_maxThreads;
     CDataStructure *m_data;
     CParseSignaller* m_signaller;
+    DBmanager* m_db;
+    QStringList m_ids_Auc;
+    QStringList m_ids_Lot;
+    QString extractFromSpanTag(const QString & tagTxt);
+
+    // todo
+    QString tempFindWinner(const QByteArray &source, const QString &templ);
+
 };
 
 #endif

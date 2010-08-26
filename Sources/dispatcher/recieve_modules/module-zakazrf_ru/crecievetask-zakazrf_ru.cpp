@@ -6,7 +6,8 @@
 
 #include <constants.h>
 
-#define RUN_ALL_TASKS
+#undef RUN_ALL_TASKS
+//#define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 {

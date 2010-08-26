@@ -1,4 +1,4 @@
-TARGET = m_zakazrf
+TARGET = m_sberbank
 TEMPLATE = lib
 
 QT += sql
@@ -16,13 +16,13 @@ INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
     $$GBR_SOURCE_ROOT/$$GRB_DBMANAGER_PATH
 INCLUDEPATH += ../
 
-HEADERS += tp_zakazrf.h \
+HEADERS += tp_sberbank.h \
     ../tp_task.h \
     ../cparsesignaller.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/tparsethread.h \
     $$GBR_SOURCE_ROOT/$$GRB_DBMANAGER_PATH/dbmanager.h
 
-SOURCES += tp_zakazrf.cpp \
+SOURCES += tp_sberbank.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/tparsethread.cpp
