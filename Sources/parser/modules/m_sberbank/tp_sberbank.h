@@ -29,15 +29,17 @@ private:
 
     QString getDataTeg(const QString& html,const QString& teg);
     QString getDataClearTeg(const QString& html,const QString& teg);
+    QString getDataClearTeg(const QString& html,const QString& teg, int number);
+    int getCountTeg(const QString& html,const QString& teg);
 
-    QMap<QString,QString> getDateData(const QString& html);
-    QMap<QString,QString> getCodeData(const QString& html);
-    QMap<QString,QString> getCustomerData(const QString& html);
-    QMap<QString,QString> getProviderData(const QString& html);
-    QMap<QString,QString> getPriceData(const QString& html);
-    QMap<QString,QString> getProvidingData(const QString& html);
+    QVariantMap getDateData(const QString& html);
+    QVariantMap getCodeData(const QString& html);
+    QVariantMap getCustomerData(const QString& html);
+    QVariantMap getProviderData(const QString& html);
+    QVariantMap getPriceData(const QString& html);
+    QVariantMap getProvidingData(const QString& html);
 
-    void parse(const QByteArray& _data);
+    QVariantMap parse(CDataStructure* data, bool isRoot);
 
     qint64 m_threadCounter;
     int m_maxThreads;
