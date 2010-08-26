@@ -13,7 +13,6 @@ CDataStructure::CDataStructure(QUrl url, QObject *parent) :
 CDataStructure::~CDataStructure()
 {
     flush();
-    m_childs.clear();
 }
 
 CDataStructure* CDataStructure::childAt(int i)
@@ -54,6 +53,7 @@ void CDataStructure::flush()
         m_childs.at(i)->flush();
         delete m_childs.value(i);
     }
+    m_childs.clear();
     m_data.clear();
 }
 
