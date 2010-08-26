@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <cdatastructure.h>
 
+#include <constants.h>
+
 class CRecieveTask;
 
 class CRecieveTaskSignaller : public QObject
@@ -26,7 +28,7 @@ public slots:
 
     void onDataParsed(QUrl url)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+        qDebug();
         emit dataParsed(url);
     }
 

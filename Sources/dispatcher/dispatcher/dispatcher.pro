@@ -41,6 +41,8 @@ HEADERS += cmaindispatcher.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cconfighandler.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h \
     $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH/tparsereceiver.h \
+    $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH/cparsedispatcher.h \
+    $$GBR_SOURCE_ROOT/$$GRB_PARSER_PATH/cparsethread.h \
     $$GBR_SOURCE_ROOT/$$GRB_PARSER_MODULE_PATH/tp_task.h \
     $$GBR_SOURCE_ROOT/$$GRB_PARSER_MODULE_PATH/cparsesignaller.h \
     $$GBR_SOURCE_ROOT/$$GRB_DBMANAGER_PATH/dbmanager.h
