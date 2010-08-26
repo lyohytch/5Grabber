@@ -23,12 +23,13 @@ INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
 INCLUDEPATH += ../modules/
 HEADERS += tparsereceiver.h \
     cparsedispatcher.h \
+    cparsethread.h \
     ../modules/tp_task.h \
     ../modules/cparsesignaller.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/tparsethread.h
 SOURCES += tparsereceiver.cpp \
     cparsedispatcher.cpp \
+    cparsethread.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/tparsethread.cpp
-

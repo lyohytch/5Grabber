@@ -34,7 +34,7 @@ public:
 
 signals:
     void finishedParse(int _error, const QByteArray _url);
-    void addToQueue();
+//    void addToQueue();
 
 public slots:
 //    void onParseFinished();

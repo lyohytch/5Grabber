@@ -9,10 +9,11 @@
 bool TParseReceiver::init()
 {
     m_dispatcher = new CParseDispatcher();
-    if (m_dispatcher != NULL)
+    if (m_dispatcher)
     {
-        connect(this, SIGNAL(addToQueue()), m_dispatcher, SLOT(onAddedToQueue()));
-        connect(m_dispatcher, SIGNAL(queueMemeberParsed(CDataStructure*)), this, SLOT(onQueueMemberParsed(CDataStructure*)));
+        //connect(this, SIGNAL(addToQueue()), m_dispatcher, SLOT(onAddedToQueue()));
+        bool ok = connect(m_dispatcher, SIGNAL(queueMemeberParsed(CDataStructure*)), this, SLOT(onQueueMemberParsed(CDataStructure*)));
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< " Connect is ---------" <<ok;
         return TRUE;
     }
     return FALSE;
@@ -30,8 +31,9 @@ bool TParseReceiver::parse(CDataStructure* _data, const QByteArray& _url)
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Childs count "<< _data->childscCount();
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"URL" << _data->url();
 
-    m_dispatcher->queue().push_back(_data);
-    emit addToQueue();
+//    m_dispatcher->queue().push_back(_data);
+//    emit addToQueue();
+    m_dispatcher->addToQueue(_data);
 
 //    QPluginLoader loader(PATH_MODULES + PARSE_MODULE);
 //    if(!loader.load())

@@ -1,6 +1,7 @@
 #include "cparsedispatcher.h"
 
 #include <QDebug>
+#include <QMutex>
 
 CParseDispatcher::CParseDispatcher(): m_maxThreads(1)
 {
@@ -11,29 +12,58 @@ CParseDispatcher::~CParseDispatcher()
     // Nothing
 }
 
+void CParseDispatcher::addToQueue(CDataStructure *newTask)
+{
+    m_queue.push_back(newTask);
+    onAddedToQueue();
+}
+
 void CParseDispatcher::onAddedToQueue()
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    while (m_activeQueue.count() < m_maxThreads)
+    if (m_activeQueue.count() < m_maxThreads)
     {
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO << "QUEUE count = " << m_queue.count();
         if (!m_queue.isEmpty())
         {
             CDataStructure* queueMember = m_queue.takeFirst();
             m_activeQueue.push_back(queueMember);
+
+            // run thread
+            CParseThread* thread = new CParseThread();
+            connect(thread, SIGNAL(finished()), this, SLOT(onParseTaskFinished()));
+            m_threads.insert(thread, queueMember);
+            thread->start();
         }
-        // run thread
     }
 }
 
-void CParseDispatcher::onParseTaskFinished(CDataStructure* p_data)
+void CParseDispatcher::onParseTaskFinished()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
-    m_activeQueue.removeOne(p_data);
-    while (m_activeQueue.count() < m_maxThreads)
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO << "THREAD FINISHED";
+    foreach (CParseThread* thread, m_threads.keys())
     {
-        CDataStructure* queueMember = m_queue.takeFirst();
-        m_activeQueue.push_back(queueMember);
-        // run thread
+        if (thread->isFinished())
+        {
+            CDataStructure* parsed_data = m_threads.value(thread);
+            m_activeQueue.removeOne(parsed_data);
+            m_threads.remove(thread);
+            delete thread;
+            emit queueMemeberParsed(parsed_data);
+        }
+
+        if (m_activeQueue.count() < m_maxThreads)
+        {
+            if (!m_queue.isEmpty())
+            {
+                CDataStructure* queueMember = m_queue.takeFirst();
+                m_activeQueue.push_back(queueMember);
+
+                // run thread
+                CParseThread* newThread = new CParseThread();
+                m_threads.insert(newThread, queueMember);
+                newThread->start();
+            }
+        }
     }
 }

@@ -16,9 +16,12 @@ CParserHandler::~CParserHandler()
 
 bool CParserHandler::init()
 {
+    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
     if (m_parcer->init())
     {
-        return connect(m_parcer, SIGNAL(finishedParse(int,const QByteArray)), this, SLOT(onParceFinished(int,const QByteArray)),Qt::QueuedConnection);
+        bool ok = connect(m_parcer, SIGNAL(finishedParse(int,const QByteArray)), this, SLOT(onParceFinished(int,const QByteArray)),Qt::QueuedConnection);
+        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" Connect is " << ok;
+        return ok;
     }
     return FALSE;
 }
