@@ -1,8 +1,8 @@
 #include "tparsereceiver.h"
 
-#include <QPluginLoader>
-#include <QMap>
-#include <QVariant>
+//#include <QPluginLoader>
+//#include <QMap>
+//#include <QVariant>
 #include <QString>
 #include <QDebug>
 

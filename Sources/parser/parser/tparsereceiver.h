@@ -2,8 +2,6 @@
 #define TPARSERECEIVER_H
 
 #include <cdatastructure.h>
-#include <tparsethread.h>
-#include "tp_task.h"
 #include "cparsedispatcher.h"
 
 #include <QObject>
@@ -47,13 +45,13 @@ public slots:
 private:
 //    int m_id;
     CParseDispatcher* m_dispatcher;
-    bool m_done;
-    bool m_doneDocs;
+//    bool m_done;
+//    bool m_doneDocs;
 //    CDataStructure* m_data;
 //    QMap<int,TParseThread*> m_threads;
     //QList<TParseThread*> m_threads;
-    QList<TP_Task*> m_parseTasksList;
-    QList<TP_Task*> m_parseDocTasksList;
+//    QList<TP_Task*> m_parseTasksList;
+//    QList<TP_Task*> m_parseDocTasksList;
 };
 
 
