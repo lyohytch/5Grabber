@@ -1,7 +1,8 @@
 #include "cparsedispatcher.h"
+#include "constants.h"
 
 #include <QDebug>
-#include <QMutex>
+#include <QDateTime>
 
 CParseDispatcher::CParseDispatcher(): m_maxThreads(1)
 {
@@ -20,19 +21,20 @@ void CParseDispatcher::addToQueue(CDataStructure *newTask)
 
 void CParseDispatcher::onAddedToQueue()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO;
+    qDebug();
     if (m_activeQueue.count() < m_maxThreads)
     {
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO << "QUEUE count = " << m_queue.count();
+        qDebug() << "QUEUE count = " << m_queue.count();
         if (!m_queue.isEmpty())
         {
             CDataStructure* queueMember = m_queue.takeFirst();
             m_activeQueue.push_back(queueMember);
 
             // run thread
-            CParseThread* thread = new CParseThread();
+            CParseThread* thread = new CParseThread(queueMember);
             connect(thread, SIGNAL(finished()), this, SLOT(onParseTaskFinished()));
             m_threads.insert(thread, queueMember);
+            qDebug() << counter++ << "(((((((((((((((((" << QDateTime::currentDateTime().toTime_t();
             thread->start();
         }
     }
@@ -40,7 +42,8 @@ void CParseDispatcher::onAddedToQueue()
 
 void CParseDispatcher::onParseTaskFinished()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO << "THREAD FINISHED";
+    qDebug() << "THREAD FINISHED";
+    qDebug() << "))))))))))))))" << QDateTime::currentDateTime().toTime_t();
     foreach (CParseThread* thread, m_threads.keys())
     {
         if (thread->isFinished())
@@ -60,7 +63,7 @@ void CParseDispatcher::onParseTaskFinished()
                 m_activeQueue.push_back(queueMember);
 
                 // run thread
-                CParseThread* newThread = new CParseThread();
+                CParseThread* newThread = new CParseThread(queueMember);
                 m_threads.insert(newThread, queueMember);
                 newThread->start();
             }

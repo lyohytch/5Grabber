@@ -42,6 +42,7 @@ bool DBmanager::write(QVariantMap &data)
     Q_UNUSED(data);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
     bool ok = false;
+    return true;
     if (m_status)
     {
         QSqlQuery query(m_db);
@@ -99,6 +100,7 @@ bool DBmanager::write(QVariantMap &data)
 
 bool DBmanager::writeDoc(QVariantMap &data)
 {
+    return true;
     bool ok = false;
     if (m_status)
     {

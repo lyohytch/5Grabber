@@ -7,6 +7,7 @@
 #include <QRegExp>
 
 #include "tp_zakazrf_doc.h"
+#include "constants.h"
 
 TP_zakazrf_doc::TP_zakazrf_doc()
 {
@@ -71,13 +72,20 @@ CParseSignaller* TP_zakazrf_doc::signaller()
 
 bool TP_zakazrf_doc::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE DOC TASK!!!";
+    qDebug() << "RUN PARSE DOC TASK!!!" << m_data->root()->url().toString();
 
     for (int i = 0; i < m_data->childscCount(); i++)
     {
-        if (m_data->childAt(i)->type() == CDataStructure::eDataTypeDocument)
+        CDataStructure* lot = m_data->childAt(i);
+        //qDebug() << "CHILDS COUNT " << m_data->childscCount() << m_data->childAt(i)->url().toString();
+        // Looking througth the all Lots
+        for (int j = 0; j < lot->childscCount(); j++)
         {
-            docToXml(m_data->childAt(i));
+            // Looking for the DOCs in Lots
+            if (lot->childAt(j)->type() == CDataStructure::eDataTypeDocument)
+            {
+                docToXml(lot->childAt(j));
+            }
         }
     }
 
@@ -88,14 +96,15 @@ bool TP_zakazrf_doc::run()
 void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
 {
     bool valid = true;
-    QFile file(QString("%1.doc").arg(p_data->url().toString().section("=",1)));
+    QFile file(QString("/tmp/%1.doc").arg(p_data->url().toString().section("=",1)));
     bool ok = file.open(QFile::WriteOnly);
+    qDebug() << "OPEN FILE FOR WRITE is " << ok;
     if (ok)
     {
         file.write(p_data->read());
         file.close();
         QFileInfo fileInfo(file);
-        qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "DOC Saved in " << file.fileName();
+        qDebug() << "DOC Saved in " << file.fileName();
 
         QStringList args;
         args << "-x" << "db";
@@ -114,13 +123,13 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
         if (err.isEmpty())
         {
             QString info = findProviding(output);
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info;
+            qDebug() << "FINDINGS\n" <<info;
             QVariantMap db_data;
             db_data.insert("info", info);
             db_data.insert("url", p_data->url().toString());
             db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
             m_db->writeDoc(db_data);
-            qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "Output " << output.left(50);
+            qDebug() << "Output " << output.left(50);
         }
         else
         {

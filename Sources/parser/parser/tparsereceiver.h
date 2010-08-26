@@ -8,12 +8,6 @@
 #include <QThread>
 
 //======================================================
-//modules
-const QString PATH_MODULES = "./modules/parse/";
-const QString URL1 = "http://zakazrf.ru";
-const QString PARSE_MODULE = "libm_zakazrf.so";
-const QString PARSE_DOC_MODULE = "libm_zakazrf_doc.so";
-
 //code of errors
 const QString error_code = "error_code";
 const QString error_description = "error_description";

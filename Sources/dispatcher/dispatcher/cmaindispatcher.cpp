@@ -157,7 +157,7 @@ void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 
 void CMainDispatcher::onDone()
 {
-    qDebug()<<"Multi launch mode is switched off for preview";
+    qDebug()<<"Multi launch mode is switched off for preview ############# " << QDateTime::currentDateTime().toTime_t();
 //    m_startTasksTimer.setSingleShot(true);
 //    m_startTasksTimer.start(20000);
 }

@@ -1,4 +1,5 @@
 #include "tparsereceiver.h"
+#include "constants.h"
 
 //#include <QPluginLoader>
 //#include <QMap>
@@ -28,8 +29,8 @@ bool TParseReceiver::parse(CDataStructure* _data, const QByteArray& _url)
         return FALSE;
     }
 
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"Childs count "<< _data->childscCount();
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<":"<<"URL" << _data->url();
+    qDebug() << "Childs count "<< _data->childscCount();
+    qDebug() << "URL" << _data->url();
 
 //    m_dispatcher->queue().push_back(_data);
 //    emit addToQueue();

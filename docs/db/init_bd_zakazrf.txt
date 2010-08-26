@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Lot (
     PRIMARY KEY (id_reduction, num_lot)
 );
 
-CREATE TABLE IF NOT EXISTS Custoner (
+CREATE TABLE IF NOT EXISTS Customer (
     id_customer MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     adress VARCHAR(400),
