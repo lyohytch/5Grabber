@@ -75,7 +75,7 @@ bool TP_zakazrf::run()
     //Парсим лоты
     for (int i = 0; i < m_data->childscCount(); i++)
     {
-        if (m_data->childAt(i)->type() == CDataStructure::eDataTypePage)
+        if (m_data->childAt(i)->type() == CDataStructure::eDataTypeLotPage)
         {
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<m_data->childAt(i)->url().toString();
             html_to_db(m_data->childAt(i), m_ids_Lot, true);
@@ -96,12 +96,41 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
 
     if(isLot)
     {
+        //Getting participant information
+        for(int i = 0; i < p_data->childscCount(); i++)
+        {
+            if (p_data->childAt(i)->type() == CDataStructure::eDataTypeLotStatisticPage)
+            {
+                db_data.clear();
+                db_data.insert("table", "Participant");
+                qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# "<<i<<QString::fromUtf8(p_data->childAt(i)->read());
+                if( info[Content_StageLabel].toString() != "Закрыт")
+                {
+                  //Нет победителя - берём участников
+                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# not implemented yet";
+                    //db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
+                    //db_data.insert("num_lot",info[Content_NumberLabel]);
+                    //m_db->write(db_data);
+                }
+                else
+                {
+                    //Аукцион окончен.
+                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended";
+                    //db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
+                    //db_data.insert("num_lot",info[Content_NumberLabel]);
+                    db_data.insert("winner",tempFindWinner(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString()));
+                    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended. \nWinner is "<<db_data.value("winner");
+                    m_db->write(db_data);
+                }
+            }
+        }
+
         //Write in Status table
         db_data.clear();
         db_data.insert("table","Status");
         db_data.insert("id_status", (p_data->url().toString()).section("=", 1));
         db_data.insert("status", info[Content_StageLabel]);
-        m_db->write(db_data);
+        m_db->write(db_data);      
 
         //Write in Lot table
         db_data.clear();
@@ -141,6 +170,38 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("date_registration", info[PublicationDateLabel]);
         m_db->write(db_data);
     }
+}
+
+QString TP_zakazrf::tempFindWinner(const QByteArray &source, const QString &templ)
+{
+    qDebug()<<Q_FUNC_INFO<<" start";
+    QTextStream stream(source);
+    QString sourceStr(stream.readAll());
+    sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+    QString retStr;
+    int pos = sourceStr.lastIndexOf(templ);
+    //Сдвиг
+    int c = 0;
+    while(c < 2)
+    {
+        if( pos >= sourceStr.length())
+        {
+            retStr.clear();
+            break;
+        }
+        if(sourceStr[pos++] == '>')
+        {
+            c++;
+        }
+    }
+    //Получаем название фирмы
+    while(sourceStr[pos] != '<' && pos < sourceStr.length())
+    {
+        retStr += sourceStr[pos];
+        pos++;
+    }
+    qDebug()<<Q_FUNC_INFO<<" end";
+    return retStr;
 }
 
 QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)

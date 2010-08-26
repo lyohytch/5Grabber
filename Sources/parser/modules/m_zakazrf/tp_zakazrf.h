@@ -38,6 +38,9 @@ private:
     QStringList m_ids_Lot;
     QString extractFromSpanTag(const QString & tagTxt);
 
+    // todo
+    QString tempFindWinner(const QByteArray &source, const QString &templ);
+
 };
 
 #endif
