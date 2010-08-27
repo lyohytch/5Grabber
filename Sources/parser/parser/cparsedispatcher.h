@@ -31,6 +31,7 @@ private:
 //    QList<CParseThread*> m_threads;
     QList<CDataStructure*> m_queue;
     QList<CDataStructure*> m_activeQueue;
+    uint counter;
 };
 
 #endif // CPARSEDISPATCHER_H

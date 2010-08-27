@@ -3,12 +3,39 @@
 #include <QDebug>
 #include <QPluginLoader>
 
-CParseThread::CParseThread()
+CParseThread::CParseThread(CDataStructure *data): m_data(data)
 {
     // nothing
 }
 
 void CParseThread::run()
 {
-    qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO << "============ HELLO from thread "<<this->currentThreadId();
+    qDebug() << "============ HELLO from thread " << this->currentThreadId();
+    QPluginLoader loader(PATH_MODULES + PARSE_MODULE);
+    if(!loader.load())
+    {
+        qDebug() << loader.errorString();
+    }
+    TP_Task* task = qobject_cast<TP_Task *>(loader.instance());
+    task->init(1, m_data);
+    //loader.unload()
+
+    //m_parseTasksList.append(task);
+    //connect(task->signaller(), SIGNAL(finishedParse()), this, SLOT(onParseFinished()));
+    //    connect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
+    task->run();
+
+    QPluginLoader loaderDoc(PATH_MODULES + PARSE_DOC_MODULE);
+    if(!loaderDoc.load())
+    {
+        qDebug() << loaderDoc.errorString();
+    }
+    TP_Task* taskDoc = qobject_cast<TP_Task *>(loaderDoc.instance());
+    taskDoc->init(1, m_data);
+    //loader.unload()
+
+    //m_parseDocTasksList.append(taskDoc);
+    //connect(taskDoc->signaller(), SIGNAL(finishedParse()), this, SLOT(onParseDocFinished()));
+    //    connect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
+    taskDoc->run();
 }
