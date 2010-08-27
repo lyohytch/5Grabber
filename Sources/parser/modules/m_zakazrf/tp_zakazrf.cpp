@@ -72,10 +72,9 @@ CParseSignaller* TP_zakazrf::signaller()
 bool TP_zakazrf::run()
 {
     qDebug()<< "RUN PARSE TASK!!!" << m_data->childscCount();
-    //QStringList addToDBList;
-    //Парсим аукцион
+    //Parsing auction
     html_to_db(m_data->root(), m_ids_Auc, false);
-    //Парсим лоты
+    //Parsing lots
     for (int i = 0; i < m_data->childscCount(); i++)
     {
         if (m_data->childAt(i)->type() == CDataStructure::eDataTypeLotPage)
@@ -92,9 +91,7 @@ bool TP_zakazrf::run()
 
 void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, bool isLot)
 {
-    // TODO initial variant of parser
     QVariantMap info = findProviding(p_data->read(),m_ids);
-    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "FINDINGS\n" <<info<<"\n"<<isLot;
     QVariantMap db_data;
 
     if(isLot)
@@ -106,33 +103,19 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
             {
                 db_data.clear();
                 db_data.insert("table", "Participant");
-                //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"# "<<i<<QString::fromUtf8(p_data->childAt(i)->read());
-               // "<table"
-
-                if( info[labelLotParticipantCount].toString().isEmpty())
+                if( !info[labelLotParticipantCount].toString().isEmpty() )
                 {
-
-                  //Нет участников
-                    qDebug()<<"# Participants not found";
-                    participantsCount = 0;
-                    db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
-                    db_data.insert("num_lot",info[Content_NumberLabel]);
-                    db_data.insert("participants",QStringList());
-                    m_db->write(db_data);
+                    participantsCount = info[labelLotParticipantCount].toInt();
                 }
                 else
                 {
-                    //Есть участники
-                    //победитель имеет всегда первый id
-                    participantsCount = info[labelLotParticipantCount].toInt();
-                    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<"##Reduction was ended";
-                    db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
-                    db_data.insert("num_lot",info[Content_NumberLabel]);
-                    QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
-                    //qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<partNames;
-                    db_data.insert("participants",partNames);
-                    m_db->write(db_data);
+                    participantsCount = 0;
                 }
+                db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
+                db_data.insert("num_lot",info[Content_NumberLabel]);
+                QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
+                db_data.insert("participants",partNames);
+                m_db->write(db_data);
             }
         }
 
@@ -185,15 +168,19 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
 
 QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString &templ)
 {
-    //Какие-то участники точно есть
-   // qDebug()<<Q_FUNC_INFO<<" start";
     int tmpCount = participantsCount;
+
+    if(tmpCount <= 0) return QStringList();
+
     QTextStream stream(source);
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+
+    //Getting winner
     QString winner;
     int pos = sourceStr.lastIndexOf(templ);
-    //TODO check pos
+    if(pos == -1) return QStringList();
+
     //Сдвиг
     int c = 0;
     while(c < 2)
@@ -208,28 +195,29 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
             c++;
         }
     }
-    //Получаем название фирмы
-    while(sourceStr[pos] != '<' && pos < sourceStr.length())
+    //Gettong winner's company name
+    while(pos < sourceStr.length() && sourceStr[pos] != '<')
     {
         winner += sourceStr[pos];
         pos++;
     }
     QStringList retList;
-    //Получаем других участников
+
+    //Getting other participants
     retList.append(winner);
 
-    ////БОЛЬШОЙ ВЁРКЭРАУНД
+    ////BIG WORLAROUND START
     //*********************************
     tmpCount--;
     QString start = "<table";
     QString end   = "</table>";
     QString strStart = "<td";
-    QString strEnd   = "</td>";
     int posTable = sourceStr.lastIndexOf(start);
     int posEndTable = sourceStr.indexOf(end);
     //Взяли табличку
     QString tableStr = sourceStr.mid(posTable, posEndTable - posTable);
     //qDebug()<<Q_FUNC_INFO<<"::::"<<tableStr;
+    //Можно сделать, так как структура таблицы проста и без вложений
     QRegExp regexp(QString("<[^<]*>[^<]*</[^<]*>"), Qt::CaseInsensitive);
     posTable = 0;
     int l = 0;
@@ -256,17 +244,10 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
                 if(tmpCount == 0) break;
             }
         }
-        //*********************************
-    //    foreach(QString id,a_ids)
-    //    {
-    //       if (tmp.contains(id,Qt::CaseInsensitive))
-    //       {
-    //            appToDB.append(extractFromSpanTag(tmp));
-    //       }
-    //    }
     }
+    ////BIG WORLAROUND END
+    //*********************************
 
-    //qDebug()<<Q_FUNC_INFO<<" end";
     return retList;
 }
 
@@ -304,7 +285,7 @@ QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
         if (retStr.isEmpty())
         {
             // TODO remove debug
-            qDebug()<<" Template not found";
+            qDebug()<<" Template not found. id"<<id;
         }
         else
         {
@@ -320,8 +301,8 @@ QString TP_zakazrf::extractFromSpanTag(const QString & tagTxt)
 {
     QString retStr;
     int i = 0;
-    while(tagTxt[i++] != '>' && i < tagTxt.length());
-    while(tagTxt[i] != '<' && i < tagTxt.length())
+    while(i < tagTxt.length() && tagTxt[i++] != '>');
+    while(i < tagTxt.length() && tagTxt[i] != '<' )
     {
        retStr += tagTxt[i];
        i++;
