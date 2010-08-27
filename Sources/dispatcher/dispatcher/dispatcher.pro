@@ -18,6 +18,8 @@ CONFIG -= app_bundle
 GBR_SOURCE_ROOT=../..
 include($$GBR_SOURCE_ROOT/paths.pri)
 
+DEFINES += TIME_STAMPS
+
 DESTDIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BIN_PATH
 
 OBJECTS_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/obj
@@ -52,6 +54,7 @@ SOURCES += cmaindispatcher.cpp \
     cparserhandler.cpp \
     main.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cconfighandler.cpp \
-    $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp
+    $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp \
+    $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/constants.cpp
 
 DEFINES += RUN_TIME_PATH="\\\"$$PWD/$$GBR_SOURCE_ROOT/$$GRB_BIN_PATH\\\""
