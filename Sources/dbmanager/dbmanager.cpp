@@ -42,7 +42,6 @@ bool DBmanager::write(QVariantMap &data)
     Q_UNUSED(data);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
     bool ok = false;
-    return true;
     if (m_status)
     {
         QSqlQuery query(m_db);
@@ -54,9 +53,10 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "LOT")
         {
-            query.prepare("INSERT INTO Lot VALUES (:num_lot, :id_reduction, :status, :subject, :id_contract, :obespechenie, :start_price, :best_price, :start_time, :protocol);");
-            query.bindValue(":num_lot",data.value("num_lot"));
+            query.prepare("INSERT INTO Lot VALUES (:id_reduction, :num_lot, :status, :subject,"
+                " :id_contract, :obespechenie, :start_price, :best_price, :start_time, :protocol);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
+            query.bindValue(":num_lot",data.value("num_lot"));
             query.bindValue(":status",data.value("status"));
             query.bindValue(":subject",data.value("subject"));
             query.bindValue(":id_contract",data.value("id_contract"));
@@ -68,7 +68,7 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "Customer")
         {
-            query.prepare("INSERT INTO Custoner VALUES (:id_customer, :name, :adress, :post_adress, :email, :telephone);");
+            query.prepare("INSERT INTO Customer VALUES (:id_customer, :name, :adress, :post_adress, :email, :telephone);");
             query.bindValue(":id_customer",data.value("id_customer"));
             query.bindValue(":name",data.value("name"));
             query.bindValue(":adress",data.value("adress"));
@@ -85,14 +85,36 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":date_registration",data.value("date_registration"));
 
         }
+        else if(data.value("table").toString() == "Participant")
+        {
+            query.prepare("INSERT INTO Participant VALUES(:id_participant, :id_reduction, :num_lot, :name, :inn, :kpp);" );
+            query.bindValue(":num_lot",data.value("num_lot"));
+            query.bindValue(":inn",QVariant());
+            query.bindValue(":kpp",QVariant());
+            query.bindValue(":id_reduction",data.value("id_reduction"));
+            int i = 0;
+            foreach(QVariant t, data.value("participants").toList())
+            {
+                query.bindValue(":id_participant", i++);
+                query.bindValue(":name", t);
+                ok = query.exec();
+                if(!ok)
+                {
+                    qDebug() << "===> query error is: " << query.lastError().text();
+                }
+            }
+            return ok;
+
+        }
         else
         {
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" Table doesn't exist";
+            return ok;
         }
         ok = query.exec();
         if (!ok)
         {
-            qDebug() << "===> qury error is: " << query.lastError().text();
+            qDebug() << "===> query error is: " << query.lastError().text();
         }
     }
     return ok;
@@ -100,7 +122,6 @@ bool DBmanager::write(QVariantMap &data)
 
 bool DBmanager::writeDoc(QVariantMap &data)
 {
-    return true;
     bool ok = false;
     if (m_status)
     {

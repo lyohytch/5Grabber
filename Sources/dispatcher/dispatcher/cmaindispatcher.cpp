@@ -24,7 +24,9 @@ bool CMainDispatcher::init(const QString &configUrl)
     qDebug()<<"======================Start Grabber====================";
     qDebug()<<"RUN_TIME_PATH"<<RUN_TIME_PATH;;
     qDebug()<<"Time"<<QDateTime::currentDateTime().toTime_t();
-
+#ifdef TIME_STAMPS
+    gSummaryWorkTime=QDateTime::currentDateTime().toTime_t();
+#endif
     if(!CConfigHandler::load(configUrl))
     {
         qDebug()<<"Config initialization error";
@@ -60,7 +62,7 @@ bool CMainDispatcher::init(const QString &configUrl)
     }
 
     startRecieveTasks();
-    qDebug()"Succed";
+    qDebug()<<"Succed";
     return true;
 }
 
@@ -157,7 +159,11 @@ void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 
 void CMainDispatcher::onDone()
 {
-    qDebug()<<"Multi launch mode is switched off for preview ############# " << QDateTime::currentDateTime().toTime_t();
+    qDebug()<<"Multi launch mode is switched off for preview";
+#ifdef TIME_STAMPS
+    gSummaryWorkTime=QDateTime::currentDateTime().toTime_t()-gSummaryWorkTime;
+    qDebug()<<"######################## Summary work time: "<<gSummaryWorkTime<<" ########################";
+#endif
 //    m_startTasksTimer.setSingleShot(true);
 //    m_startTasksTimer.start(20000);
 }

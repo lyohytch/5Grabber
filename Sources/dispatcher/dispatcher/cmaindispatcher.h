@@ -13,6 +13,8 @@
 #include <cdatastructure.h>
 #include "cparserhandler.h"
 
+static unsigned int gSummaryWorkTime=0;
+
 class CMainDispatcher : public QObject
 {
 Q_OBJECT

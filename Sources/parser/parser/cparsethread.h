@@ -18,13 +18,14 @@ class CParseThread : public QThread
 {
     Q_OBJECT
 public:
-    CParseThread(CDataStructure* data);
+    CParseThread(CDataStructure* data, DBmanager* db);
     void run();
 
 signals:
 
 private:
     CDataStructure* m_data;
+    DBmanager* m_db;
 };
 
 #endif // CPARSETHREAD_H

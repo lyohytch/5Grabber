@@ -21,7 +21,7 @@ public:
     TP_sberbank();
     ~TP_sberbank();
 
-    virtual bool init(int maxThreads, CDataStructure* data);
+    virtual bool init(int maxThreads, CDataStructure* data, DBmanager* db);
     virtual bool run();
     virtual CParseSignaller* signaller();
 

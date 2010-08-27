@@ -21,7 +21,7 @@ public:
     TP_zakazrf();
     ~TP_zakazrf();
 
-    virtual bool init(int maxThreads, CDataStructure* data);
+    virtual bool init(int maxThreads, CDataStructure* data, DBmanager* db);
     virtual bool run();
     //virtual QMap<QString,QVariant> parse(CDataStructure* _data);
     virtual CParseSignaller* signaller();
@@ -37,9 +37,10 @@ private:
     QStringList m_ids_Auc;
     QStringList m_ids_Lot;
     QString extractFromSpanTag(const QString & tagTxt);
+    int participantsCount;
 
     // todo
-    QString tempFindWinner(const QByteArray &source, const QString &templ);
+    QStringList findParticipants(const QByteArray &source, const QString &templ);
 
 };
 

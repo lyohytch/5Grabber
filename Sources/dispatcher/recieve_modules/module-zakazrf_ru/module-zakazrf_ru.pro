@@ -4,7 +4,7 @@ TEMPLATE = lib
 QT += network
 
 #DEFINES += RUN_ALL_TASKS
-
+DEFINES += TIME_STAMPS
 GBR_SOURCE_ROOT=../../..
 include($$GBR_SOURCE_ROOT/paths.pri)
 

@@ -6,6 +6,10 @@
 #include <QVariantList>
 #include <QDebug>
 
+#ifdef TIME_STAMPS
+#include <QDateTime>
+#endif
+
 static const QString cConfigUrl("./config/main.ini");
 typedef QMap<QUrl, QVariantList> siterules_t;
 typedef QMapIterator<QUrl, QVariantList> siterules_ti;
@@ -14,4 +18,6 @@ typedef QMapIterator<QUrl, QVariantList> siterules_ti;
 #define qWarning() qWarning()<<"WARNING -"__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<": "
 
 #define getConfigurationValue(X, Y) (CConfigHandler::instance()->value(X, Y))
+
+
 #endif // CONSTANTS_H

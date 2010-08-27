@@ -44,7 +44,10 @@ protected:
     int m_httpId;
 
     CDataStructure* m_data;
-
+#ifdef TIME_STAMPS
+    unsigned int m_TmpDownloadStartTime;
+    static unsigned int gSummaryDownloadTime;
+#endif
 protected slots:
     void onRecieveComplete(int id, bool error);
     void onError();

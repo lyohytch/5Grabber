@@ -4,10 +4,17 @@
 
 #include <constants.h>
 
+#ifdef TIME_STAMPS
+    unsigned int CReciveThread :: gSummaryDownloadTime=0;
+#endif
+
 CReciveThread :: CReciveThread(QUrl url, int id, QObject *parent) : QThread(parent)
         ,m_url(url)
         ,m_threadId(id)
 {
+#ifdef TIME_STAMPS
+    m_TmpDownloadStartTime=QDateTime::currentDateTime().toTime_t();
+#endif
 }
 
 CReciveThread :: ~CReciveThread()
@@ -52,6 +59,10 @@ void CReciveThread::onRecieveComplete(int id, bool error)
     QByteArray data=m_http.readAll();
     qDebug()<<data.size();
     m_data->write(data);
+#ifdef TIME_STAMPS
+    gSummaryDownloadTime+=QDateTime::currentDateTime().toTime_t()-m_TmpDownloadStartTime;
+    qDebug()<<"######################## Summary download time"<<gSummaryDownloadTime<<" ##########################";
+#endif
     emit dataReady(m_threadId);
 }
 
