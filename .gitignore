@@ -1,3 +1,6 @@
 Sources/Grubber.pro.user*
 Grubber-build-desktop/
 Sources/Makefile
+Sources/build
+*Makefile*
+*pro.user*
