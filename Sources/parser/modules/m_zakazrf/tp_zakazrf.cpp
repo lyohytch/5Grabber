@@ -2,6 +2,7 @@
 
 #include "constants.h"
 #include <QByteArray>
+#include <QMutex>
 
 //Reduction
 const QString NumberLabel                 = "ctl00_Content_ReductionViewForm_NumberLabel";
@@ -27,7 +28,7 @@ TP_zakazrf::TP_zakazrf()
 {
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
-    m_db = new DBmanager();
+//    m_db = new DBmanager();
     //TODO сделать константами
     //Reduction
     m_ids_Auc<<"ctl00_Content_ReductionViewForm_NumberLabel"  //Номер аукциона
@@ -53,14 +54,15 @@ TP_zakazrf::TP_zakazrf()
 TP_zakazrf::~TP_zakazrf()
 {
     delete m_signaller;
-    delete m_db;
+//    delete m_db;
 }
 
-bool TP_zakazrf::init(int maxThreads, CDataStructure *data)
+bool TP_zakazrf::init(int maxThreads, CDataStructure *data, DBmanager* db)
 {
     m_maxThreads = maxThreads;
     m_data = data;
-    m_db->init();
+//    m_db->init();
+    m_db = db;
     return TRUE;
 }
 
@@ -93,6 +95,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
 {
     QVariantMap info = findProviding(p_data->read(),m_ids);
     QVariantMap db_data;
+    QMutex mutex;
 
     if(isLot)
     {
@@ -115,7 +118,9 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
                 db_data.insert("num_lot",info[Content_NumberLabel]);
                 QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
                 db_data.insert("participants",partNames);
-                m_db->write(db_data);
+                mutex.lock();
+                    m_db->write(db_data);
+                mutex.unlock();
             }
         }
 
@@ -124,7 +129,9 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("table","Status");
         db_data.insert("id_status", (p_data->url().toString()).section("=", 1));
         db_data.insert("status", info[Content_StageLabel]);
-        m_db->write(db_data);      
+        mutex.lock();
+            m_db->write(db_data);
+        mutex.unlock();
 
         //Write in Lot table
         db_data.clear();
@@ -139,7 +146,9 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
         db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
         db_data.insert("protocol","");
-        m_db->write(db_data);
+        mutex.lock();
+            m_db->write(db_data);
+        mutex.unlock();
     }
     //Customer and Reduction tables
     else
@@ -153,7 +162,9 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("post_adress", info[CustomerPostAddressLabel]);
         db_data.insert("email", info[CustomerEMailLabel]);
         db_data.insert("telephone", info[CustomerContactPhoneLabel]);
-        m_db->write(db_data);
+        mutex.lock();
+            m_db->write(db_data);
+        mutex.unlock();
 
         //Write in Reduction Table
         db_data.clear();
@@ -162,7 +173,9 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("string_number", info[NumberLabel]);
         db_data.insert("id_customer", (p_data->url().toString()).section("=", 1));
         db_data.insert("date_registration", info[PublicationDateLabel]);
-        m_db->write(db_data);
+        mutex.lock();
+            m_db->write(db_data);
+        mutex.unlock();
     }
 }
 

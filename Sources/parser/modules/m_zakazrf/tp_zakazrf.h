@@ -21,7 +21,7 @@ public:
     TP_zakazrf();
     ~TP_zakazrf();
 
-    virtual bool init(int maxThreads, CDataStructure* data);
+    virtual bool init(int maxThreads, CDataStructure* data, DBmanager* db);
     virtual bool run();
     //virtual QMap<QString,QVariant> parse(CDataStructure* _data);
     virtual CParseSignaller* signaller();

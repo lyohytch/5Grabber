@@ -55,6 +55,6 @@ SOURCES += cmaindispatcher.cpp \
     main.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cconfighandler.cpp \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/cdatastructure.cpp \
-    $$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/constants.cpp
+    #$$GBR_SOURCE_ROOT/$$GRB_LIBS_SRC_PATH/constants.cpp
 
 DEFINES += RUN_TIME_PATH="\\\"$$PWD/$$GBR_SOURCE_ROOT/$$GRB_BIN_PATH\\\""

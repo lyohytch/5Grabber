@@ -1,6 +1,7 @@
 #include "tp_sberbank.h"
 
 #include <QDebug>
+#include <QMutex>
 
 
 TP_sberbank::TP_sberbank()
@@ -14,11 +15,12 @@ TP_sberbank::~TP_sberbank()
     delete m_signaller;
 }
 
-bool TP_sberbank::init(int maxThreads, CDataStructure *data)
+bool TP_sberbank::init(int maxThreads, CDataStructure *data, DBmanager* db)
 {
     m_maxThreads = maxThreads;
     m_data = data;
-    m_db->init();
+//    m_db->init();
+    m_db = db;
     return TRUE;
 }
 
@@ -29,6 +31,7 @@ CParseSignaller* TP_sberbank::signaller()
 
 bool TP_sberbank::run()
 {
+    QMutex mutex;
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< "RUN PARSE TASK!!!";
 
     QVariantMap info = parse(m_data,true);
@@ -45,7 +48,9 @@ bool TP_sberbank::run()
     db_data.insert("info", info);
     db_data.insert("url", m_data->url().toString());
     db_data.insert("id_reduction", m_data->root()->url().toString().section("=", 1));
-    m_db->write(db_data);
+    mutex.lock();
+        m_db->write(db_data);
+    mutex.unlock();
 
     m_signaller->onParseFinished();
     return TRUE;

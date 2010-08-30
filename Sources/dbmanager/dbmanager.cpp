@@ -53,10 +53,11 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "LOT")
         {
-            query.prepare("INSERT INTO Lot VALUES (:id_reduction, :num_lot, :status, :subject,"
+            query.prepare("INSERT INTO Lot VALUES (:id_reduction, :num_lot, :id_lot, :status, :subject,"
                 " :id_contract, :obespechenie, :start_price, :best_price, :start_time, :protocol);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
             query.bindValue(":num_lot",data.value("num_lot"));
+            query.bindValue(":id_lot",QVariant());
             query.bindValue(":status",data.value("status"));
             query.bindValue(":subject",data.value("subject"));
             query.bindValue(":id_contract",data.value("id_contract"));
@@ -87,7 +88,8 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "Participant")
         {
-            query.prepare("INSERT INTO Participant VALUES(:id_participant, :id_reduction, :num_lot, :name, :inn, :kpp);" );
+//            query.prepare("INSERT INTO Participant VALUES(:id_participant, :id_reduction, :num_lot, :name, :inn, :kpp);" );
+            query.prepare("INSERT INTO Participant VALUES(:id_participant, :name, :inn, :kpp);" );
             query.bindValue(":num_lot",data.value("num_lot"));
             query.bindValue(":inn",QVariant());
             query.bindValue(":kpp",QVariant());
