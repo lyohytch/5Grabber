@@ -55,6 +55,7 @@ void CParseDispatcher::onParseTaskFinished()
     qDebug() << "))))))))))))))" << QDateTime::currentDateTime().toTime_t();
     foreach (CParseThread* thread, m_threads.keys())
     {
+        qDebug() << "THREADS COUNT BEFORE = " << m_threads.count();
         if (thread->isFinished())
         {
             CDataStructure* parsed_data = m_threads.value(thread);
@@ -63,19 +64,25 @@ void CParseDispatcher::onParseTaskFinished()
             delete thread;
             emit queueMemeberParsed(parsed_data);
         }
-
-        if (m_activeQueue.count() < m_maxThreads)
+    }
+    qDebug() << "THREADS COUNT AFTER  = " << m_threads.count();
+    while (m_activeQueue.count() < m_maxThreads)
+    {
+        if (!m_queue.isEmpty())
         {
-            if (!m_queue.isEmpty())
-            {
-                CDataStructure* queueMember = m_queue.takeFirst();
-                m_activeQueue.push_back(queueMember);
+            CDataStructure* queueMember = m_queue.takeFirst();
+            m_activeQueue.push_back(queueMember);
 
-                // run thread
-                CParseThread* newThread = new CParseThread(queueMember, m_db);
-                m_threads.insert(newThread, queueMember);
-                newThread->start();
-            }
+            // run thread
+            CParseThread* newThread = new CParseThread(queueMember, m_db);
+            connect(newThread, SIGNAL(finished()), this, SLOT(onParseTaskFinished()));
+            m_threads.insert(newThread, queueMember);
+            newThread->start();
+        }
+        else
+        {
+            break;
         }
     }
+    qDebug() << "THREADS COUNT AFTER2 = " << m_threads.count();
 }
