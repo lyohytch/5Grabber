@@ -9,6 +9,7 @@ QT += xml
 QT += xmlpatterns
 QT += webkit
 QT += dbus
+QT += sql
 TARGET = parser
 CONFIG += console
 CONFIG -= app_bundle
@@ -21,7 +22,8 @@ DESTDIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_LIBS_BIN_PATH
 OBJECTS_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/obj
 MOC_DIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BUILD_PATH/$$TARGET/moc
 INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
-    $$GBR_SOURCE_ROOT/$$GRB_DSP_MODULES_PATH
+    $$GBR_SOURCE_ROOT/$$GRB_DSP_MODULES_PATH \
+    $$GBR_SOURCE_ROOT/$$GRB_DBMANAGER_PATH
 INCLUDEPATH += ../modules/
 HEADERS += tparsereceiver.h \
     cparsedispatcher.h \
@@ -29,7 +31,8 @@ HEADERS += tparsereceiver.h \
     ../modules/tp_task.h \
     ../modules/cparsesignaller.h \
     $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/cdatastructure.h \
-    $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/tparsethread.h
+    $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH/tparsethread.h \
+    $$GBR_SOURCE_ROOT/$$GRB_DBMANAGER_PATH/dbmanager.h
 SOURCES += tparsereceiver.cpp \
     cparsedispatcher.cpp \
     cparsethread.cpp \

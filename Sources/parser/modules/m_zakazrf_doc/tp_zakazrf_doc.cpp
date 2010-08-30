@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QRegExp>
+#include <QMutex>
 
 #include "tp_zakazrf_doc.h"
 #include "constants.h"
@@ -13,20 +14,21 @@ TP_zakazrf_doc::TP_zakazrf_doc()
 {
     m_threadCounter = 0;
     m_signaller = new CParseSignaller();
-    m_db = new DBmanager();
+//    m_db = new DBmanager();
 }
 
 TP_zakazrf_doc::~TP_zakazrf_doc()
 {
     delete m_signaller;
-    delete m_db;
+//    delete m_db;
 }
 
-bool TP_zakazrf_doc::init(int maxThreads, CDataStructure *data)
+bool TP_zakazrf_doc::init(int maxThreads, CDataStructure *data, DBmanager *db)
 {
     m_maxThreads = maxThreads;
     m_data = data;
-    m_db->init();
+//    m_db->init();
+    m_db = db;
     return TRUE;
 }
 
@@ -95,6 +97,7 @@ bool TP_zakazrf_doc::run()
 
 void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
 {
+    QMutex mutex;
     bool valid = true;
     QFile file(QString("/tmp/%1.doc").arg(p_data->url().toString().section("=",1)));
     bool ok = file.open(QFile::WriteOnly);
@@ -128,7 +131,9 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
             db_data.insert("info", info);
             db_data.insert("url", p_data->url().toString());
             db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
-            m_db->writeDoc(db_data);
+            mutex.lock();
+                m_db->writeDoc(db_data);
+            mutex.unlock();
             qDebug() << "Output " << output.left(50);
         }
         else

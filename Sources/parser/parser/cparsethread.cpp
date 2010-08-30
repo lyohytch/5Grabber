@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QPluginLoader>
 
-CParseThread::CParseThread(CDataStructure *data): m_data(data)
+CParseThread::CParseThread(CDataStructure *data, DBmanager *db): m_data(data), m_db(db)
 {
     // nothing
 }
@@ -17,7 +17,7 @@ void CParseThread::run()
         qDebug() << loader.errorString();
     }
     TP_Task* task = qobject_cast<TP_Task *>(loader.instance());
-    task->init(1, m_data);
+    task->init(1, m_data, m_db);
     //loader.unload()
 
     //m_parseTasksList.append(task);
@@ -31,7 +31,7 @@ void CParseThread::run()
         qDebug() << loaderDoc.errorString();
     }
     TP_Task* taskDoc = qobject_cast<TP_Task *>(loaderDoc.instance());
-    taskDoc->init(1, m_data);
+    taskDoc->init(1, m_data, m_db);
     //loader.unload()
 
     //m_parseDocTasksList.append(taskDoc);

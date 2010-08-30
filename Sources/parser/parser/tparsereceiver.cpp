@@ -12,8 +12,9 @@ bool TParseReceiver::init()
     m_dispatcher = new CParseDispatcher();
     if (m_dispatcher)
     {
+        bool ok = m_dispatcher->init();
         //connect(this, SIGNAL(addToQueue()), m_dispatcher, SLOT(onAddedToQueue()));
-        bool ok = connect(m_dispatcher, SIGNAL(queueMemeberParsed(CDataStructure*)), this, SLOT(onQueueMemberParsed(CDataStructure*)));
+        ok &= connect(m_dispatcher, SIGNAL(queueMemeberParsed(CDataStructure*)), this, SLOT(onQueueMemberParsed(CDataStructure*)));
         qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<< " Connect is ---------" <<ok;
         return TRUE;
     }

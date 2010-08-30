@@ -7,6 +7,7 @@
 
 #include "cdatastructure.h"
 #include "cparsethread.h"
+#include "dbmanager.h"
 
 class CParseDispatcher : public QObject
 {
@@ -14,6 +15,7 @@ class CParseDispatcher : public QObject
 public:
     CParseDispatcher();
     ~CParseDispatcher();
+    bool init();
     //QList<CDataStructure*> queue() {return m_queue;}
     void addToQueue(CDataStructure* newTask);
     void onAddedToQueue();
@@ -27,6 +29,7 @@ public slots:
 
 private:
     int m_maxThreads;
+    DBmanager* m_db;
     QMap <CParseThread* , CDataStructure*> m_threads;
 //    QList<CParseThread*> m_threads;
     QList<CDataStructure*> m_queue;
