@@ -20,6 +20,7 @@ CReciveThread :: CReciveThread(QUrl url, int id, QObject *parent) : QThread(pare
 CReciveThread :: ~CReciveThread()
 {
     m_http.close();
+    disconnect(&m_http, SIGNAL(requestFinished(int,bool)), this, SLOT(onRecieveComplete(int,bool)));
 }
 
 void CReciveThread :: run()
