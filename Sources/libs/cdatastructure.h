@@ -45,6 +45,8 @@ public:
 
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
+    void setNeedRequeue(int need) {m_needRequeue=need;}
+    int needRequeue() {return m_needRequeue;}
 
 //    bool isRunned() {return m_isRunned;}
 //    void setRunned() {m_isRunned=true;}
@@ -61,6 +63,7 @@ private:
     QUrl m_url;
     bool m_isDone;
     bool m_isRoot;
+    int m_needRequeue;
 //    bool m_isRunned;
 
     CDataStructure* m_root;

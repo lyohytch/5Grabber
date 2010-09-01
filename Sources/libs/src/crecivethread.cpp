@@ -1,5 +1,5 @@
 #include "crecivethread.h"
-
+#include <cconfighandler.h>
 #include <QNetworkProxy>
 
 #include <constants.h>
@@ -15,6 +15,9 @@ CReciveThread :: CReciveThread(QUrl url, int id, QObject *parent) : QThread(pare
 #ifdef TIME_STAMPS
     m_TmpDownloadStartTime=QDateTime::currentDateTime().toTime_t();
 #endif
+    connect(&m_timeout, SIGNAL(timeout()), &m_http, SLOT(abort()));
+    m_timeout.setSingleShot(true);
+    m_timeout.start((getConfigurationValue("zakazrf_ru/connection_timout", 10).toInt())*1000);
 }
 
 CReciveThread :: ~CReciveThread()
@@ -54,7 +57,18 @@ void CReciveThread::onRecieveComplete(int id, bool error)
 
     if(error)
     {
-        qDebug()<<"Could not recieve requested URL";
+        qDebug()<<"Could not recieve requested URL ("<<m_http.error()<<")"<<m_http.errorString();
+        if(m_data->needRequeue()>0)
+        {
+            m_data->setNeedRequeue(m_data->needRequeue()-1);
+        }
+        else
+        {
+            m_data->setNeedRequeue(getConfigurationValue("zakazrf_ru/attempts", 10).toInt());
+        }
+        qDebug()<<"Attempts amount :"<<m_data->needRequeue();
+        emit dataReady(m_threadId);
+        return;
     }
 
     QByteArray data=m_http.readAll();
@@ -64,6 +78,6 @@ void CReciveThread::onRecieveComplete(int id, bool error)
     gSummaryDownloadTime+=QDateTime::currentDateTime().toTime_t()-m_TmpDownloadStartTime;
     qDebug()<<"######################## Summary download time"<<gSummaryDownloadTime<<" ##########################";
 #endif
+    m_data->setNeedRequeue(0);
     emit dataReady(m_threadId);
 }
-

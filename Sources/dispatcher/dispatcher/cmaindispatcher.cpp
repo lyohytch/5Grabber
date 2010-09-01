@@ -180,6 +180,12 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
     qDebug()<<"Data structure is ready:"<<data->url();
+    if(data->read().size()<=0)
+    {
+        qDebug()<<"Filter empty data";
+        onParceFinished(0, data->url());
+        return;
+    }
     QUrl url;
     url.setHost(data->url().host());
     url.setScheme(data->url().scheme());

@@ -179,6 +179,14 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
             continue;
         }
 
+        if(data->needRequeue()>0)
+        {
+//            data->setNeedRequeue(data->needRequeue());
+            m_activeDataStructures.push_back(data);
+            activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
+            continue;
+        }
+
         if(m_threads.count()<(m_maxThreads+1))
         {
             CReciveThread *thread=new CReciveThread(data->url(),m_threadCounter++);
@@ -227,6 +235,22 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         return;
     }
 
+    if(data->needRequeue()>0)
+    {
+        m_threads.at(threadNum)->exit(0);
+        return;
+    }
+
+    if(data->read().size()<=0)
+    {
+        data->done();
+        if(data->root()->isFinished())
+        {
+            m_signaller->onDataReady(data->root());
+        }
+        m_threads.at(threadNum)->exit(0);
+        return;
+    }
 
     if(data->type()==CDataStructure::eDataTypeDocument)
     {
