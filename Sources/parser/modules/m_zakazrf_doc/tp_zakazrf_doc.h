@@ -27,7 +27,7 @@ private:
 //    QMap<QString,QVariant> parse_html_auk(const QString& _html);
 //    QMap<QString,QVariant> parse_html_lot(const QString& _html);
 //    QString html_to_txt(const QString& _html);
-    void docToXml(CDataStructure* p_data);
+    void docToXml(CDataStructure* p_data, int lot);
     QString findProviding(const QByteArray &source);
     qint64 m_threadCounter;
     int m_maxThreads;

@@ -89,15 +89,17 @@ bool DBmanager::write(QVariantMap &data)
         else if(data.value("table").toString() == "Participant")
         {
 //            query.prepare("INSERT INTO Participant VALUES(:id_participant, :id_reduction, :num_lot, :name, :inn, :kpp);" );
-            query.prepare("INSERT INTO Participant VALUES(:id_participant, :name, :inn, :kpp);" );
-            query.bindValue(":num_lot",data.value("num_lot"));
+            query.prepare("INSERT INTO Participant VALUES(:id_participant, :name, :inn, :kpp, :id_reduction, :num_lot);" );
+            query.bindValue(":id_participant",QVariant());
+            //query.bindValue(":name", data.value("participants"));
             query.bindValue(":inn",QVariant());
             query.bindValue(":kpp",QVariant());
             query.bindValue(":id_reduction",data.value("id_reduction"));
+            query.bindValue(":num_lot",data.value("num_lot"));
             int i = 0;
             foreach(QVariant t, data.value("participants").toList())
             {
-                query.bindValue(":id_participant", i++);
+                //query.bindValue(":id_participant", i++);
                 query.bindValue(":name", t);
                 ok = query.exec();
                 if(!ok)
@@ -128,9 +130,10 @@ bool DBmanager::writeDoc(QVariantMap &data)
     if (m_status)
     {
         QSqlQuery query(m_db);
-        query.prepare("INSERT INTO DocFile VALUES (:id_file, :id_reduction, :name, :url, :uploaded, :last_parsed, :info);");
+        query.prepare("INSERT INTO DocFile VALUES (:id_file, :id_reduction, :num_lot, :name, :url, :uploaded, :last_parsed, :info);");
         query.bindValue(":id_file", QVariant());
         query.bindValue(":id_reduction", data.value("id_reduction"));
+        query.bindValue(":num_lot", data.value("num_lot"));
         query.bindValue(":name", QVariant(""));
         query.bindValue(":url", data.value("url"));
         query.bindValue(":uploaded", QVariant());

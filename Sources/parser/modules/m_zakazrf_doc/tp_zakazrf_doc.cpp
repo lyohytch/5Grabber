@@ -86,7 +86,7 @@ bool TP_zakazrf_doc::run()
             // Looking for the DOCs in Lots
             if (lot->childAt(j)->type() == CDataStructure::eDataTypeDocument)
             {
-                docToXml(lot->childAt(j));
+                docToXml(lot->childAt(j), j + 1);
             }
         }
     }
@@ -95,7 +95,7 @@ bool TP_zakazrf_doc::run()
     return TRUE;
 }
 
-void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
+void TP_zakazrf_doc::docToXml(CDataStructure *p_data, int lot)
 {
     QMutex mutex;
     bool valid = true;
@@ -131,6 +131,7 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data)
             db_data.insert("info", info);
             db_data.insert("url", p_data->url().toString());
             db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
+            db_data.insert("num_lot", lot);
             mutex.lock();
                 m_db->writeDoc(db_data);
             mutex.unlock();
@@ -154,10 +155,30 @@ QString TP_zakazrf_doc::findProviding(const QByteArray &source)
    QRegExp regexp(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
    for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
    {
-       QString tmp = regexp.capturedTexts().at(0);
-       if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive))
+       //QString tmp = regexp.capturedTexts().at(0);
+       QString tmp = regexp.cap();
+       //pos += tmp.length();
+       if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive) &&
+           tmp.contains(QTextStream("исполнени").readAll(),Qt::CaseInsensitive) &&
+           tmp.contains(QTextStream("контракт").readAll(),Qt::CaseInsensitive) &&
+           tmp.length() < 200)
        {
-           found.append(tmp + "\n");
+           found.append(tmp);
+           QString secondStr = sourceStr.mid(pos + tmp.length());
+           //QRegExp regexp2(QString("<[^<]*>\\d[^<]*<[^<]*>"), Qt::CaseInsensitive);
+           QRegExp regexp2(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
+           for (int pos2 = regexp.indexIn(secondStr); pos2 >= 0; pos2 = regexp.indexIn(secondStr,pos2 + 1))
+           {
+               QString tmp2 = regexp2.cap();
+               if (!tmp2.isEmpty() && ~tmp2.isNull() && tmp2.trimmed().at(0).digitValue() != -1)
+               {
+                   found.append(secondStr.left(pos2));
+                   break;
+               }
+//               found.append(tmp2);
+               //pos += tmp2.length();
+           }
+//           found.append("\n");
        }
    }
 
