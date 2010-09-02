@@ -15,9 +15,6 @@ CReciveThread :: CReciveThread(QUrl url, int id, QObject *parent) : QThread(pare
 #ifdef TIME_STAMPS
     m_TmpDownloadStartTime=QDateTime::currentDateTime().toTime_t();
 #endif
-    connect(&m_timeout, SIGNAL(timeout()), &m_http, SLOT(abort()));
-    m_timeout.setSingleShot(true);
-    m_timeout.start((getConfigurationValue("zakazrf_ru/connection_timout", 10).toInt())*1000);
 }
 
 CReciveThread :: ~CReciveThread()
@@ -42,6 +39,10 @@ void CReciveThread :: run()
         m_http.setProxy(QUrl(QProcessEnvironment::systemEnvironment().value("https_proxy")).host(),QUrl(QProcessEnvironment::systemEnvironment().value("https_proxy")).port());
     }
 
+    connect(&m_timeout, SIGNAL(timeout()), &m_http, SLOT(abort()));
+    m_timeout.setSingleShot(true);
+    m_timeout.start((getConfigurationValue("zakazrf_ru/connection_timout", 10).toInt())*1000);
+
     connect(&m_http, SIGNAL(requestFinished(int,bool)), this, SLOT(onRecieveComplete(int,bool)));
     qDebug()<<"dataPointer raw value:"<<m_data<<"threadId:"<<m_threadId<<"path:"<<QString("%1?%2").arg(m_url.path()).arg(QString(m_url.encodedQuery()));
     m_httpId=m_http.get(QString("%1?%2").arg(m_url.path()).arg(QString(m_url.encodedQuery())));
@@ -50,6 +51,7 @@ void CReciveThread :: run()
 
 void CReciveThread::onRecieveComplete(int id, bool error)
 {
+    m_timeout.stop();
     if(m_httpId!=id)
     {
         return;
@@ -69,6 +71,11 @@ void CReciveThread::onRecieveComplete(int id, bool error)
         qDebug()<<"Attempts amount :"<<m_data->needRequeue();
         emit dataReady(m_threadId);
         return;
+    }
+
+    if(m_data->type()==CDataStructure::eDataTypeDocument)
+    {
+        m_data->setContentType(m_http.lastResponse().contentType());
     }
 
     QByteArray data=m_http.readAll();

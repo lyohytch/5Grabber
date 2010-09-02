@@ -7,6 +7,7 @@ CDataStructure::CDataStructure(QUrl url, QObject *parent) :
     ,m_isDone(false)
     ,m_isRoot(false)
     ,m_needRequeue(0)
+    ,m_contentType()
 //    ,m_isRunned(false)
 {
     m_url=url;
