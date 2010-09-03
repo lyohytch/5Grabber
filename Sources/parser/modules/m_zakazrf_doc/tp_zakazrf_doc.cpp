@@ -152,35 +152,65 @@ QString TP_zakazrf_doc::findProviding(const QByteArray &source)
    QString sourceStr(stream.readAll());
    sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
    QString found;
-   QRegExp regexp(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
+   QRegExp regexp(QString("<(\\b[^<]*\\b)\\s+\\w+=\\D+>[^<]*(\\d{1,2})[^<]*</\\1>"), Qt::CaseInsensitive);
    for (int pos = regexp.indexIn(sourceStr); pos >= 0; pos = regexp.indexIn(sourceStr,pos + 1))
    {
-       //QString tmp = regexp.capturedTexts().at(0);
        QString tmp = regexp.cap();
+
        //pos += tmp.length();
        if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive) &&
            tmp.contains(QTextStream("исполнени").readAll(),Qt::CaseInsensitive) &&
-           tmp.contains(QTextStream("контракт").readAll(),Qt::CaseInsensitive) &&
-           tmp.length() < 200)
+           //tmp.contains(QTextStream("контракт").readAll(),Qt::CaseInsensitive) &&
+           tmp.length() < 250)
        {
+
            found.append(tmp);
            QString secondStr = sourceStr.mid(pos + tmp.length());
-           //QRegExp regexp2(QString("<[^<]*>\\d[^<]*<[^<]*>"), Qt::CaseInsensitive);
-           QRegExp regexp2(QString("<[^<]*>[^<]*<[^<]*>"), Qt::CaseInsensitive);
-           for (int pos2 = regexp.indexIn(secondStr); pos2 >= 0; pos2 = regexp.indexIn(secondStr,pos2 + 1))
+           int num = regexp.cap(2).toInt();
+           QString expr = QString("<[^<]*>[^<]*\\s\\b*%1\\D*<[^<]*>").arg(QString("%1").arg(num+1));
+           QRegExp regexp2(expr, Qt::CaseInsensitive);
+           for (int pos2 = regexp2.indexIn(secondStr); pos2 >= 0; pos2 = regexp2.indexIn(secondStr, pos2 + 1))
            {
-               QString tmp2 = regexp2.cap();
-               if (!tmp2.isEmpty() && ~tmp2.isNull() && tmp2.trimmed().at(0).digitValue() != -1)
-               {
-                   found.append(secondStr.left(pos2));
-                   break;
-               }
-//               found.append(tmp2);
-               //pos += tmp2.length();
+               found.append(secondStr.left(pos2));
+               break;
            }
-//           found.append("\n");
        }
    }
+
+//   if (!found.isEmpty())
+//   {
+//       return found;
+//   }
+   found.append(" # ");
+
+   QRegExp regexp3(QString("<(\\b[^<]*\\b)>[^<]*(\\d{1,2})[^<]*</\\1>"), Qt::CaseInsensitive);
+   for (int pos = regexp3.indexIn(sourceStr); pos >= 0; pos = regexp3.indexIn(sourceStr,pos + 1))
+   {
+       QString tmp = regexp3.cap();
+
+       //pos += tmp.length();
+       if (tmp.contains(QTextStream("обеспечен").readAll(),Qt::CaseInsensitive) &&
+           tmp.contains(QTextStream("исполнени").readAll(),Qt::CaseInsensitive) &&
+           //tmp.contains(QTextStream("контракт").readAll(),Qt::CaseInsensitive) &&
+           tmp.length() < 250)
+       {
+           qDebug() << tmp;
+           found.append(tmp);
+           QString secondStr = sourceStr.mid(pos + tmp.length());
+           int num = regexp3.cap(2).toInt();
+           QString expr = QString("<[^<]*>[^<]*%1\\D*<[^<]*>").arg(QString("%1").arg(num+1));
+           QRegExp regexp2(expr, Qt::CaseInsensitive);
+           for (int pos2 = regexp2.indexIn(secondStr); pos2 >= 0; pos2 = regexp2.indexIn(secondStr, pos2 + 1))
+           {
+               found.append(secondStr.left(pos2));
+               break;
+           }
+       }
+   }
+
+   found = found.remove(QRegExp("</?\\w+>"));
+   found = found.remove(QRegExp("</?\\w+\\s+\\w+=\\D*>"));
+   found = found.trimmed();
 
    return found;
 }
