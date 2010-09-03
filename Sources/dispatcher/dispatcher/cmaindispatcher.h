@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTimer>
 #include <QList>
+#include <QPluginLoader>
 
 #include <constants.h>
 #include <crecievetask.h>
@@ -30,7 +31,7 @@ protected:
     bool connectActions();
 
     QTimer m_startTasksTimer;
-    QList<CRecieveTask*> m_activeTasksList;
+    QMap<CRecieveTask*, QPluginLoader*> m_activeTasksList;
 
     siterules_t m_sites;
     CParserHandler m_parser;

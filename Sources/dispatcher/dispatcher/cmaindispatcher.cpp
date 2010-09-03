@@ -1,6 +1,5 @@
 #include "cmaindispatcher.h"
 #include <QDebug>
-#include <QPluginLoader>
 #include <QDateTime>
 
 CMainDispatcher::CMainDispatcher(QObject *parent) :
@@ -91,33 +90,53 @@ void CMainDispatcher::startRecieveTasks()
         Iter.next();
 
         qDebug()<<Iter.key().host().replace(".","_");
-        QPluginLoader loader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
-        if(!loader.load())
+        QPluginLoader* loader = new QPluginLoader(QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_")));
+        if(!loader->load())
         {
-            qWarning()<<"Library: "<< QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"))<<loader.errorString();
+            qWarning()<<"Library: "<< QString("./modules/recieve/libmodule-%1.so").arg(Iter.key().host().replace(".","_"))<<loader->errorString();
             continue;
         }
 
-        CRecieveTask* task=qobject_cast<CRecieveTask *>(loader.instance());
+        CRecieveTask* task=qobject_cast<CRecieveTask *>(loader->instance());
         task->init(getConfigurationValue("main/max_threads",QVariant(5)).toInt(), Iter);
-//        loader.unload();
 
-        m_activeTasksList.append(task);
+        m_activeTasksList.insert(task,loader);
         connect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
         connect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
     }
 
-    for(int i=0;i<m_activeTasksList.count();i++)
+    QMapIterator<CRecieveTask*, QPluginLoader*> pluginIter(m_activeTasksList);
+    while(pluginIter.hasNext())
     {
-        m_activeTasksList.at(i)->run();
+        pluginIter.next();
+        pluginIter.key()->run();
     }
+//    for(int i=0;i<m_activeTasksList.count();i++)
+//    {
+//        m_activeTasksList.at(i)->run();
+//    }
+
 }
 
 void CMainDispatcher::onRecieveTaskFinished(CRecieveTask *task)
 {
     qDebug()<<"Task Finished";
 
-    m_activeTasksList.removeOne(task);
+//    QPluginLoader *plugin=m_activeTasksList.value(task);
+//    disconnect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
+//    disconnect(task->signaller(), SIGNAL(dataReady(CDataStructure*)), this, SLOT(onRecieveDataReady(CDataStructure*)));
+//    m_activeTasksList.remove(task);
+//    qDebug()<<plugin->unload();
+//
+//    delete plugin;
+//    QMapIterator pluginIter(m_activeTasksList);
+//    while(pluginIter.hasNext())
+//    {
+//        pluginIter.next();
+//        pluginIter.key()->run();
+//    }
+//
+//    m_activeTasksList.removeOne(task);
 
     if(m_activeTasksList.isEmpty())
     {
@@ -130,14 +149,25 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
 {
     qDebug()<<"url:"<<url.host()<<"error:"<<error;
     CRecieveTask* task=NULL;
-    for(int i=0; i<m_activeTasksList.count(); i++)
+
+    QMapIterator<CRecieveTask*, QPluginLoader*> pluginIter(m_activeTasksList);
+    while(pluginIter.hasNext())
     {
-        if(m_activeTasksList.at(i)->taskHost()==url.host())
+        pluginIter.next();
+        if(pluginIter.key()->taskHost()==url.host())
         {
-            task=m_activeTasksList.value(i);
+            task=pluginIter.key();
         }
     }
 
+//    for(int i=0; i<m_activeTasksList.count(); i++)
+//    {
+//        if(m_activeTasksList.at(i)->taskHost()==url.host())
+//        {
+//            task=m_activeTasksList.value(i);
+//        }
+//    }
+//
     if(!task)
     {
         qCritical()"task for host "<<url.host()<<" not found";
@@ -150,6 +180,12 @@ void CMainDispatcher :: onParceFinished(int error, QUrl url)
 void CMainDispatcher::onRecieveDataReady(CDataStructure* data)
 {
     qDebug()<<"Data structure is ready:"<<data->url();
+    if(data->read().size()<=0)
+    {
+        qDebug()<<"Filter empty data";
+        onParceFinished(0, data->url());
+        return;
+    }
     QUrl url;
     url.setHost(data->url().host());
     url.setScheme(data->url().scheme());

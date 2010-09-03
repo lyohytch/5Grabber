@@ -1,10 +1,13 @@
 #include "cdatastructure.h"
+#include <cconfighandler.h>
 #include <constants.h>
 
 CDataStructure::CDataStructure(QUrl url, QObject *parent) :
     QObject(parent)
     ,m_isDone(false)
     ,m_isRoot(false)
+    ,m_needRequeue(0)
+    ,m_contentType()
 //    ,m_isRunned(false)
 {
     m_url=url;

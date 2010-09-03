@@ -45,6 +45,8 @@ public:
 
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
+    void setNeedRequeue(int need) {m_needRequeue=need;}
+    int needRequeue() {return m_needRequeue;}
 
 //    bool isRunned() {return m_isRunned;}
 //    void setRunned() {m_isRunned=true;}
@@ -53,7 +55,8 @@ public:
 
     CDataStructure* root();
     void setRoot(CDataStructure* root) {m_root=root;}
-
+    QString contentType() const {return m_contentType;}
+    void setContentType(const QString& contentType) {m_contentType=contentType;}
 private:
     int m_type;
     QList<CDataStructure* > m_childs;
@@ -61,6 +64,8 @@ private:
     QUrl m_url;
     bool m_isDone;
     bool m_isRoot;
+    int m_needRequeue;
+    QString m_contentType;
 //    bool m_isRunned;
 
     CDataStructure* m_root;
