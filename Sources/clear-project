@@ -1,3 +1,11 @@
 #!/bin/sh
-rm -rf build
-rm $(find | grep Makefile)
+echo '===> Removing:'
+build_dir=$(find ./ -name 'build' -type d)
+rm -rf $build_dir; echo $build_dir
+
+list=$(find ./ -name 'Makefile*')
+for i in $list; do rm -f $i; echo $i; done
+
+list2=$(find ./ -name '*.pro.user')
+for j in $list2; do rm -f $j; echo $j; done
+echo '===> Clear! :)'
