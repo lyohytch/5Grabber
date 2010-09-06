@@ -1,57 +1,57 @@
 CREATE TABLE IF NOT EXISTS Reduction(
-    id_reduction_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    string_number VARCHAR(20) NOT NULL,
     id_customer MEDIUMINT UNSIGNED NOT NULL,
-    string_number CHAR(20) NOT NULL,
-    date_registration DATETIME,
+    date_registration VARCHAR(100),
+    url VARCHAR(150),
     PRIMARY KEY (id_reduction_auto)
 );
 
 CREATE TABLE IF NOT EXISTS Lot (
-    id_lot_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
-    id_reduction_auto MEDIUMINT UNSIGNED NOT NULL,
-    id_status_auto MEDIUMINT UNSIGNED NOT NULL,
-    id_lot MEDIUMINT UNSIGNED,
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
+    id_lot MEDIUMINT UNSIGNED,
+    url VARCHAR(150),
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
-    obespechenie FLOAT,
-    start_price FLOAT NOT NULL,
-    best_price FLOAT,
-    start_time DATETIME,
+    obespechenie VARCHAR(100),
+    start_price VARCHAR(100) NOT NULL,
+    best_price VARCHAR(100),
+    start_time VARCHAR(100),
     protocol VARCHAR(200),
-    PRIMARY KEY (id_lot_auto, id_reduction_auto)
+    PRIMARY KEY (id_lot, id_reduction)
 );
 
 CREATE TABLE IF NOT EXISTS Customer (
-    id_customer_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
     id_customer MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     adress VARCHAR(400),
     post_adress VARCHAR(400),
     email VARCHAR(100),
     telephone VARCHAR(100),
-    PRIMARY KEY (id_customer_auto)
+    PRIMARY KEY (id_customer)
 );
 
 CREATE TABLE IF NOT EXISTS Party (
     id_party_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
-    id_lot_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE,
-    id_participant_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE,
+    id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE,
+    id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     PRIMARY_KEY (id_party_auto)
 );
 
 CREATE TABLE IF NOT EXISTS Participant (
-    id_participant_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
+    id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(300),
-    inn CHAR(30),
-    kpp CHAR(30),
+    inn VARCHAR(30),
+    kpp VARCHAR(30),
     PRIMARY KEY (id_participant_auto)
 );
 
 CREATE TABLE IF NOT EXISTS Status (
-    id_status_auto SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-    status CHAR(30),
+    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    status VARCHAR(30),
     PRIMARY KEY (id_status)
 );
 

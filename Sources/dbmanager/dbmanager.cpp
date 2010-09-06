@@ -47,13 +47,13 @@ bool DBmanager::write(QVariantMap &data)
         QSqlQuery query(m_db);
         if(data.value("table").toString() == "Status")
         {
-            query.prepare("INSERT INTO Status VALUES (:id_status, :status);");
+            query.prepare("REPLACE INTO Status VALUES (:id_status, :status);");
             query.bindValue(":id_status",data.value("id_status"));
             query.bindValue(":status",data.value("status"));
         }
         else if(data.value("table").toString() == "LOT")
         {
-            query.prepare("INSERT INTO Lot VALUES (:id_reduction, :num_lot, :id_lot, :status, :subject,"
+            query.prepare("REPLACE INTO Lot VALUES (:id_reduction, :num_lot, :id_lot, :status, :subject,"
                 " :id_contract, :obespechenie, :start_price, :best_price, :start_time, :protocol);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
             query.bindValue(":num_lot",data.value("num_lot"));
@@ -69,7 +69,7 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "Customer")
         {
-            query.prepare("INSERT INTO Customer VALUES (:id_customer, :name, :adress, :post_adress, :email, :telephone);");
+            query.prepare("REPLACE INTO Customer VALUES (:id_customer, :name, :adress, :post_adress, :email, :telephone);");
             query.bindValue(":id_customer",data.value("id_customer"));
             query.bindValue(":name",data.value("name"));
             query.bindValue(":adress",data.value("adress"));
@@ -79,7 +79,7 @@ bool DBmanager::write(QVariantMap &data)
         }
         else if(data.value("table").toString() == "Reduction")
         {
-            query.prepare("INSERT INTO Reduction VALUES (:id_reduction, :string_number, :id_customer, :date_registration);");
+            query.prepare("REPLACE INTO Reduction VALUES (:id_reduction, :string_number, :id_customer, :date_registration);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
             query.bindValue(":string_number",data.value("string_number"));
             query.bindValue(":id_customer",data.value("id_customer"));
@@ -89,7 +89,7 @@ bool DBmanager::write(QVariantMap &data)
         else if(data.value("table").toString() == "Participant")
         {
 //            query.prepare("INSERT INTO Participant VALUES(:id_participant, :id_reduction, :num_lot, :name, :inn, :kpp);" );
-            query.prepare("INSERT INTO Participant VALUES(:id_participant, :name, :inn, :kpp, :id_reduction, :num_lot);" );
+            query.prepare("REPLACE INTO Participant VALUES(:id_participant, :name, :inn, :kpp, :id_reduction, :num_lot);" );
             query.bindValue(":id_participant",QVariant());
             //query.bindValue(":name", data.value("participants"));
             query.bindValue(":inn",QVariant());
