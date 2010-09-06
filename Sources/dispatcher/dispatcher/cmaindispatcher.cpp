@@ -98,7 +98,7 @@ void CMainDispatcher::startRecieveTasks()
         }
 
         CRecieveTask* task=qobject_cast<CRecieveTask *>(loader->instance());
-        task->init(getConfigurationValue("main/max_threads",QVariant(5)).toInt(), Iter);
+        task->init(getConfigurationValue("main/max_threads",QVariant(5)).toUInt(), Iter);
 
         m_activeTasksList.insert(task,loader);
         connect(task->signaller(), SIGNAL(finished(CRecieveTask*)), this, SLOT(onRecieveTaskFinished(CRecieveTask*)));
