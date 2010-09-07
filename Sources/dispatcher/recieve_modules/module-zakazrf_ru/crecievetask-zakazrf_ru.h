@@ -28,7 +28,7 @@ public:
 private:
     QStringList findLinks(QList<QRegExp>& regexps, const QByteArray& data);
     QUrl createFullUrlFromRule(QUrl url,QVariant rule);
-    int getUrlDataType(QUrl &url);
+    int getUrlDataType(const QUrl &url);
     QList<CReciveThread*> m_threads;
     QMultiMap<QUrl, CDataStructure*> m_dataStructures;
     QList<CDataStructure*> m_activeDataStructures;

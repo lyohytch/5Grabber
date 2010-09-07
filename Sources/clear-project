@@ -1,3 +1,4 @@
 #!/bin/sh
 rm -rf build
-rm $(find | grep Makefile)
+rm $(find ./ -name *pro.user)
+rm $(find ./ -name Makefile*)

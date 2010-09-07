@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include <constants.h>
+#include <cdownloadmanager_zakazrf_ru.h>
 
 //#undef RUN_ALL_TASKS
 #define RUN_ALL_TASKS
@@ -87,15 +88,32 @@ bool CRecieveTask_zakazrf_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=73; i<9000; i++)
-{
-    QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
-    CDataStructure* tmpdata = new CDataStructure(testUrl);
-    tmpdata->setType(getUrlDataType(testUrl));
-    tmpdata->setRoot();
-    m_dataStructures.insert(testUrl, tmpdata);
-    m_activeDataStructures.push_back(tmpdata);
-}
+    CDownloadManager_zakazrf_ru downloadManager;
+    downloadManager.init();
+    QUrlList urls=downloadManager.getUrls();
+    if(urls.isEmpty())
+    {
+        for(int i=73; i<9000; i++)
+        {
+            QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
+            CDataStructure* tmpdata = new CDataStructure(testUrl);
+            tmpdata->setType(getUrlDataType(testUrl));
+            tmpdata->setRoot();
+            m_dataStructures.insert(testUrl, tmpdata);
+            m_activeDataStructures.push_back(tmpdata);
+        }
+    }
+    else
+    {
+        for(int i=0; i<urls.count();i++)
+        {
+            CDataStructure* tmpdata = new CDataStructure(urls.at(i));
+            tmpdata->setType(getUrlDataType(urls.at(i)));
+            tmpdata->setRoot();
+            m_dataStructures.insert(urls.at(i), tmpdata);
+            m_activeDataStructures.push_back(tmpdata);
+        }
+    }
 #endif
 
     CDataStructure* data=NULL;
@@ -299,7 +317,7 @@ QUrl CRecieveTask_zakazrf_ru::createFullUrlFromRule(QUrl url, QVariant rule)
     return url;
 }
 
-int CRecieveTask_zakazrf_ru::getUrlDataType(QUrl &url)
+int CRecieveTask_zakazrf_ru::getUrlDataType(const QUrl &url)
 {
     if(url.toString().contains("DFile.ashx"))
     {

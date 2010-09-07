@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QDateTime>
 
-DBmanager::DBmanager(): m_dbName("zakazrf"), m_dbHost("localhost"), m_dbUser("project"), m_dbPass("project_pass")
+DBmanager::DBmanager(): m_dbName("zakazrf"), m_dbHost("localhost"), m_dbUser("root"), m_dbPass("")
 // DBmanager::DBmanager(const QString &db_name):m_dbName(db_name)
 {
     m_db = QSqlDatabase::addDatabase("QMYSQL");
