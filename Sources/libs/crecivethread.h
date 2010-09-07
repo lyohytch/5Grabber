@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QUrl>
+#include <QTimer>
 #include <QProcessEnvironment>
 
 #include <cdatastructure.h>
@@ -43,6 +44,7 @@ protected:
     int m_threadId;
     int m_httpId;
 
+    QTimer m_timeout;
     CDataStructure* m_data;
 #ifdef TIME_STAMPS
     unsigned int m_TmpDownloadStartTime;
@@ -50,6 +52,5 @@ protected:
 #endif
 protected slots:
     void onRecieveComplete(int id, bool error);
-    void onError();
 };
 #endif //CRECIEVETHREAD_H

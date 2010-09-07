@@ -17,10 +17,15 @@ CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 
 CRecieveTask_zakazrf_ru::~CRecieveTask_zakazrf_ru()
 {
+
+    disconnect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
+
     delete m_signaller;
 
     for(int i=0; i<m_threads.count(); i++)
     {
+        disconnect(m_threads.value(i), SIGNAL(dataReady(int/*,QByteArray*/)), this, SLOT(onDataReady(int/*,QByteArray*/)));
+        disconnect(m_threads.value(i), SIGNAL(finished()), this, SLOT(onThreadFinished()));
         delete m_threads.value(i);
     }
     m_threads.clear();
@@ -58,6 +63,8 @@ QString CRecieveTask_zakazrf_ru::taskHost() const
 bool CRecieveTask_zakazrf_ru::run()
 {
     qDebug();
+//    m_signaller->onRecieveFinished(this);
+//    return true;
 
     connect(m_signaller, SIGNAL(dataParsed(QUrl)), this, SLOT(removeData(QUrl)));
 #ifndef RUN_ALL_TASKS
@@ -80,7 +87,7 @@ bool CRecieveTask_zakazrf_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=2000; i<10000; i++)
+for(int i=5000; i<5005; i++)
 {
     QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
     CDataStructure* tmpdata = new CDataStructure(testUrl);
@@ -136,6 +143,8 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
 
         if(thread->isFinished())
         {
+            disconnect(thread, SIGNAL(dataReady(int/*,QByteArray*/)), this, SLOT(onDataReady(int/*,QByteArray*/)));
+            disconnect(thread, SIGNAL(finished()), this, SLOT(onThreadFinished()));
             delete thread;
             threadIter=m_threads.erase(threadIter);
             continue;
@@ -166,6 +175,14 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
         if(data->isDone())
         {
             qDebug()<<"Found done data structure in task list\n remove it";
+            activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
+            continue;
+        }
+
+        if(data->needRequeue()>0)
+        {
+//            data->setNeedRequeue(data->needRequeue());
+            m_activeDataStructures.push_back(data);
             activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
             continue;
         }
@@ -218,6 +235,22 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
         return;
     }
 
+    if(data->needRequeue()>0)
+    {
+        m_threads.at(threadNum)->exit(0);
+        return;
+    }
+
+    if(data->read().size()<=0)
+    {
+        data->done();
+        if(data->root()->isFinished())
+        {
+            m_signaller->onDataReady(data->root());
+        }
+        m_threads.at(threadNum)->exit(0);
+        return;
+    }
 
     if(data->type()==CDataStructure::eDataTypeDocument)
     {

@@ -1,11 +1,15 @@
 #!/bin/sh
 echo '===> Removing:'
+#list1=$(find ./ -name 'lib*.so')
+#for k in $list1; do rm -f $k*; echo $k*; done
+
 build_dir=$(find ./ -name 'build' -type d)
 rm -rf $build_dir; echo $build_dir
 
-list=$(find ./ -name 'Makefile*')
-for i in $list; do rm -f $i; echo $i; done
+list2=$(find ./ -name 'Makefile*')
+for i in $list2; do rm -f $i; echo $i; done
 
-list2=$(find ./ -name '*.pro.user')
-for j in $list2; do rm -f $j; echo $j; done
+list3=$(find ./ -name '*.pro.user')
+for j in $list3; do rm -f $j; echo $j; done
+
 echo '===> Clear! :)'

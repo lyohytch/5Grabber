@@ -15,7 +15,7 @@ public:
 public slots:
     void onParseFinished()
     {
-        emit finishedParse();
+        //emit finishedParse();
     }
 //    void onDataReady(CDataStructure* data)
 //    {

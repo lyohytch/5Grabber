@@ -79,7 +79,7 @@ bool CRecieveTask_sberbank_ast_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=2000; i<10000; i++)
+for(int i=2000; i<2005; i++)
 {
     QUrl testUrl(QString("http://sberbank-ast.ru/purchaseview.aspx?id=%1").arg(i));
     CDataStructure* tmpdata = new CDataStructure(testUrl);

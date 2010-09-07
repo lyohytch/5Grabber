@@ -13,13 +13,13 @@
 TP_zakazrf_doc::TP_zakazrf_doc()
 {
     m_threadCounter = 0;
-    m_signaller = new CParseSignaller();
+//    m_signaller = new CParseSignaller();
 //    m_db = new DBmanager();
 }
 
 TP_zakazrf_doc::~TP_zakazrf_doc()
 {
-    delete m_signaller;
+//    delete m_signaller;
 //    delete m_db;
 }
 
@@ -91,7 +91,7 @@ bool TP_zakazrf_doc::run()
         }
     }
 
-    m_signaller->onParseFinished();
+//    m_signaller->onParseFinished();
     return TRUE;
 }
 

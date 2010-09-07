@@ -7,12 +7,12 @@
 TP_sberbank::TP_sberbank()
 {
     m_threadCounter = 0;
-    m_signaller = new CParseSignaller();
+//    m_signaller = new CParseSignaller();
 }
 
 TP_sberbank::~TP_sberbank()
 {
-    delete m_signaller;
+//    delete m_signaller;
 }
 
 bool TP_sberbank::init(int maxThreads, CDataStructure *data, DBmanager* db)
@@ -49,10 +49,13 @@ bool TP_sberbank::run()
     db_data.insert("url", m_data->url().toString());
     db_data.insert("id_reduction", m_data->root()->url().toString().section("=", 1));
     mutex.lock();
-        m_db->write(db_data);
+//        m_db->write(db_data);
+        qDebug() << "============================================================";
+        qDebug() << db_data;
+        qDebug() << "============================================================";
     mutex.unlock();
 
-    m_signaller->onParseFinished();
+//    m_signaller->onParseFinished();
     return TRUE;
 }
 

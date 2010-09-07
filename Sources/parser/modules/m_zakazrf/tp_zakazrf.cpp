@@ -27,7 +27,7 @@ const QString labelLotParticipantCount    = "ctl00_Content_labelLotParticipantCo
 TP_zakazrf::TP_zakazrf()
 {
     m_threadCounter = 0;
-    m_signaller = new CParseSignaller();
+//    m_signaller = new CParseSignaller();
 //    m_db = new DBmanager();
     //TODO сделать константами
     //Reduction
@@ -53,7 +53,7 @@ TP_zakazrf::TP_zakazrf()
 
 TP_zakazrf::~TP_zakazrf()
 {
-    delete m_signaller;
+//    delete m_signaller;
 //    delete m_db;
 }
 
@@ -86,7 +86,7 @@ bool TP_zakazrf::run()
         }
     }
 
-    m_signaller->onParseFinished();
+//    m_signaller->onParseFinished();
     return TRUE;
 
 }
