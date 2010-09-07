@@ -1,3 +1,7 @@
+drop database zakazrf;
+create database zakazrf;
+connect zakazrf;
+
 CREATE TABLE Reduction(
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     string_number VARCHAR(20) NOT NULL,
@@ -5,7 +9,7 @@ CREATE TABLE Reduction(
     date_registration VARCHAR(100),
     url VARCHAR(150),
     last_parsed DATETIME,
-    PRIMARY KEY (id_reduction_auto)
+    PRIMARY KEY (id_reduction)
 );
 
 CREATE TABLE Lot (
@@ -39,7 +43,7 @@ CREATE TABLE Party (
     id_party_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
     id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
-    PRIMARY_KEY (id_party_auto)
+    PRIMARY KEY (id_party_auto)
 );
 
 CREATE TABLE Participant (
@@ -49,7 +53,7 @@ CREATE TABLE Participant (
     kpp VARCHAR(30),
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
-    PRIMARY KEY (id_participant_auto)
+    PRIMARY KEY (id_participant)
 );
 
 CREATE TABLE Status (
