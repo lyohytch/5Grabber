@@ -7,8 +7,8 @@
 #include <constants.h>
 #include <cdownloadmanager_zakazrf_ru.h>
 
-//#undef RUN_ALL_TASKS
-#define RUN_ALL_TASKS
+#undef RUN_ALL_TASKS
+//#define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 {
@@ -175,6 +175,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
     QList<CDataStructure*>::iterator activeDataStructuresIter;
     for(activeDataStructuresIter = m_activeDataStructures.begin(); activeDataStructuresIter != m_activeDataStructures.end();)
     {
+        qDebug()<<"Active data structures amount:"<<m_activeDataStructures.count();
         CDataStructure* data=(*activeDataStructuresIter);
         if(!data)
         {
@@ -197,15 +198,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
             continue;
         }
 
-        if(data->needRequeue()>0)
-        {
-//            data->setNeedRequeue(data->needRequeue());
-            m_activeDataStructures.push_back(data);
-            activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
-            continue;
-        }
-
-        if(m_threads.count()<(m_maxThreads+1))
+        if(m_threads.count()<(m_maxThreads))
         {
             CReciveThread *thread=new CReciveThread(data->url(),m_threadCounter++);
             thread->setDataStructure(data);
@@ -255,6 +248,19 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 
     if(data->needRequeue()>0)
     {
+        if(data->needRequeue()==1)
+        {
+            data->done();
+            if(data->root()->isFinished())
+            {
+                m_signaller->onDataReady(data->root());
+            }
+        }
+        else
+        {
+            m_activeDataStructures.push_back(data);
+        }
+
         m_threads.at(threadNum)->exit(0);
         return;
     }
