@@ -1,0 +1,3 @@
+select * from Reduction as r INNER JOIN (Customer as c, Lot as l, Participant as p, Status as s, DocFile as d) ON (l.id_reduction=r.id AND r.id_customer=c.id_customer AND p.id_reduction=l.id_reduction AND p.num_lot=l.num_lot AND s.id_status=l.status AND d.id_reduction=r.id);
+
+mysql -u root -p zakazrf -e "select * from Reduction as r INNER JOIN (Customer as c, Lot as l, Participant as p, Status as s, DocFile as d) ON (l.id_reduction=r.id_reduction AND r.id_customer=c.id_customer AND p.id_reduction=l.id_reduction AND p.num_lot=l.num_lot AND s.id_status=l.status AND d.id_reduction=r.id_reduction) INTO OUTFILE '/tmp/result.csv' FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';"

@@ -127,7 +127,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         //Write in Status table
         db_data.clear();
         db_data.insert("table","Status");
-        db_data.insert("id_status", (p_data->url().toString()).section("=", 1));
+        db_data.insert("id_status", p_data->url().toString().section("=",1));
         db_data.insert("status", info[Content_StageLabel]);
         mutex.lock();
             m_db->write(db_data);
@@ -138,6 +138,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("table","LOT");
         db_data.insert("num_lot",info[Content_NumberLabel]);
         db_data.insert("id_reduction",p_data->root()->url().toString().section("=",1));
+        db_data.insert("id_lot",p_data->url().toString().section("=",1));
         db_data.insert("status", (p_data->url().toString()).section("=", 1));
         db_data.insert("subject", info[Content_SubjectLabel]);
         db_data.insert("id_contract", (p_data->url().toString()).section("=", 1));
@@ -146,6 +147,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
         db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
         db_data.insert("protocol","");
+        db_data.insert("url", p_data->url().toString());
         mutex.lock();
             m_db->write(db_data);
         mutex.unlock();
@@ -173,6 +175,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("string_number", info[NumberLabel]);
         db_data.insert("id_customer", (p_data->url().toString()).section("=", 1));
         db_data.insert("date_registration", info[PublicationDateLabel]);
+        db_data.insert("url", p_data->root()->url().toString());
         mutex.lock();
             m_db->write(db_data);
         mutex.unlock();

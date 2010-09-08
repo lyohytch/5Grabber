@@ -86,7 +86,7 @@ bool TP_zakazrf_doc::run()
             // Looking for the DOCs in Lots
             if (lot->childAt(j)->type() == CDataStructure::eDataTypeDocument)
             {
-                docToXml(lot->childAt(j), j + 1);
+                docToXml(lot->childAt(j), i + 1);
             }
         }
     }
@@ -127,15 +127,19 @@ void TP_zakazrf_doc::docToXml(CDataStructure *p_data, int lot)
         {
             QString info = findProviding(output);
             qDebug() << "FINDINGS\n" <<info;
-            QVariantMap db_data;
-            db_data.insert("info", info);
-            db_data.insert("url", p_data->url().toString());
-            db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
-            db_data.insert("num_lot", lot);
-            mutex.lock();
+            if (!info.isEmpty())
+            {
+                QVariantMap db_data;
+                db_data.insert("id_file", p_data->url().toString().section("=", 1));
+                db_data.insert("id_reduction", p_data->root()->url().toString().section("=", 1));
+                db_data.insert("num_lot", lot);
+                db_data.insert("url", p_data->url().toString());
+                db_data.insert("info", info);
+
+                mutex.lock();
                 m_db->writeDoc(db_data);
-            mutex.unlock();
-            qDebug() << "Output " << output.left(50);
+                mutex.unlock();
+            }
         }
         else
         {
@@ -167,13 +171,14 @@ QString TP_zakazrf_doc::findProviding(const QByteArray &source)
            found.append(tmp);
            QString secondStr = sourceStr.mid(pos + tmp.length());
            int num = regexp.cap(2).toInt();
-           QString expr = QString("<[^<]*>[^<]*\\s\\b*%1\\D*<[^<]*>").arg(QString("%1").arg(num+1));
+           QString expr = QString("<[^<]*>[^<]*%1\\D*<[^<]*>").arg(QString("%1").arg(num+1));
            QRegExp regexp2(expr, Qt::CaseInsensitive);
            for (int pos2 = regexp2.indexIn(secondStr); pos2 >= 0; pos2 = regexp2.indexIn(secondStr, pos2 + 1))
            {
                found.append(secondStr.left(pos2));
                break;
            }
+           found.append(" # ");
        }
    }
 
@@ -181,7 +186,7 @@ QString TP_zakazrf_doc::findProviding(const QByteArray &source)
 //   {
 //       return found;
 //   }
-   found.append(" # ");
+//   found.append(" # ");
 
    QRegExp regexp3(QString("<(\\b[^<]*\\b)>[^<]*(\\d{1,2})[^<]*</\\1>"), Qt::CaseInsensitive);
    for (int pos = regexp3.indexIn(sourceStr); pos >= 0; pos = regexp3.indexIn(sourceStr,pos + 1))
@@ -205,6 +210,7 @@ QString TP_zakazrf_doc::findProviding(const QByteArray &source)
                found.append(secondStr.left(pos2));
                break;
            }
+           found.append(" # ");
        }
    }
 

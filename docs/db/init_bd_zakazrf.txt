@@ -1,28 +1,33 @@
-CREATE TABLE IF NOT EXISTS Reduction(
+DROP TABLE Reduction, Lot, Customer, Party, Participant, Status, DocFile;
+
+CREATE TABLE Reduction(
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     string_number VARCHAR(20) NOT NULL,
     id_customer MEDIUMINT UNSIGNED NOT NULL,
     date_registration VARCHAR(100),
     url VARCHAR(150),
-    PRIMARY KEY (id_reduction_auto)
+    last_parsed DATETIME,
+    PRIMARY KEY (id_reduction)
 );
 
-CREATE TABLE IF NOT EXISTS Lot (
+CREATE TABLE Lot (
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
     id_lot MEDIUMINT UNSIGNED,
     url VARCHAR(150),
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
-    obespechenie VARCHAR(100),
-    start_price VARCHAR(100) NOT NULL,
-    best_price VARCHAR(100),
-    start_time VARCHAR(100),
+    obespechenie VARCHAR(150),
+    start_price VARCHAR(50),
+    best_price VARCHAR(50),
+    start_time VARCHAR(50),
+    end_time VARCHAR(50),
     protocol VARCHAR(200),
+    last_parsed DATETIME,
     PRIMARY KEY (id_lot, id_reduction)
 );
 
-CREATE TABLE IF NOT EXISTS Customer (
+CREATE TABLE Customer (
     id_customer MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     name VARCHAR(300),
     adress VARCHAR(400),
@@ -32,32 +37,33 @@ CREATE TABLE IF NOT EXISTS Customer (
     PRIMARY KEY (id_customer)
 );
 
-CREATE TABLE IF NOT EXISTS Party (
+CREATE TABLE Party (
     id_party_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
     id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
-    PRIMARY_KEY (id_party_auto)
+    PRIMARY KEY (id_party_auto)
 );
 
-CREATE TABLE IF NOT EXISTS Participant (
+CREATE TABLE Participant (
     id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
-    id_reduction MEDIUMINT UNSIGNED NOT NULL,
-    num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(300),
     inn VARCHAR(30),
     kpp VARCHAR(30),
-    PRIMARY KEY (id_participant_auto)
+    id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    num_lot SMALLINT UNSIGNED NOT NULL,
+    PRIMARY KEY (id_participant)
 );
 
-CREATE TABLE IF NOT EXISTS Status (
-    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+CREATE TABLE Status (
+    id_status SMALLINT UNSIGNED NOT NULL UNIQUE,
     status VARCHAR(30),
     PRIMARY KEY (id_status)
 );
 
-CREATE TABLE IF NOT EXISTS DocFile (
-    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+CREATE TABLE DocFile (
+    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
+    num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(256),
     url VARCHAR(300),
     uploaded DATETIME,
@@ -65,3 +71,5 @@ CREATE TABLE IF NOT EXISTS DocFile (
     info VARCHAR(5000),
     PRIMARY KEY (id_file)
 );
+
+SHOW TABLES;
