@@ -24,7 +24,7 @@ DBmanager::~DBmanager()
 bool DBmanager::init()
 {
     m_status = m_db.open();
-    qDebug() << "===> db open is new" << m_status;
+    qDebug() << "===> db open is new!!!!!!!!!!!!!!" << m_status << m_db.lastError().text();
     if(m_status)
     {
         qDebug() << m_db.tables(QSql::Tables);
@@ -67,7 +67,7 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":start_price",data.value("start_price"));
             query.bindValue(":best_price",data.value("best_price"));
             query.bindValue(":start_time",data.value("start_time"));
-            query.bindValue(":end_time",QVariant());
+            query.bindValue(":end_time",data.value("end_time"));
             query.bindValue(":protocol",data.value("protocol"));
             query.bindValue(":last_parsed",QVariant(QDateTime::currentDateTime()));
         }
@@ -123,6 +123,7 @@ bool DBmanager::write(QVariantMap &data)
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" Table doesn't exist";
             return ok;
         }
+        qDebug() << "#########################################!!!!!!!!!!!!!!!!!!!!!!!!!!##################### ";
         ok = query.exec();
         if (!ok)
         {

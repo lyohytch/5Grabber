@@ -11,7 +11,7 @@ QT += webkit
 QT += dbus
 QT += sql
 
-
+CONFIG += qsqlmysql
 CONFIG += console
 CONFIG -= app_bundle
 

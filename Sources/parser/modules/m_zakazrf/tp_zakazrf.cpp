@@ -146,7 +146,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("start_price", info[Content_FinalPriceLabel]);
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
         db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
-        db_data.insert("end_time", info[Content_TradeBeginDateLabel]);
+        db_data.insert("end_time", info["lotEndTime"]);
         db_data.insert("protocol","");
         db_data.insert("url", p_data->url().toString());
         mutex.lock();
