@@ -10,8 +10,9 @@
 //modules
 const QString PATH_MODULES = "./modules/parse/";
 const QString URL1 = "http://zakazrf.ru";
-const QString PARSE_MODULE = "libm_zakazrf.so";
-const QString PARSE_DOC_MODULE = "libm_zakazrf_doc.so";
+const QString PARSE_MODULE_ZAKAZRF = "libm_zakazrf.so";
+const QString PARSE_MODULE_SBER = "libm_sberbank.so";
+const QString PARSE_MODULE_ZAKAZRF_DOC = "libm_zakazrf_doc.so";
 //======================================================
 
 class CParseThread : public QThread

@@ -1,3 +1,15 @@
 #!/bin/sh
-rm -rf build
-rm $(find | grep Makefile)
+echo '===> Removing:'
+#list1=$(find ./ -name 'lib*.so')
+#for k in $list1; do rm -f $k*; echo $k*; done
+
+build_dir=$(find ./ -name 'build' -type d)
+rm -rf $build_dir; echo $build_dir
+
+list2=$(find ./ -name 'Makefile*')
+for i in $list2; do rm -f $i; echo $i; done
+
+list3=$(find ./ -name '*.pro.user')
+for j in $list3; do rm -f $j; echo $j; done
+
+echo '===> Clear! :)'

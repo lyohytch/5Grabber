@@ -1,3 +1,5 @@
+DROP TABLE Reduction, Lot, Customer, Party, Participant, Status, DocFile;
+
 CREATE TABLE Reduction(
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     string_number VARCHAR(20) NOT NULL,
@@ -5,7 +7,7 @@ CREATE TABLE Reduction(
     date_registration VARCHAR(100),
     url VARCHAR(150),
     last_parsed DATETIME,
-    PRIMARY KEY (id_reduction_auto)
+    PRIMARY KEY (id_reduction)
 );
 
 CREATE TABLE Lot (
@@ -16,10 +18,10 @@ CREATE TABLE Lot (
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
     obespechenie VARCHAR(150),
-    start_price FLOAT,
-    best_price FLOAT,
-    start_time DATETIME,
-    end_time DATETIME,
+    start_price VARCHAR(50),
+    best_price VARCHAR(50),
+    start_time VARCHAR(50),
+    end_time VARCHAR(50),
     protocol VARCHAR(200),
     last_parsed DATETIME,
     PRIMARY KEY (id_lot, id_reduction)
@@ -39,7 +41,7 @@ CREATE TABLE Party (
     id_party_auto MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT UNIQUE,
     id_lot MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_participant MEDIUMINT UNSIGNED NOT NULL UNIQUE,
-    PRIMARY_KEY (id_party_auto)
+    PRIMARY KEY (id_party_auto)
 );
 
 CREATE TABLE Participant (
@@ -49,17 +51,17 @@ CREATE TABLE Participant (
     kpp VARCHAR(30),
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
-    PRIMARY KEY (id_participant_auto)
+    PRIMARY KEY (id_participant)
 );
 
 CREATE TABLE Status (
-    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    id_status SMALLINT UNSIGNED NOT NULL UNIQUE,
     status VARCHAR(30),
     PRIMARY KEY (id_status)
 );
 
 CREATE TABLE DocFile (
-    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(256),
@@ -69,3 +71,5 @@ CREATE TABLE DocFile (
     info VARCHAR(5000),
     PRIMARY KEY (id_file)
 );
+
+SHOW TABLES;
