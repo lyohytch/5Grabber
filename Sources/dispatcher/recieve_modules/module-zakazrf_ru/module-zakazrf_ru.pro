@@ -18,7 +18,7 @@ INCLUDEPATH += $$GBR_SOURCE_ROOT/$$GRB_LIBS_PATH \
     $$GBR_SOURCE_ROOT/$$GRB_DWL_MODULES_PATH \
     $$GBR_SOURCE_ROOT/$$GRB_DWL_MODULES_PATH/module_zakazrf_ru
 
-LIBS += -L$$GBR_SOURCE_ROOT/$$GRB_LIBS_BIN_PATH -ldownloadmanager-zakazrf_ru
+LIBS += -L$$PWD/$$GBR_SOURCE_ROOT/$$GRB_LIBS_BIN_PATH -ldownloadmanager-zakazrf_ru
 HEADERS += crecievetask-zakazrf_ru.h \
     ../crecievetask.h \
     ../crecievetasksignaller.h \
