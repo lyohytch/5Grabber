@@ -20,10 +20,10 @@ CREATE TABLE Lot (
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
     obespechenie VARCHAR(150),
-    start_price FLOAT,
-    best_price FLOAT,
-    start_time DATETIME,
-    end_time DATETIME,
+    start_price VARCHAR(50),
+    best_price VARCHAR(50),
+    start_time VARCHAR(50),
+    end_time VARCHAR(50),
     protocol VARCHAR(200),
     last_parsed DATETIME,
     PRIMARY KEY (id_lot, id_reduction)
@@ -57,13 +57,13 @@ CREATE TABLE Participant (
 );
 
 CREATE TABLE Status (
-    id_status SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    id_status SMALLINT UNSIGNED NOT NULL UNIQUE,
     status VARCHAR(30),
     PRIMARY KEY (id_status)
 );
 
 CREATE TABLE DocFile (
-    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    id_file MEDIUMINT UNSIGNED NOT NULL UNIQUE,
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
     num_lot SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(256),
@@ -73,3 +73,5 @@ CREATE TABLE DocFile (
     info VARCHAR(5000),
     PRIMARY KEY (id_file)
 );
+
+SHOW TABLES;
