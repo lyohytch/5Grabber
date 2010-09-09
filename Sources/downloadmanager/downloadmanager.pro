@@ -1,3 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += ./downloadmanager/downloadmanager.pro
-SUBDIRS += ./downloadmanager_modules/downloadmanager_modules.pro
+SUBDIRS += ./module_zakazrf_ru/module-zakazrf_ru.pro

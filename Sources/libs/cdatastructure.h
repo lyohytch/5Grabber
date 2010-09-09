@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QRegExp>
 #include <QStringList>
+#include <QMutex>
 
 class CDataStructure : public QObject
 {
@@ -45,7 +46,7 @@ public:
 
     bool isRoot() {return m_isRoot;}
     void setRoot() {m_isRoot=true;}
-    void setNeedRequeue(int need) {m_needRequeue=need;}
+    void setNeedRequeue(int need) {QMutex mutex; mutex.lock(); m_needRequeue=need; mutex.unlock();}
     int needRequeue() {return m_needRequeue;}
 
 //    bool isRunned() {return m_isRunned;}

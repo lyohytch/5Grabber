@@ -123,6 +123,7 @@ bool DBmanager::write(QVariantMap &data)
             qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" Table doesn't exist";
             return ok;
         }
+        qDebug() << "#########################################!!!!!!!!!!!!!!!!!!!!!!!!!!##################### ";
         ok = query.exec();
         if (!ok)
         {

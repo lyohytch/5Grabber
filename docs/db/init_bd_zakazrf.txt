@@ -1,4 +1,6 @@
-DROP TABLE Reduction, Lot, Customer, Party, Participant, Status, DocFile;
+drop database zakazrf;
+create database zakazrf;
+connect zakazrf;
 
 CREATE TABLE Reduction(
     id_reduction MEDIUMINT UNSIGNED NOT NULL,

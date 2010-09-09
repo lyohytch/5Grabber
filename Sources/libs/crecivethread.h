@@ -50,7 +50,8 @@ protected:
     unsigned int m_TmpDownloadStartTime;
     static unsigned int gSummaryDownloadTime;
 #endif
-protected slots:
+public slots:
     void onRecieveComplete(int id, bool error);
+    void onTimeout();
 };
 #endif //CRECIEVETHREAD_H

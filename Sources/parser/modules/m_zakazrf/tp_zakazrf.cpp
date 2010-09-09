@@ -146,6 +146,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("start_price", info[Content_FinalPriceLabel]);
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
         db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
+        db_data.insert("end_time", info["lotEndTime"]);
         db_data.insert("protocol","");
         db_data.insert("url", p_data->url().toString());
         mutex.lock();
@@ -309,6 +310,28 @@ QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
         }
     }
 
+    QString endTimeKeyword;
+    endTimeKeyword=endTimeKeyword.fromUtf8("<td>Протокол проведения аукциона</td><td>");
+    qDebug()<<endTimeKeyword;
+    int endTimeStartIndex=sourceStr.lastIndexOf(endTimeKeyword);
+    if(endTimeStartIndex==-1)
+    {
+        return appToDB;
+    }
+
+    endTimeStartIndex+=endTimeKeyword.size();
+
+    QString retStr;
+    while(endTimeStartIndex < sourceStr.count() && sourceStr[endTimeStartIndex] != '<')
+    {
+        retStr+=sourceStr[endTimeStartIndex++];
+    }
+    if (!retStr.isEmpty())
+    {
+        appToDB.insert("lotEndTime",retStr);
+    }
+
+    qDebug()<<retStr;
     return appToDB;
 
 }
