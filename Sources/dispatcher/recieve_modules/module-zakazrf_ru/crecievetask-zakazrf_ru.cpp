@@ -93,7 +93,7 @@ bool CRecieveTask_zakazrf_ru::run()
     QUrlList urls=downloadManager.getUrls();
     if(urls.isEmpty())
     {
-        for(int i=9300; i>74; i--)
+        for(int i=7220; i>5900; i--)
         {
             QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
             CDataStructure* tmpdata = new CDataStructure(testUrl);
