@@ -7,8 +7,8 @@
 #include <constants.h>
 #include <cdownloadmanager_zakazrf_ru.h>
 
-#undef RUN_ALL_TASKS
-//#define RUN_ALL_TASKS
+//#undef RUN_ALL_TASKS
+#define RUN_ALL_TASKS
 
 CRecieveTask_zakazrf_ru::CRecieveTask_zakazrf_ru()
 {
@@ -93,7 +93,7 @@ bool CRecieveTask_zakazrf_ru::run()
     QUrlList urls=downloadManager.getUrls();
     if(urls.isEmpty())
     {
-        for(int i=73; i<9000; i++)
+        for(int i=1000; i>74; i--)
         {
             QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
             CDataStructure* tmpdata = new CDataStructure(testUrl);
