@@ -87,7 +87,7 @@ bool CRecieveTask_zakazrf_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=5000; i<5005; i++)
+for(int i=7200; i>5900; i--)
 {
     QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
     CDataStructure* tmpdata = new CDataStructure(testUrl);

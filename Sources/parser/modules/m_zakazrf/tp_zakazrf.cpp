@@ -117,7 +117,11 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
                 db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
                 db_data.insert("num_lot",info[Content_NumberLabel]);
                 QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
-                db_data.insert("participants",partNames);
+                if (!partNames.isEmpty())
+                {
+                    db_data.insert("end_time", partNames.takeLast());
+                    db_data.insert("participants",partNames);
+                }
                 mutex.lock();
                     m_db->write(db_data);
                 mutex.unlock();
@@ -224,6 +228,7 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
 
     ////BIG WORLAROUND START
     //*********************************
+    QString end_time;
     tmpCount--;
     QString start = "<table";
     QString end   = "</table>";
@@ -243,8 +248,19 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
         if(tmp.contains(strStart))
         {
             l++;
+            if (l==1)
+            {
+                int p = 0;
+                QString part;
+                while(p < tmp.length() && tmp[p++] != '>');
+                while(p < tmp.length() && tmp[p] != '<')
+                {
+                    part += tmp[p++];
+                }
+                end_time = part;
+            }
             //TODO пропускаем два td считываем третий
-           if(l==3)
+            if(l==3)
             {
                 l = 0;
                 int p = 0;
@@ -264,6 +280,7 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
     ////BIG WORLAROUND END
     //*********************************
 
+    retList.append(end_time);
     return retList;
 }
 

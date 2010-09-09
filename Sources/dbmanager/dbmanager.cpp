@@ -67,7 +67,7 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":start_price",data.value("start_price"));
             query.bindValue(":best_price",data.value("best_price"));
             query.bindValue(":start_time",data.value("start_time"));
-            query.bindValue(":end_time",QVariant());
+            query.bindValue(":end_time",data.value("end_time"));
             query.bindValue(":protocol",data.value("protocol"));
             query.bindValue(":last_parsed",QVariant(QDateTime::currentDateTime()));
         }
