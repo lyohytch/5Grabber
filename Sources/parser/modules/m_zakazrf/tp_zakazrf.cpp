@@ -117,10 +117,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
                 db_data.insert("id_reduction",p_data->root()->root()->url().toString().section("=",1));
                 db_data.insert("num_lot",info[Content_NumberLabel]);
                 QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
-                //Take and remove final date from participants
-                QString finalDate = partNames.takeAt(0);
                 db_data.insert("participants",partNames);
-                db_data.insert("final_date", finalDate);
                 mutex.lock();
                     m_db->write(db_data);
                 mutex.unlock();
@@ -194,38 +191,14 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
     QTextStream stream(source);
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+
     //Getting winner
     QString winner;
     int pos = sourceStr.lastIndexOf(templ);
     if(pos == -1) return QStringList();
 
     //Сдвиг
-    // Здесь можно найти дату
-    int posTime = pos;
     int c = 0;
-    //Move to start position for final time
-    QString finalTime;
-    while(c <  3)
-    {
-        if( posTime <= 0)
-        {
-            finalTime.clear();
-            break;
-        }
-        if(sourceStr[posTime--] == '<')
-        {
-            c++;
-        }
-    }
-    while(posTime < sourceStr.length() && sourceStr[posTime++] != '>');
-    //Getting final time
-    while(posTime < sourceStr.length() && sourceStr[posTime] != '<')
-    {
-        finalTime += sourceStr[posTime];
-        posTime++;
-    }
-
-    c = 0;
     while(c < 2)
     {
         if( pos >= sourceStr.length())
@@ -247,7 +220,6 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
     QStringList retList;
 
     //Getting other participants
-    retList.append(finalTime);
     retList.append(winner);
 
     ////BIG WORLAROUND START
