@@ -40,6 +40,9 @@ bool DBmanager::is_open()
 bool DBmanager::write(QVariantMap &data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
+    qDebug() << "##############################################################";
+    qDebug() << data;
+    qDebug() << "##############################################################";
     bool ok = false;
     if (m_status)
     {
