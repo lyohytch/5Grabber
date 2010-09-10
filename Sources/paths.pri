@@ -16,10 +16,12 @@ GRB_LIBS_SRC_PATH=$$GRB_LIBS_PATH/src
 #paths only for dispatcher
 
 GRB_DSP_MODULES_PATH=dispatcher/recieve_modules
-
+GRB_DWL_MODULES_PATH=downloadmanager
 #parser paths
 GRB_PARSER_PATH=parser/parser
 GRB_PARSER_MODULE_PATH=parser/modules
 
 #parser paths
 GRB_DBMANAGER_PATH=dbmanager
+
+DEFINES += TIME_STAMPS

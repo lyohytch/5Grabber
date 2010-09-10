@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include <constants.h>
+#include <cdownloadmanager_zakazrf_ru.h>
 
 //#undef RUN_ALL_TASKS
 #define RUN_ALL_TASKS
@@ -87,15 +88,32 @@ bool CRecieveTask_zakazrf_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=7200; i>5900; i--)
-{
-    QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
-    CDataStructure* tmpdata = new CDataStructure(testUrl);
-    tmpdata->setType(getUrlDataType(testUrl));
-    tmpdata->setRoot();
-    m_dataStructures.insert(testUrl, tmpdata);
-    m_activeDataStructures.push_back(tmpdata);
-}
+    CDownloadManager_zakazrf_ru downloadManager;
+    downloadManager.init();
+    QUrlList urls=downloadManager.getUrls();
+    if(urls.isEmpty())
+    {
+        for(int i=9000; i>50; i--)
+        {
+            QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
+            CDataStructure* tmpdata = new CDataStructure(testUrl);
+            tmpdata->setType(getUrlDataType(testUrl));
+            tmpdata->setRoot();
+            m_dataStructures.insert(testUrl, tmpdata);
+            m_activeDataStructures.push_back(tmpdata);
+        }
+    }
+    else
+    {
+        for(int i=0; i<urls.count();i++)
+        {
+            CDataStructure* tmpdata = new CDataStructure(urls.at(i));
+            tmpdata->setType(getUrlDataType(urls.at(i)));
+            tmpdata->setRoot();
+            m_dataStructures.insert(urls.at(i), tmpdata);
+            m_activeDataStructures.push_back(tmpdata);
+        }
+    }
 #endif
 
     CDataStructure* data=NULL;
@@ -157,6 +175,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
     QList<CDataStructure*>::iterator activeDataStructuresIter;
     for(activeDataStructuresIter = m_activeDataStructures.begin(); activeDataStructuresIter != m_activeDataStructures.end();)
     {
+        qDebug()<<"Active data structures amount:"<<m_activeDataStructures.count();
         CDataStructure* data=(*activeDataStructuresIter);
         if(!data)
         {
@@ -179,15 +198,7 @@ void  CRecieveTask_zakazrf_ru::onThreadFinished()
             continue;
         }
 
-        if(data->needRequeue()>0)
-        {
-//            data->setNeedRequeue(data->needRequeue());
-            m_activeDataStructures.push_back(data);
-            activeDataStructuresIter=m_activeDataStructures.erase(activeDataStructuresIter);
-            continue;
-        }
-
-        if(m_threads.count()<(m_maxThreads+1))
+        if(m_threads.count()<(m_maxThreads))
         {
             CReciveThread *thread=new CReciveThread(data->url(),m_threadCounter++);
             thread->setDataStructure(data);
@@ -237,6 +248,19 @@ void CRecieveTask_zakazrf_ru::onDataReady(int threadId/*, QByteArray data*/)
 
     if(data->needRequeue()>0)
     {
+        if(data->needRequeue()==1)
+        {
+            data->done();
+            if(data->root()->isFinished())
+            {
+                m_signaller->onDataReady(data->root());
+            }
+        }
+        else
+        {
+            m_activeDataStructures.push_back(data);
+        }
+
         m_threads.at(threadNum)->exit(0);
         return;
     }
@@ -299,7 +323,7 @@ QUrl CRecieveTask_zakazrf_ru::createFullUrlFromRule(QUrl url, QVariant rule)
     return url;
 }
 
-int CRecieveTask_zakazrf_ru::getUrlDataType(QUrl &url)
+int CRecieveTask_zakazrf_ru::getUrlDataType(const QUrl &url)
 {
     if(url.toString().contains("DFile.ashx"))
     {

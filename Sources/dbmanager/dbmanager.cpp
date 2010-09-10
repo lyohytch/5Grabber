@@ -39,7 +39,6 @@ bool DBmanager::is_open()
 
 bool DBmanager::write(QVariantMap &data)
 {
-    Q_UNUSED(data);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
     bool ok = false;
     if (m_status)
@@ -55,7 +54,7 @@ bool DBmanager::write(QVariantMap &data)
         {
             query.prepare("REPLACE INTO Lot VALUES (:id_reduction, :num_lot, :id_lot, :url, :status, :subject,"
                           " :obespechenie, :start_price, :best_price, :start_time, :end_time,"
-                          " :protocol, :last_parsed);");
+                          " :winner, :protocol, :protocol_summary, :last_parsed);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
             query.bindValue(":num_lot",data.value("num_lot"));
             query.bindValue(":id_lot",data.value("id_lot"));
@@ -68,7 +67,9 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":best_price",data.value("best_price"));
             query.bindValue(":start_time",data.value("start_time"));
             query.bindValue(":end_time",data.value("end_time"));
+            query.bindValue(":winner",data.value("winner"));
             query.bindValue(":protocol",data.value("protocol"));
+            query.bindValue(":protocol_sumary",data.value("protocol_summary"));
             query.bindValue(":last_parsed",QVariant(QDateTime::currentDateTime()));
         }
         else if(data.value("table").toString() == "Customer")

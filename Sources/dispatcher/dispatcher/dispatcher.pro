@@ -11,14 +11,12 @@ QT += webkit
 QT += dbus
 QT += sql
 
-
+CONFIG += qsqlmysql
 CONFIG += console
 CONFIG -= app_bundle
 
 GBR_SOURCE_ROOT=../..
 include($$GBR_SOURCE_ROOT/paths.pri)
-
-DEFINES += TIME_STAMPS
 
 DESTDIR = $$PWD/$$GBR_SOURCE_ROOT/$$GRB_BIN_PATH
 

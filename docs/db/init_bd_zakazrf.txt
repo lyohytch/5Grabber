@@ -1,4 +1,6 @@
-DROP TABLE Reduction, Lot, Customer, Party, Participant, Status, DocFile;
+drop database zakazrf;
+create database zakazrf;
+connect zakazrf;
 
 CREATE TABLE Reduction(
     id_reduction MEDIUMINT UNSIGNED NOT NULL,
@@ -18,11 +20,13 @@ CREATE TABLE Lot (
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
     obespechenie VARCHAR(150),
-    start_price VARCHAR(50),
+    start_price FLOAT,
     best_price VARCHAR(50),
     start_time VARCHAR(50),
-    end_time VARCHAR(50),
-    protocol VARCHAR(200),
+    end_time DATETIME,
+    winner VARCHAR(300),
+    protocol VARCHAR(150),
+    protocol_summary VARCHAR(150),
     last_parsed DATETIME,
     PRIMARY KEY (id_lot, id_reduction)
 );
