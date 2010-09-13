@@ -148,14 +148,22 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         qDebug() << link;
         qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
         qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
+        bool protocol_exists = false;
         for (int j = 0; j < p_data->childscCount(); j++)
         {
             if (!link.isEmpty() && p_data->childAt(j)->url().toString().contains(link))
             {
                 db_data = db_data.unite(parseProtocol(p_data->childAt(j)));
                 db_data.insert("protocol", p_data->childAt(j)->url().toString());
-                qDebug() << db_data;
+                protocol_exists = true;
+                //qDebug() << db_data;
+                break;
             }
+        }
+        if (!protocol_exists)
+        {
+            db_data.insert("protocol", QVariant());
+            db_data.insert("end_time", QVariant());
         }
         db_data.insert("table","LOT");
         db_data.insert("num_lot",info[Content_NumberLabel]);
@@ -420,9 +428,9 @@ QVariantMap TP_zakazrf::parseProtocol(CDataStructure *p_data)
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
     QVariantMap result;
     QStringList list;
-//    QString expr = QString::fromUtf8("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>");
-//    QRegExp regexp1(expr, Qt::CaseInsensitive);
-    QRegExp regexp1("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>", Qt::CaseInsensitive);
+    QString expr = QString::fromUtf8("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>");
+    QRegExp regexp1(expr, Qt::CaseInsensitive);
+//    QRegExp regexp1("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>", Qt::CaseInsensitive);
     for (int pos = regexp1.indexIn(sourceStr); pos > 0; pos = regexp1.indexIn(sourceStr, pos + 1))
     {
         qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -436,9 +444,9 @@ QVariantMap TP_zakazrf::parseProtocol(CDataStructure *p_data)
         }
         break;
     }
-//    expr = QString::fromUtf8("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s");
-//    QRegExp regexp2(expr, Qt::CaseInsensitive);
-    QRegExp regexp2("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s", Qt::CaseInsensitive);
+    expr = QString::fromUtf8("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s");
+    QRegExp regexp2(expr, Qt::CaseInsensitive);
+//    QRegExp regexp2("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s", Qt::CaseInsensitive);
     for (int pos = regexp2.indexIn(sourceStr); pos > 0; pos = regexp2.indexIn(sourceStr, pos + 1))
     {
         qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

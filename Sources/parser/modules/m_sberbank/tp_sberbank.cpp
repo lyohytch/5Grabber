@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QMutex>
+#include <QRegExp>
 
 
 TP_sberbank::TP_sberbank()
@@ -43,16 +44,13 @@ bool TP_sberbank::run()
         }
     }
 
-
     QVariantMap db_data;
-    db_data.insert("info", info);
+    db_data.unite(info);
     db_data.insert("url", m_data->url().toString());
     db_data.insert("id_reduction", m_data->root()->url().toString().section("=", 1));
+    db_data.insert("table", "Auction");
     mutex.lock();
-//        m_db->write(db_data);
-        qDebug() << "============================================================";
-        qDebug() << db_data;
-        qDebug() << "============================================================";
+        m_db->write(db_data);
     mutex.unlock();
 
 //    m_signaller->onParseFinished();
@@ -69,21 +67,57 @@ QVariantMap TP_sberbank::parse(CDataStructure* data,bool isRoot)
     QVariantMap info;
     if(isRoot)
     {
-        info.insert("date",QVariant(getDateData(html)));
-        info.insert("code",QVariant(getCodeData(html)));
-        info.insert("customer",QVariant(getCustomerData(html)));
-        info.insert("providersmap",QVariant(""));
-        info.insert("price",QVariant(getPriceData(html)));
-        info.insert("providing",QVariant(getProvidingData(html)));
+//        info.insert("date",QVariant(getDateData(html)));
+//        info.insert("code",QVariant(getCodeData(html)));
+//        info.insert("customer",QVariant(getCustomerData(html)));
+//        info.insert("providersmap",QVariant(""));
+//        info.insert("price",QVariant(getPriceData(html)));
+//        info.insert("providing",QVariant(getProvidingData(html)));
+        info.unite(getDateData(html));
+        info.unite(getCodeData(html));
+        info.unite(getCustomerData(html));
+        info.unite(getPriceData(html));
+        info.unite(getProvidingData(html));
         return info;
     }
     else
     {
-        QVariantMap temp = getProviderData(html);
-        if(!temp.isEmpty())
+//        QVariantMap temp = getProviderData(html);
+//        if(!temp.isEmpty())
+//        {
+////            info.insert("providersmap",QVariant(temp));
+//            info.unite(temp);
+//        }
+
+        QString words = QString::fromUtf8("Сведения вторых частей заявок на участие в открытом аукционе в электронной форме");
+        int position = html.indexOf(words);
+        if (position != -1)
         {
-            info.insert("providersmap",QVariant(temp));
+            info.insert("protocol", data->url().toString());
+            QString source = html.mid(position);
+            source = source.remove(QRegExp("\n|\t|\r|\a"));
+            //QString expr = QString::fromUtf8("<td>\\s*\\d{1,2}\\s*</td>\\s*<td>\\s*\\b(\\D*)\\b</td>\\s*<td>\\s*\\d*\\.{0,1}\\d{0,2}\\s*</td>\\s*<td>\\s*понижение\\s*</td>");
+            QString expr = QString::fromUtf8("<tr>\\s*"
+                                             "<td>\\s*\\d{1,2}\\s*</td>\\s*"
+                                             "<td>(\\D*\\d*\\D*\\d*)</td>\\s*"
+                                             "<td>\\s*\\d*.*\\d*\\s*</td>\\s*"
+                                             "<td>\\D*</td>\\s*"
+                                             "<td>\\s*\\d*.*\\d*.*\\d*\\s*\\d*:*\\d*:*\\d*\\s*</td>\\s*"
+                                             "<td>\\s*соответствует\\s*</td>\\s*"
+                                             "<td>\\w*</td>\\s*"
+                                             "</tr>");
+            QRegExp regexp(expr, Qt::CaseInsensitive);
+            for (int pos = regexp.indexIn(source); pos > 0; pos = regexp.indexIn(source, pos + 1))
+            {
+                if (!regexp.cap(1).isEmpty())
+                {
+                    info.insert("winner", regexp.cap(1));
+                    return info;
+                }
+            }
+            info.insert("winner", QString());
         }
+
         return info;
     }
 }
@@ -148,6 +182,7 @@ QVariantMap TP_sberbank::getCustomerData(const QString& html)
     data.insert("orgphones", QVariant(getDataClearTeg(html_data,"orgphones")));
     data.insert("orgcontactperson", QVariant(getDataClearTeg(html_data,"orgcontactperson")));
     data.insert("custorgname", QVariant(getDataClearTeg(html_data,"custorgname")));
+    data.insert("purchfullname", QVariant(getDataClearTeg(html_data,"purchfullname")));
     return data;
 }
 
@@ -156,38 +191,39 @@ QVariantMap TP_sberbank::getProviderData(const QString& html)
     QVariantMap  data;
     QString html_data = getDataTeg(html,"textarea");
 
-    int countProvider  = getCountTeg(html_data,"reqno");
-    int num = 0;
-    for(int i = 1; i < countProvider; i = i + 2)
-    {
+    //int countProvider  = getCountTeg(html_data,"reqno");
+    //int num = 0;
+//    for(int i = 1; i < countProvider; i = i + 2)
+//    {
         QVariantMap  provider;
-        provider.insert("reqno",QVariant(getDataClearTeg(html_data,"reqno",i)));
-        provider.insert("bufullname",QVariant(getDataClearTeg(html_data,"bufullname",i)));
-        provider.insert("offerprice",QVariant(getDataClearTeg(html_data,"offerprice",i)));
-        provider.insert("offerkind",QVariant(getDataClearTeg(html_data,"offerkind",i)));
-        provider.insert("createat",QVariant(getDataClearTeg(html_data,"createat",i)));
+        provider.insert("reqno",QVariant(getDataClearTeg(html_data,"reqno"/*,i*/)));
+        provider.insert("bufullname",QVariant(getDataClearTeg(html_data,"bufullname"/*,i*/)));
+        provider.insert("offerprice",QVariant(getDataClearTeg(html_data,"offerprice"/*,i*/)));
+        provider.insert("offerkind",QVariant(getDataClearTeg(html_data,"offerkind"/*,i*/)));
+        provider.insert("createat",QVariant(getDataClearTeg(html_data,"createat"/*,i*/)));
 
-        if( provider.value("reqno").toString().isEmpty() &&
-            provider.value("bufullname").toString().isEmpty() &&
-            provider.value("offerprice").toString().isEmpty() &&
-            provider.value("offerkind").toString().isEmpty() &&
-            provider.value("createat").toString().isEmpty() )
-        {
-            break;
-        }
+//        if( provider.value("reqno").toString().isEmpty() &&
+//            provider.value("bufullname").toString().isEmpty() &&
+//            provider.value("offerprice").toString().isEmpty() &&
+//            provider.value("offerkind").toString().isEmpty() &&
+//            provider.value("createat").toString().isEmpty() )
+//        {
+//            break;
+//        }
 
-        data.insert( provider.value("reqno").toString(),QVariant(provider));
-        num ++;
-    }
+        //data.insert( provider.value("reqno").toString(),QVariant(provider));
+        //num ++;
+//    }
 
-    return data;
+//    return data;
+    return provider;
 }
 
 QVariantMap TP_sberbank::getPriceData(const QString& html)
 {
     QVariantMap  data;
     QString html_data = getDataTeg(html,"textarea");
-    data.insert("purchamount", QVariant(getDataClearTeg(html_data,"contrneed")));
+    data.insert("purchamount", QVariant(getDataClearTeg(html_data,"purchamount")));
     data.insert("purchpricestepmin", QVariant(getDataClearTeg(html_data,"purchpricestepmin")));
     data.insert("purchpricestepmax", QVariant(getDataClearTeg(html_data,"purchpricestepmax")));
     return data;

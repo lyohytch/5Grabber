@@ -76,4 +76,30 @@ CREATE TABLE DocFile (
     PRIMARY KEY (id_file)
 );
 
+CREATE TABLE Auction (
+    id_auction MEDIUMINT UNSIGNED NOT NULL UNIQUE,
+    code VARCHAR(30),
+    url VARCHAR(150),
+    subject VARCHAR(500),
+    customer_name VARCHAR(300),
+    customer_address VARCHAR(300),
+    customer_post VARCHAR(300),
+    customer_email VARCHAR(100),
+    customer_phone VARCHAR(50),
+    customer_contact VARCHAR(100),
+    auctionbegindate VARCHAR(50),
+    auctionenddate VARCHAR(50),
+    publicdate VARCHAR(50),
+    requestacceptdate VARCHAR(50),
+    requestdate VARCHAR(50),
+    purchamount FLOAT,
+    contrcoveramount FLOAT,
+    contrcoveramountinpercent SMALLINT UNSIGNED,
+    contrneed CHAR(3),
+    status VARCHAR(20),
+    winner VARCHAR(150),
+    protocol VARCHAR(100),
+    PRIMARY KEY (id_auction)
+);
+
 SHOW TABLES;
