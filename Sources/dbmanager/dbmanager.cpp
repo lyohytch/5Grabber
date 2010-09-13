@@ -40,9 +40,9 @@ bool DBmanager::is_open()
 bool DBmanager::write(QVariantMap &data)
 {
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
-    qDebug() << "##############################################################";
-    qDebug() << data;
-    qDebug() << "##############################################################";
+//    qDebug() << "##############################################################";
+//    qDebug() << data;
+//    qDebug() << "##############################################################";
     bool ok = false;
     if (m_status)
     {
@@ -129,7 +129,7 @@ bool DBmanager::write(QVariantMap &data)
                           " :customer_post, :customer_email, :customer_phone, :customer_contact, "
                           " :auctionbegindate, :auctionenddate, :publicdate, :requestacceptdate, "
                           " :requestdate, :purchamount, :contrcoveramount, :contrcoveramountinpercent, "
-                          " :contrneed, :status, :winner, :protocol);" );
+                          " :contrneed, :status, :winner, :protocol, :last_parsed);" );
             query.bindValue(":id_auction",data.value("id_reduction"));
             query.bindValue(":code",data.value("purchcode"));
             query.bindValue(":url",data.value("url"));
@@ -149,9 +149,10 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":contrcoveramount",data.value("contrcoveramount"));
             query.bindValue(":contrcoveramountinpercent",data.value("contrcoveramountinpercent"));
             query.bindValue(":contrneed",data.value("contrneed"));
-            query.bindValue(":status",QVariant());
+            query.bindValue(":status",data.value("purchstate"));
             query.bindValue(":winner",data.value("winner"));
             query.bindValue(":protocol",data.value("protocol"));
+            query.bindValue(":last_parsed", QVariant(QDateTime::currentDateTime()));
         }
         else
         {

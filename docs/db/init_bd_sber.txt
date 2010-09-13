@@ -16,7 +16,7 @@ CREATE TABLE Auction (
     auctionbegindate DATETIME,
     auctionenddate DATETIME,
     publicdate DATETIME,
-    requestacceptdate DATETIME,
+    requestacceptdate DATE,
     requestdate DATETIME,
     purchamount FLOAT,
     contrcoveramount FLOAT,
@@ -25,6 +25,7 @@ CREATE TABLE Auction (
     status VARCHAR(20),
     winner VARCHAR(150),
     protocol VARCHAR(100),
+    last_parsed DATETIME,
     PRIMARY KEY (id_auction)
 );
 

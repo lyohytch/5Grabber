@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QStringList>
 #include <QMutex>
+#include <QDateTime>
 
 //Reduction
 const QString NumberLabel                 = "ctl00_Content_ReductionViewForm_NumberLabel";
@@ -143,11 +144,6 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         //Write in Lot table
         db_data.clear();
         QString link = findProtocol(p_data);
-        qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
-        qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
-        qDebug() << link;
-        qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
-        qDebug() << "CCCCCCCCCCCCCCCCCCCCCCCCCCC";
         bool protocol_exists = false;
         for (int j = 0; j < p_data->childscCount(); j++)
         {
@@ -175,8 +171,8 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("obespechenie", info[Content_MaintenanceSumLabel]);
         db_data.insert("start_price", info["start_price"]);
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
-        db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
-//        db_data.insert("end_time", info["lotEndTime"]);
+        db_data.insert("start_time", QDateTime::fromString(info.value(Content_TradeBeginDateLabel).toString(),
+                                                           QString("d.M.yyyy H:m")));
         db_data.insert("winner", winner);
         db_data.insert("url", p_data->url().toString());
         mutex.lock();
@@ -427,52 +423,35 @@ QVariantMap TP_zakazrf::parseProtocol(CDataStructure *p_data)
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
     QVariantMap result;
-    QStringList list;
-    QString expr = QString::fromUtf8("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>");
+    QString list;
+    QString expr = QString::fromUtf8("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*((\\d{1,2}):(\\d{1,2}):(\\d{1,2}))\\s*</u>\\s*</p>");
     QRegExp regexp1(expr, Qt::CaseInsensitive);
 //    QRegExp regexp1("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>", Qt::CaseInsensitive);
     for (int pos = regexp1.indexIn(sourceStr); pos > 0; pos = regexp1.indexIn(sourceStr, pos + 1))
     {
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << regexp1.cap();
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        for (int i = 1; i < 4; i++)
+        if (!regexp1.cap().isEmpty())
         {
-            list.append(regexp1.cap(i));
+            list.append(regexp1.cap(1) + " ");
+            break;
         }
-        break;
     }
-    expr = QString::fromUtf8("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s");
+    expr = QString::fromUtf8("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}\\s)(\\w*)(\\s\\d{4})\\s");
     QRegExp regexp2(expr, Qt::CaseInsensitive);
-//    QRegExp regexp2("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2})\\s(\\D*)\\s(\\d{4})\\s", Qt::CaseInsensitive);
+//    QRegExp regexp2("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}\\s)(\\w*)(\\s\\d{4})\\s", Qt::CaseInsensitive);
     for (int pos = regexp2.indexIn(sourceStr); pos > 0; pos = regexp2.indexIn(sourceStr, pos + 1))
     {
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << regexp2.cap();
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        for (int i = 1; i < 4; i++)
+        if (!regexp2.cap().isEmpty())
         {
-            if (i == 2)
-            {
-                list.append(montheTable.value(regexp2.cap(2)));;
-                continue;
-            }
-            list.append(regexp2.cap(i));
+            list.append(regexp2.cap(1));
+            list.append(montheTable.value(regexp2.cap(2)));
+            list.append(regexp2.cap(3));
+            break;
         }
         break;
     }
-    qDebug() << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-    qDebug() << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-    qDebug() << list;
-    qDebug() << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-    qDebug() << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-    QDateTime dt = QDateTime::fromString(QString("%1 %2 %3 %4 %5 %6").arg(list.at(0), list.at(1), list.at(2),
-                                                                          list.at(3), list.at(4), list.at(5)),
-                                         QString("hh mm ss dd MM yyyy"));
+    QDateTime dt = QDateTime::fromString(list, QString("H:m:s d M yyyy"));
+
+
     result.insert("end_time", dt);
 
 //    expr = QString::fromUtf8("<p>\\s*4.Начальная\\s\\(максимальная\\)\\sцена\\sконтракта\\s\\(лота\\):\\s*<u>"

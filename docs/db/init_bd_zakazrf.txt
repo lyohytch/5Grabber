@@ -22,7 +22,7 @@ CREATE TABLE Lot (
     obespechenie VARCHAR(150),
     start_price FLOAT,
     best_price VARCHAR(50),
-    start_time VARCHAR(50),
+    start_time DATETIME,
     end_time DATETIME,
     winner VARCHAR(300),
     protocol VARCHAR(150),
@@ -87,11 +87,11 @@ CREATE TABLE Auction (
     customer_email VARCHAR(100),
     customer_phone VARCHAR(50),
     customer_contact VARCHAR(100),
-    auctionbegindate VARCHAR(50),
-    auctionenddate VARCHAR(50),
-    publicdate VARCHAR(50),
-    requestacceptdate VARCHAR(50),
-    requestdate VARCHAR(50),
+    auctionbegindate DATETIME,
+    auctionenddate DATETIME,
+    publicdate DATETIME,
+    requestacceptdate DATE,
+    requestdate DATETIME,
     purchamount FLOAT,
     contrcoveramount FLOAT,
     contrcoveramountinpercent SMALLINT UNSIGNED,
@@ -99,6 +99,7 @@ CREATE TABLE Auction (
     status VARCHAR(20),
     winner VARCHAR(150),
     protocol VARCHAR(100),
+    last_parsed DATETIME,
     PRIMARY KEY (id_auction)
 );
 
