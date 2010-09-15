@@ -43,7 +43,6 @@ bool DBmanager::write(QVariantMap &data)
     qDebug() << "##############################################################";
     qDebug() << data;
     qDebug() << "##############################################################";
-    return true;
     bool ok = false;
     if (m_status)
     {
@@ -153,6 +152,7 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":status",data.value("purchstate"));
             query.bindValue(":winner",data.value("winner"));
             query.bindValue(":protocol",data.value("protocol"));
+            query.bindValue(":end_time",data.value("end_time"));
             query.bindValue(":last_parsed", QVariant(QDateTime::currentDateTime()));
         }
         else
