@@ -99,6 +99,7 @@ CREATE TABLE Auction (
     status VARCHAR(20),
     winner VARCHAR(150),
     protocol VARCHAR(100),
+    end_time DATETIME,
     last_parsed DATETIME,
     PRIMARY KEY (id_auction)
 );
