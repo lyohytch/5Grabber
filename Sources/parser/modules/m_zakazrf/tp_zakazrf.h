@@ -29,7 +29,7 @@ public:
 private:
     void html_to_db(CDataStructure *, const QStringList &m_ids, bool isLot); //хтмл в стринглист
     QVariantMap findProviding(CDataStructure* p_data, const QStringList &);
-    QString findProtocol(CDataStructure* p_data);
+    QVariantMap findProtocol(CDataStructure* p_data);
     QVariantMap parseProtocol(CDataStructure* p_data);
 
     QMap<QString, QString> montheTable; // Month conversion

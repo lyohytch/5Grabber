@@ -133,7 +133,7 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
                 db_data.insert("participants",partNames);
                 if (!partNames.isEmpty())
                 {
-                    winner = partNames.first();
+                    //winner = partNames.first();
                 }
                 mutex.lock();
                     m_db->write(db_data);
@@ -143,14 +143,18 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
 
         //Write in Lot table
         db_data.clear();
-        QString link = findProtocol(p_data);
+        QVariantMap protocol = findProtocol(p_data);
+        QString link = protocol.value("link").toString();
         bool protocol_exists = false;
+        // TODO insert check for link.isEmpty
         for (int j = 0; j < p_data->childscCount(); j++)
         {
+            // TODO remove check fro link.isEmpty
             if (!link.isEmpty() && p_data->childAt(j)->url().toString().contains(link))
             {
-                db_data = db_data.unite(parseProtocol(p_data->childAt(j)));
+                //db_data = db_data.unite(parseProtocol(p_data->childAt(j)));
                 db_data.insert("protocol", p_data->childAt(j)->url().toString());
+                db_data.insert("end_time", protocol.value("end_time"));
                 protocol_exists = true;
                 //qDebug() << db_data;
                 break;
@@ -397,24 +401,28 @@ QString TP_zakazrf::extractFromSpanTag(const QString & tagTxt)
     return retStr;
 }
 
-QString TP_zakazrf::findProtocol(CDataStructure* p_data)
+QVariantMap TP_zakazrf::findProtocol(CDataStructure* p_data)
 {
     QTextStream stream(p_data->read());
     QString sourceStr(stream.readAll());
+    QVariantMap result;
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
-    QString expr = QString::fromUtf8("href=\\\"(\\D*id=\\d{3,6})\\\">Протокол\\sпроведения\\sаукциона");
+    QString expr = QString::fromUtf8("href=\\\"(\\D*id=\\d{3,6})\\\">\\s*Протокол\\sподведения\\sитогов\\sаукциона[.]htm\\s*"
+                                     "</a>\\s*</td>\\s*<td>\\s*Протокол\\sподведения\\sитогов\\sаукциона\\s*"
+                                     "</td>\\s*<td>\\s*(\\d*[.]\\d*[.]\\d*\\s*\\d*:\\d*:\\d*)\\s*</td>");
     QRegExp regexp(expr, Qt::CaseInsensitive);
-    QString link;
 
     for (int pos = regexp.indexIn(sourceStr); pos > 0; pos = regexp.indexIn(sourceStr, pos + 1))
     {
-        link = regexp.cap(1);
-        if (!link.isEmpty())
+        if (!regexp.cap().isEmpty())
         {
-            return link;
+            result.insert("link", regexp.cap(1));
+            QDateTime dt = QDateTime::fromString(regexp.cap(2), QString("d.M.yyyy H:m:s"));
+            result.insert("end_time", dt);
+            return result;
         }
     }
-    return link;
+    return result;
 }
 
 QVariantMap TP_zakazrf::parseProtocol(CDataStructure *p_data)

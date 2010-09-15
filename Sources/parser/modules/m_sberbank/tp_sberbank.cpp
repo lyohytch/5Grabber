@@ -41,7 +41,7 @@ bool TP_sberbank::run()
     {
         if (m_data->childAt(i)->type() == CDataStructure::eDataEventPage)
         {
-            info.unite(parse(m_data->childAt(i),false));
+            //info.unite(parse(m_data->childAt(i),false));
         }
     }
 
@@ -68,6 +68,38 @@ QVariantMap TP_sberbank::parse(CDataStructure* data,bool isRoot)
     QVariantMap info;
     if(isRoot)
     {
+        QString expr = QString::fromUtf8("&lt;docid&gt;\\s*(\\d*)\\s*&lt;/docid&gt;"
+                                          "&lt;comment&gt;\\s*Протокол\\sподведения\\sитогов\\s*&lt;/comment&gt;"
+                                          "&lt;chngdate&gt;\\s*(\\d*[.]\\d*[.]\\d*\\s\\d*:\\d*)\\s*&lt;/chngdate&gt;");
+        QRegExp regexp(expr, Qt::CaseInsensitive);
+        QString docid = "";
+        QString time = "";
+        for (int pos = regexp.indexIn(html); pos > 0; pos = regexp.indexIn(html, pos + 1))
+        {
+            if (!regexp.cap(1).isEmpty())
+            {
+                docid = regexp.cap(1);
+                time = regexp.cap(2);
+                break;
+            }
+        }
+        if (!docid.isEmpty())
+        {
+            for (int k = 0; k < data->childscCount(); k++)
+            {
+                if (data->childAt(k)->url().toString().endsWith(docid))
+                {
+                    info.insert("protocol", data->childAt(k)->url().toString());
+                    QDateTime dt = QDateTime::fromString(time, QString("d.M.yyyy H:m"));
+                    info.insert("end_time", dt);
+                }
+            }
+        }
+        else
+        {
+            info.insert("winner", "");
+            info.insert("protocol", "");
+        }
 //        info.insert("date",QVariant(getDateData(html)));
 //        info.insert("code",QVariant(getCodeData(html)));
 //        info.insert("customer",QVariant(getCustomerData(html)));
@@ -90,34 +122,37 @@ QVariantMap TP_sberbank::parse(CDataStructure* data,bool isRoot)
 //            info.unite(temp);
 //        }
 
-        QString words = QString::fromUtf8("Сведения вторых частей заявок на участие в открытом аукционе в электронной форме");
-        int position = html.indexOf(words);
-        if (position != -1)
-        {
-            info.insert("protocol", data->url().toString());
-            QString source = html.mid(position);
-            source = source.remove(QRegExp("\n|\t|\r|\a"));
-            //QString expr = QString::fromUtf8("<td>\\s*\\d{1,2}\\s*</td>\\s*<td>\\s*\\b(\\D*)\\b</td>\\s*<td>\\s*\\d*\\.{0,1}\\d{0,2}\\s*</td>\\s*<td>\\s*понижение\\s*</td>");
-            QString expr = QString::fromUtf8("<tr>\\s*"
-                                             "<td>\\s*\\d{1,2}\\s*</td>\\s*"
-                                             "<td>(\\D*\\d*\\D*\\d*)</td>\\s*"
-                                             "<td>\\s*\\d*.*\\d*\\s*</td>\\s*"
-                                             "<td>\\D*</td>\\s*"
-                                             "<td>\\s*\\d*.*\\d*.*\\d*\\s*\\d*:*\\d*:*\\d*\\s*</td>\\s*"
-                                             "<td>\\s*соответствует\\s*</td>\\s*"
-                                             "<td>\\w*</td>\\s*"
-                                             "</tr>");
-            QRegExp regexp(expr, Qt::CaseInsensitive);
-            for (int pos = regexp.indexIn(source); pos > 0; pos = regexp.indexIn(source, pos + 1))
-            {
-                if (!regexp.cap(1).isEmpty())
-                {
-                    info.insert("winner", regexp.cap(1));
-                    return info;
-                }
-            }
-            info.insert("winner", QString());
-        }
+
+        //info.insert("protocol", data->url().toString());
+
+//        QString words = QString::fromUtf8("Сведения вторых частей заявок на участие в открытом аукционе в электронной форме");
+//        int position = html.indexOf(words);
+//        if (position != -1)
+//        {
+//            info.insert("protocol", data->url().toString());
+//            QString source = html.mid(position);
+//            source = source.remove(QRegExp("\n|\t|\r|\a"));
+//            //QString expr = QString::fromUtf8("<td>\\s*\\d{1,2}\\s*</td>\\s*<td>\\s*\\b(\\D*)\\b</td>\\s*<td>\\s*\\d*\\.{0,1}\\d{0,2}\\s*</td>\\s*<td>\\s*понижение\\s*</td>");
+//            QString expr = QString::fromUtf8("<tr>\\s*"
+//                                             "<td>\\s*\\d{1,2}\\s*</td>\\s*"
+//                                             "<td>(\\D*\\d*\\D*\\d*)</td>\\s*"
+//                                             "<td>\\s*\\d*.*\\d*\\s*</td>\\s*"
+//                                             "<td>\\D*</td>\\s*"
+//                                             "<td>\\s*\\d*.*\\d*.*\\d*\\s*\\d*:*\\d*:*\\d*\\s*</td>\\s*"
+//                                             "<td>\\s*соответствует\\s*</td>\\s*"
+//                                             "<td>\\w*</td>\\s*"
+//                                             "</tr>");
+//            QRegExp regexp(expr, Qt::CaseInsensitive);
+//            for (int pos = regexp.indexIn(source); pos > 0; pos = regexp.indexIn(source, pos + 1))
+//            {
+//                if (!regexp.cap(1).isEmpty())
+//                {
+//                    info.insert("winner", regexp.cap(1));
+//                    return info;
+//                }
+//            }
+//            info.insert("winner", QString());
+//        }
 
         return info;
     }
