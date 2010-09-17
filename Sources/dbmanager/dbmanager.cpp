@@ -129,7 +129,7 @@ bool DBmanager::write(QVariantMap &data)
                           " :customer_post, :customer_email, :customer_phone, :customer_contact, "
                           " :auctionbegindate, :auctionenddate, :publicdate, :requestacceptdate, "
                           " :requestdate, :purchamount, :contrcoveramount, :contrcoveramountinpercent, "
-                          " :contrneed, :status, :winner, :protocol, :last_parsed);" );
+                          " :contrneed, :status, :winner, :protocol, :end_time, :last_parsed);" );
             query.bindValue(":id_auction",data.value("id_reduction"));
             query.bindValue(":code",data.value("purchcode"));
             query.bindValue(":url",data.value("url"));
