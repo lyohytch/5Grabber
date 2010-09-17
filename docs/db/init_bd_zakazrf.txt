@@ -20,11 +20,13 @@ CREATE TABLE Lot (
     status SMALLINT UNSIGNED NOT NULL,
     subject VARCHAR(1000),  
     obespechenie VARCHAR(150),
-    start_price VARCHAR(50),
+    start_price FLOAT,
     best_price VARCHAR(50),
-    start_time VARCHAR(50),
-    end_time VARCHAR(50),
-    protocol VARCHAR(200),
+    start_time DATETIME,
+    end_time DATETIME,
+    winner VARCHAR(300),
+    protocol VARCHAR(150),
+    protocol_summary VARCHAR(150),
     last_parsed DATETIME,
     PRIMARY KEY (id_lot, id_reduction)
 );
@@ -72,6 +74,34 @@ CREATE TABLE DocFile (
     last_parsed DATETIME,
     info VARCHAR(5000),
     PRIMARY KEY (id_file)
+);
+
+CREATE TABLE Auction (
+    id_auction MEDIUMINT UNSIGNED NOT NULL UNIQUE,
+    code VARCHAR(30),
+    url VARCHAR(150),
+    subject VARCHAR(500),
+    customer_name VARCHAR(300),
+    customer_address VARCHAR(300),
+    customer_post VARCHAR(300),
+    customer_email VARCHAR(100),
+    customer_phone VARCHAR(50),
+    customer_contact VARCHAR(100),
+    auctionbegindate DATETIME,
+    auctionenddate DATETIME,
+    publicdate DATETIME,
+    requestacceptdate DATE,
+    requestdate DATETIME,
+    purchamount FLOAT,
+    contrcoveramount FLOAT,
+    contrcoveramountinpercent SMALLINT UNSIGNED,
+    contrneed CHAR(3),
+    status VARCHAR(20),
+    winner VARCHAR(150),
+    protocol VARCHAR(100),
+    end_time DATETIME,
+    last_parsed DATETIME,
+    PRIMARY KEY (id_auction)
 );
 
 SHOW TABLES;

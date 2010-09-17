@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include <constants.h>
+#include <cconfighandler.h>
 
 #define RUN_ALL_TASKS
 
@@ -79,7 +80,15 @@ bool CRecieveTask_sberbank_ast_ru::run()
     m_dataStructures.insert(testUrl3, tmpdata3);
     m_activeDataStructures.push_back(tmpdata3);
 #else
-for(int i=2000; i<2005; i++)
+    int min = getConfigurationValue("sberbank_ast/min_id",100).toUInt();
+    int max = getConfigurationValue("sberbank_ast/max_id",39000).toUInt();
+    if (max < min)
+    {
+        int tmp = max;
+        max = min;
+        min = tmp;
+    }
+    for(int i = min; i < max; i++)
 {
     QUrl testUrl(QString("http://sberbank-ast.ru/purchaseview.aspx?id=%1").arg(i));
     CDataStructure* tmpdata = new CDataStructure(testUrl);
@@ -264,7 +273,7 @@ QUrl CRecieveTask_sberbank_ast_ru::createFullUrlFromRule(QUrl url, QVariant rule
 
 int CRecieveTask_sberbank_ast_ru::getUrlDataType(QUrl &url)
 {
-    if(url.toString().contains("ViewDocument.ashx"))
+    if(url.toString().contains("ViewDocument.aspx"))
     {
         return CDataStructure::eDataEventPage;
     }

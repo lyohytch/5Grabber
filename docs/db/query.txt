@@ -1,0 +1,17 @@
+mysql -u root -p zakazrf -e "select * from Reduction as r INNER JOIN (Customer as c, Lot as l, Participant as p, Status as s, DocFile as d) ON (l.id_reduction=r.id_reduction AND r.id_customer=c.id_customer AND p.id_reduction=l.id_reduction AND p.num_lot=l.num_lot AND s.id_status=l.status AND d.id_reduction=r.id_reduction) WHERE l.end_time > '11.09.2010 00:00' INTO OUTFILE '/tmp/result.csv' FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';"
+
+sed s/"http:\/\/zakazrf.ru\/\w*.as[p|h]x?id=[0-9]*"/=HYPERLINK\(\&\)\)\)/g
+
+mysql -u root -p zakazrf -e "select * from Auction as a WHERE (a.auctionenddate > '2010-09-14' and NOT a.code = '') INTO OUTFILE '/tmp/result_sber.csv' FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';"
+
+sed s/"http:\/\/sberbank-ast.ru\/\w*.aspx?id=[0-9]*"/=HYPERLINK\(\&\)\)\)/g
+
+
+mysql -u root -p zakazrf -e "select MIN(l.id_reduction) from Lot as l WHERE (l.end_time > '2010-09-14');"
+mysql -u root -p zakazrf -e "select MIN(a.id_auction) from Auction as a WHERE (a.auctionenddate > '2010-09-14' and NOT a.code = '');"
+
+select a.id_auction, a.auctionenddate from Auction as a WHERE (a.auctionenddate > '2010-09-13' and NOT a.code = '') order by a.auctionenddate desc;
+
+select * from Auction as a WHERE (a.auctionenddate > '2010-09-13' and NOT a.code = '' and NOT a.end_time = '') order by a.auctionenddate asc INTO OUTFILE '/tmp/result_sber.csv' FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
+
+select * from Lot as l INNER JOIN (Customer as c, Reduction as r,  DocFile as d) ON (l.id_reduction=r.id_reduction AND r.id_customer=c.id_customer AND d.id_reduction=l.id_reduction and d.num_lot=l.num_lot) WHERE (l.start_time > '2010-09-13' and NOT l.end_time = '') order by l.end_time asc INTO OUTFILE '/tmp/result_sber.csv' FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';

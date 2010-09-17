@@ -2,7 +2,9 @@
 
 #include "constants.h"
 #include <QByteArray>
+#include <QStringList>
 #include <QMutex>
+#include <QDateTime>
 
 //Reduction
 const QString NumberLabel                 = "ctl00_Content_ReductionViewForm_NumberLabel";
@@ -22,7 +24,6 @@ const QString Content_MaintenanceSumLabel = "ctl00_Content_MaintenanceSumLabel";
 const QString Content_FinalPriceLabel     = "ctl00_Content_FinalPriceLabel";
 const QString Content_TradeBeginDateLabel = "ctl00_Content_TradeBeginDateLabel";
 const QString labelLotParticipantCount    = "ctl00_Content_labelLotParticipantCount";
-
 
 TP_zakazrf::TP_zakazrf()
 {
@@ -48,7 +49,18 @@ TP_zakazrf::TP_zakazrf()
              <<"ctl00_Content_TradeBeginDateLabel" // Дата проведения торгов в электр форме
              <<"ctl00_Content_labelLotParticipantCount";
 
-
+    montheTable[QString::fromUtf8("января")] = "1";
+    montheTable[QString::fromUtf8("февраля")] = "2";
+    montheTable[QString::fromUtf8("марта")] = "3";
+    montheTable[QString::fromUtf8("апреля")] = "4";
+    montheTable[QString::fromUtf8("мая")] = "5";
+    montheTable[QString::fromUtf8("июня")] = "6";
+    montheTable[QString::fromUtf8("июля")] = "7";
+    montheTable[QString::fromUtf8("августа")] = "8";
+    montheTable[QString::fromUtf8("сентября")] = "9";
+    montheTable[QString::fromUtf8("октября")] = "10";
+    montheTable[QString::fromUtf8("ноября")] = "11";
+    montheTable[QString::fromUtf8("декабря")] = "12";
 }
 
 TP_zakazrf::~TP_zakazrf()
@@ -93,12 +105,13 @@ bool TP_zakazrf::run()
 
 void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, bool isLot)
 {
-    QVariantMap info = findProviding(p_data->read(),m_ids);
+    QVariantMap info = findProviding(p_data,m_ids);
     QVariantMap db_data;
     QMutex mutex;
 
     if(isLot)
     {
+        QString winner;
         //Getting participant information
         for(int i = 0; i < p_data->childscCount(); i++)
         {
@@ -118,23 +131,40 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
                 db_data.insert("num_lot",info[Content_NumberLabel]);
                 QStringList partNames = findParticipants(p_data->childAt(i)->read(), info[Content_FinalPriceLabel].toString());
                 db_data.insert("participants",partNames);
+                if (!partNames.isEmpty())
+                {
+                    //winner = partNames.first();
+                }
                 mutex.lock();
                     m_db->write(db_data);
                 mutex.unlock();
             }
         }
 
-        //Write in Status table
-        db_data.clear();
-        db_data.insert("table","Status");
-        db_data.insert("id_status", p_data->url().toString().section("=",1));
-        db_data.insert("status", info[Content_StageLabel]);
-        mutex.lock();
-            m_db->write(db_data);
-        mutex.unlock();
-
         //Write in Lot table
         db_data.clear();
+        QVariantMap protocol = findProtocol(p_data);
+        QString link = protocol.value("link").toString();
+        bool protocol_exists = false;
+        // TODO insert check for link.isEmpty
+        for (int j = 0; j < p_data->childscCount(); j++)
+        {
+            // TODO remove check fro link.isEmpty
+            if (!link.isEmpty() && p_data->childAt(j)->url().toString().contains(link))
+            {
+                //db_data = db_data.unite(parseProtocol(p_data->childAt(j)));
+                db_data.insert("protocol", p_data->childAt(j)->url().toString());
+                db_data.insert("end_time", protocol.value("end_time"));
+                protocol_exists = true;
+                //qDebug() << db_data;
+                break;
+            }
+        }
+        if (!protocol_exists)
+        {
+            db_data.insert("protocol", QVariant());
+            db_data.insert("end_time", QVariant());
+        }
         db_data.insert("table","LOT");
         db_data.insert("num_lot",info[Content_NumberLabel]);
         db_data.insert("id_reduction",p_data->root()->url().toString().section("=",1));
@@ -143,12 +173,21 @@ void  TP_zakazrf::html_to_db(CDataStructure *p_data, const QStringList &m_ids, b
         db_data.insert("subject", info[Content_SubjectLabel]);
         db_data.insert("id_contract", (p_data->url().toString()).section("=", 1));
         db_data.insert("obespechenie", info[Content_MaintenanceSumLabel]);
-        db_data.insert("start_price", info[Content_FinalPriceLabel]);
+        db_data.insert("start_price", info["start_price"]);
         db_data.insert("best_price", info[Content_FinalPriceLabel]);
-        db_data.insert("start_time", info[Content_TradeBeginDateLabel]);
-        db_data.insert("end_time", info["lotEndTime"]);
-        db_data.insert("protocol","");
+        db_data.insert("start_time", QDateTime::fromString(info.value(Content_TradeBeginDateLabel).toString(),
+                                                           QString("d.M.yyyy H:m")));
+        db_data.insert("winner", winner);
         db_data.insert("url", p_data->url().toString());
+        mutex.lock();
+            m_db->write(db_data);
+        mutex.unlock();
+
+        //Write in Status table
+        db_data.clear();
+        db_data.insert("table","Status");
+        db_data.insert("id_status", p_data->url().toString().section("=",1));
+        db_data.insert("status", info[Content_StageLabel]);
         mutex.lock();
             m_db->write(db_data);
         mutex.unlock();
@@ -268,9 +307,9 @@ QStringList TP_zakazrf::findParticipants(const QByteArray &source, const QString
     return retList;
 }
 
-QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringList &a_ids)
+QVariantMap TP_zakazrf::findProviding(CDataStructure *p_data, const QStringList &a_ids)
 {
-    QTextStream stream(source);
+    QTextStream stream(p_data->read());
     QString sourceStr(stream.readAll());
     sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
     QVariantMap appToDB;
@@ -310,28 +349,40 @@ QVariantMap TP_zakazrf::findProviding(const QByteArray &source, const QStringLis
         }
     }
 
-    QString endTimeKeyword;
-    endTimeKeyword=endTimeKeyword.fromUtf8("<td>Протокол проведения аукциона</td><td>");
-    qDebug()<<endTimeKeyword;
-    int endTimeStartIndex=sourceStr.lastIndexOf(endTimeKeyword);
-    if(endTimeStartIndex==-1)
+//    QString endTimeKeyword;
+//    endTimeKeyword=endTimeKeyword.fromUtf8("<td>Протокол проведения аукциона</td><td>");
+//    qDebug()<<endTimeKeyword;
+//    int endTimeStartIndex=sourceStr.lastIndexOf(endTimeKeyword);
+//    if(endTimeStartIndex==-1)
+//    {
+//        return appToDB;
+//    }
+//
+//    endTimeStartIndex+=endTimeKeyword.size();
+//
+//    QString retStr;
+//    while(endTimeStartIndex < sourceStr.count() && sourceStr[endTimeStartIndex] != '<')
+//    {
+//        retStr+=sourceStr[endTimeStartIndex++];
+//    }
+//    if (!retStr.isEmpty())
+//    {
+//        appToDB.insert("lotEndTime",retStr);
+//    }
+
+    if (!p_data->isRoot())
     {
-        return appToDB;
+        QString expr;
+        expr = QString::fromUtf8("Начальная\\sцена\\sлота\\s\\(контракта\\)\\s*</b>\\s*</td>\\s*<td>"
+                                 "\\s*(\\d*\\D?\\d{0,2})\\s*");
+        QRegExp regexp(expr, Qt::CaseInsensitive);
+        for (int pos = regexp.indexIn(sourceStr); pos > 0; pos = regexp.indexIn(sourceStr, pos + 1))
+        {
+            appToDB.insert("start_price", regexp.cap(1).replace(",", ".").toFloat());
+        }
     }
 
-    endTimeStartIndex+=endTimeKeyword.size();
-
-    QString retStr;
-    while(endTimeStartIndex < sourceStr.count() && sourceStr[endTimeStartIndex] != '<')
-    {
-        retStr+=sourceStr[endTimeStartIndex++];
-    }
-    if (!retStr.isEmpty())
-    {
-        appToDB.insert("lotEndTime",retStr);
-    }
-
-    qDebug()<<retStr;
+//    qDebug()<<retStr;
     return appToDB;
 
 }
@@ -348,6 +399,77 @@ QString TP_zakazrf::extractFromSpanTag(const QString & tagTxt)
     }
 
     return retStr;
+}
+
+QVariantMap TP_zakazrf::findProtocol(CDataStructure* p_data)
+{
+    QTextStream stream(p_data->read());
+    QString sourceStr(stream.readAll());
+    QVariantMap result;
+    sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+    QString expr = QString::fromUtf8("href=\\\"(\\D*id=\\d{3,6})\\\">\\s*Протокол\\sподведения\\sитогов\\sаукциона[.]htm\\s*"
+                                     "</a>\\s*</td>\\s*<td>\\s*Протокол\\sподведения\\sитогов\\sаукциона\\s*"
+                                     "</td>\\s*<td>\\s*(\\d*[.]\\d*[.]\\d*\\s*\\d*:\\d*:\\d*)\\s*</td>");
+    QRegExp regexp(expr, Qt::CaseInsensitive);
+
+    for (int pos = regexp.indexIn(sourceStr); pos > 0; pos = regexp.indexIn(sourceStr, pos + 1))
+    {
+        if (!regexp.cap().isEmpty())
+        {
+            result.insert("link", regexp.cap(1));
+            QDateTime dt = QDateTime::fromString(regexp.cap(2), QString("d.M.yyyy H:m:s"));
+            result.insert("end_time", dt);
+            return result;
+        }
+    }
+    return result;
+}
+
+QVariantMap TP_zakazrf::parseProtocol(CDataStructure *p_data)
+{
+    QTextStream stream(p_data->read());
+    QString sourceStr(stream.readAll());
+    sourceStr = sourceStr.remove(QRegExp("\n|\t|\r|\a"));
+    QVariantMap result;
+    QString list;
+    QString expr = QString::fromUtf8("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*((\\d{1,2}):(\\d{1,2}):(\\d{1,2}))\\s*</u>\\s*</p>");
+    QRegExp regexp1(expr, Qt::CaseInsensitive);
+//    QRegExp regexp1("<p>\\s*Время\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}):(\\d{1,2}):(\\d{1,2})\\s*</u>\\s*</p>", Qt::CaseInsensitive);
+    for (int pos = regexp1.indexIn(sourceStr); pos > 0; pos = regexp1.indexIn(sourceStr, pos + 1))
+    {
+        if (!regexp1.cap().isEmpty())
+        {
+            list.append(regexp1.cap(1) + " ");
+            break;
+        }
+    }
+    expr = QString::fromUtf8("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}\\s)(\\w*)(\\s\\d{4})\\s");
+    QRegExp regexp2(expr, Qt::CaseInsensitive);
+//    QRegExp regexp2("<p>\\s*Дата\\sокончания\\sаукциона\\s*<u>\\s*(\\d{1,2}\\s)(\\w*)(\\s\\d{4})\\s", Qt::CaseInsensitive);
+    for (int pos = regexp2.indexIn(sourceStr); pos > 0; pos = regexp2.indexIn(sourceStr, pos + 1))
+    {
+        if (!regexp2.cap().isEmpty())
+        {
+            list.append(regexp2.cap(1));
+            list.append(montheTable.value(regexp2.cap(2)));
+            list.append(regexp2.cap(3));
+            break;
+        }
+        break;
+    }
+    QDateTime dt = QDateTime::fromString(list, QString("H:m:s d M yyyy"));
+
+
+    result.insert("end_time", dt);
+
+//    expr = QString::fromUtf8("<p>\\s*4.Начальная\\s\\(максимальная\\)\\sцена\\sконтракта\\s\\(лота\\):\\s*<u>"
+//                             "\\s*(\\d*\\D?\\d{0,2})\\s");
+//    QRegExp regexp3(expr, Qt::CaseInsensitive);
+//    for (int pos = regexp3.indexIn(sourceStr); pos > 0; pos = regexp3.indexIn(sourceStr, pos + 1))
+//    {
+//        result.insert("start_price", regexp3.cap(1).replace(",", ".").toFloat());
+//    }
+    return result;
 }
 
 Q_EXPORT_PLUGIN2(TP_zakazrf, TP_zakazrf);

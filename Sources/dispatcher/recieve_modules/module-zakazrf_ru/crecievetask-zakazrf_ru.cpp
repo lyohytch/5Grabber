@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include <constants.h>
+#include <cconfighandler.h>
 #include <cdownloadmanager_zakazrf_ru.h>
 
 //#undef RUN_ALL_TASKS
@@ -93,7 +94,15 @@ bool CRecieveTask_zakazrf_ru::run()
     QUrlList urls=downloadManager.getUrls();
     if(urls.isEmpty())
     {
-        for(int i=7220; i>5900; i--)
+        int min = getConfigurationValue("zakazrf/min_id",1).toUInt();
+        int max = getConfigurationValue("zakazrf/max_id",10000).toUInt();
+        if (max < min)
+        {
+            int tmp = max;
+            max = min;
+            min = tmp;
+        }
+        for(int i = min; i < max; i++)
         {
             QUrl testUrl(QString("http://zakazrf.ru/ViewReduction.aspx?id=%1").arg(i));
             CDataStructure* tmpdata = new CDataStructure(testUrl);

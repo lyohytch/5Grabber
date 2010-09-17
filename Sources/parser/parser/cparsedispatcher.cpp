@@ -43,7 +43,7 @@ void CParseDispatcher::onAddedToQueue()
             CParseThread* thread = new CParseThread(queueMember, m_db);
             connect(thread, SIGNAL(finished()), this, SLOT(onParseTaskFinished()));
             m_threads.insert(thread, queueMember);
-            qDebug() << counter++ << "(((((((((((((((((" << QDateTime::currentDateTime().toTime_t();
+//            qDebug() << counter++ << "(((((((((((((((((" << QDateTime::currentDateTime().toTime_t();
             thread->start();
         }
     }
@@ -51,8 +51,8 @@ void CParseDispatcher::onAddedToQueue()
 
 void CParseDispatcher::onParseTaskFinished()
 {
-    qDebug() << "THREAD FINISHED";
-    qDebug() << "))))))))))))))" << QDateTime::currentDateTime().toTime_t();
+//    qDebug() << "THREAD FINISHED";
+//    qDebug() << "))))))))))))))" << QDateTime::currentDateTime().toTime_t();
     foreach (CParseThread* thread, m_threads.keys())
     {
         qDebug() << "THREADS COUNT BEFORE = " << m_threads.count();

@@ -39,8 +39,10 @@ bool DBmanager::is_open()
 
 bool DBmanager::write(QVariantMap &data)
 {
-    Q_UNUSED(data);
     qDebug()<<__FILE__<<"("<<__LINE__<<") "<<Q_FUNC_INFO<<" :: "<<data.value("table");
+    qDebug() << "##############################################################";
+    qDebug() << data;
+    qDebug() << "##############################################################";
     bool ok = false;
     if (m_status)
     {
@@ -55,7 +57,7 @@ bool DBmanager::write(QVariantMap &data)
         {
             query.prepare("REPLACE INTO Lot VALUES (:id_reduction, :num_lot, :id_lot, :url, :status, :subject,"
                           " :obespechenie, :start_price, :best_price, :start_time, :end_time,"
-                          " :protocol, :last_parsed);");
+                          " :winner, :protocol, :protocol_summary, :last_parsed);");
             query.bindValue(":id_reduction",data.value("id_reduction"));
             query.bindValue(":num_lot",data.value("num_lot"));
             query.bindValue(":id_lot",data.value("id_lot"));
@@ -67,8 +69,10 @@ bool DBmanager::write(QVariantMap &data)
             query.bindValue(":start_price",data.value("start_price"));
             query.bindValue(":best_price",data.value("best_price"));
             query.bindValue(":start_time",data.value("start_time"));
-            query.bindValue(":end_time",QVariant());
+            query.bindValue(":end_time",data.value("end_time"));
+            query.bindValue(":winner",data.value("winner"));
             query.bindValue(":protocol",data.value("protocol"));
+            query.bindValue(":protocol_sumary",data.value("protocol_summary"));
             query.bindValue(":last_parsed",QVariant(QDateTime::currentDateTime()));
         }
         else if(data.value("table").toString() == "Customer")
@@ -117,6 +121,39 @@ bool DBmanager::write(QVariantMap &data)
             }
             return ok;
 
+        }
+        else if(data.value("table").toString() == "Auction")
+        {
+            query.prepare("REPLACE INTO Auction VALUES (:id_auction,"
+                          " :code, :url, :subject, :customer_name, :customer_address, "
+                          " :customer_post, :customer_email, :customer_phone, :customer_contact, "
+                          " :auctionbegindate, :auctionenddate, :publicdate, :requestacceptdate, "
+                          " :requestdate, :purchamount, :contrcoveramount, :contrcoveramountinpercent, "
+                          " :contrneed, :status, :winner, :protocol, :end_time, :last_parsed);" );
+            query.bindValue(":id_auction",data.value("id_reduction"));
+            query.bindValue(":code",data.value("purchcode"));
+            query.bindValue(":url",data.value("url"));
+            query.bindValue(":subject",data.value("purchfullname"));
+            query.bindValue(":customer_name",data.value("orgname"));
+            query.bindValue(":customer_email",data.value("orgemail"));
+            query.bindValue(":customer_phone",data.value("orgphones"));
+            query.bindValue(":customer_post",data.value("orgpostaddress"));
+            query.bindValue(":customer_address",data.value("orgplace"));
+            query.bindValue(":customer_contact",data.value("orgcontactperson"));
+            query.bindValue(":auctionbegindate",data.value("auctionbegindate"));
+            query.bindValue(":auctionenddate",data.value("auctionenddate"));
+            query.bindValue(":publicdate",data.value("publicdate"));
+            query.bindValue(":requestacceptdate",data.value("requestacceptdate"));
+            query.bindValue(":requestdate",data.value("requestdate"));
+            query.bindValue(":purchamount",data.value("purchamount"));
+            query.bindValue(":contrcoveramount",data.value("contrcoveramount"));
+            query.bindValue(":contrcoveramountinpercent",data.value("contrcoveramountinpercent"));
+            query.bindValue(":contrneed",data.value("contrneed"));
+            query.bindValue(":status",data.value("purchstate"));
+            query.bindValue(":winner",data.value("winner"));
+            query.bindValue(":protocol",data.value("protocol"));
+            query.bindValue(":end_time",data.value("end_time"));
+            query.bindValue(":last_parsed", QVariant(QDateTime::currentDateTime()));
         }
         else
         {
